@@ -328,7 +328,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-010 - Configurar Prisma + PostgreSQL
 
 - **Skill dona:** `database-design`
-- **Status:** `READY`
+- **Status:** `BLOCKED`
 - **Fluxo critico:** `sim`
 - **Descricao:** Integrar Prisma ao backend e configurar conexao com PostgreSQL.
 - **Dependencias:** `FT-009`
@@ -337,6 +337,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - datasource funcionando
   - Prisma Client gerado
   - primeira conexao com banco validada
+- **Bloqueio atual:** `version-matrix.md` ainda nao define versoes exatas de `prisma` e `@prisma/client`, e o ambiente ainda nao tem PostgreSQL local validado para checar a primeira conexao
 
 ## FT-011 - Modelar schema inicial do dominio
 
@@ -796,7 +797,6 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-010` - Configurar Prisma + PostgreSQL
 - `FT-016` - Integrar auth no backend
 - `FT-017` - Inicializar app Expo
 - `FT-020` - Inicializar app admin Next.js
@@ -808,10 +808,9 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-010` - Configurar Prisma + PostgreSQL
-2. `FT-034` - Configurar Swagger no backend
-3. `FT-017` - Inicializar app Expo
-4. `FT-020` - Inicializar app admin Next.js
-5. `FT-016` - Integrar auth no backend
-6. `FT-027` - Definir cobranca mensal da plataforma
-7. `FT-029` - Configurar scripts de lint, typecheck e test
+1. `FT-034` - Configurar Swagger no backend
+2. `FT-017` - Inicializar app Expo
+3. `FT-020` - Inicializar app admin Next.js
+4. `FT-016` - Integrar auth no backend
+5. `FT-027` - Definir cobranca mensal da plataforma
+6. `FT-029` - Configurar scripts de lint, typecheck e test
