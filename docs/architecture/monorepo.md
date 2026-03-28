@@ -108,6 +108,14 @@ A base do workspace usa:
 - `turbo.json` para orquestrar tarefas
 - `tsconfig.base.json` para TypeScript compartilhado
 - `eslint.config.mjs` e `prettier.config.cjs` para qualidade e formatacao
+- `.gitignore` da raiz como unica fonte oficial de regras de ignore
+
+## Regra de ignore do monorepo
+
+- cada app deve obedecer ao `.gitignore` da raiz
+- apps nao devem manter `.gitignore` proprio sem task e decisao arquitetural explicitas
+- `apps/mobile/expo-env.d.ts` permanece versionado por fazer parte do setup do app Expo
+- arquivos gerados locais do Expo continuam sendo tratados pela regra da raiz, sem duplicacao em `apps/mobile/.gitignore`
 
 ## Ordem estrutural das proximas etapas
 
