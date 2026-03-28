@@ -404,7 +404,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-012 - Criar migration inicial
 
 - **Skill dona:** `database-design`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Gerar migration inicial do banco.
 - **Dependencias:** `FT-011`
@@ -412,6 +412,27 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - migration criada
   - banco sincronizado
   - sem erro de geracao do client
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/api/prisma/migrations/20260328115642_init/migration.sql`
+  - `apps/api/prisma/migrations/migration_lock.toml`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - prisma migrate dev: ok
+  - prisma migrate status: ok
+  - prisma validate: ok
+  - prisma generate: ok
+  - Prisma Client atualizado: ok
+  - banco sincronizado: ok via PostgreSQL 16.13 em container temporario
+  - typecheck API: ok
+  - build API: ok
+  - format:check: ok
+  - lint raiz: ok
+  - typecheck raiz: ok
+  - build raiz: ok
+  - commit: ok
+- **Commit:** `feat(db): create initial prisma migration`
 
 ## FT-013 - Definir modulos do backend
 
@@ -852,18 +873,16 @@ Quando houver multiplas tasks `READY`, priorizar por:
 - `FT-027` - Definir cobranca mensal da plataforma
 - `FT-029` - Configurar scripts de lint, typecheck e test
 - `FT-034` - Configurar Swagger no backend
-- `FT-012` - Criar migration inicial
 - `FT-013` - Definir modulos do backend
 
 ---
 
 # Ordem sugerida para comecar
 
-1. `FT-012` - Criar migration inicial
-2. `FT-013` - Definir modulos do backend
-3. `FT-034` - Configurar Swagger no backend
-4. `FT-017` - Inicializar app Expo
-5. `FT-020` - Inicializar app admin Next.js
-6. `FT-016` - Integrar auth no backend
-7. `FT-027` - Definir cobranca mensal da plataforma
-8. `FT-029` - Configurar scripts de lint, typecheck e test
+1. `FT-013` - Definir modulos do backend
+2. `FT-034` - Configurar Swagger no backend
+3. `FT-017` - Inicializar app Expo
+4. `FT-020` - Inicializar app admin Next.js
+5. `FT-016` - Integrar auth no backend
+6. `FT-027` - Definir cobranca mensal da plataforma
+7. `FT-029` - Configurar scripts de lint, typecheck e test
