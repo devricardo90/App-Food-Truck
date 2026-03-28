@@ -410,7 +410,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-026 - Definir fluxo oficial de pagamento do pedido
 
 - **Skill dona:** `payments-integration`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Formalizar como o pedido nasce, aguarda pagamento e e confirmado.
 - **Dependencias:** nenhuma
@@ -419,6 +419,15 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - relacao pagamento-pedido definida
   - webhook ou callback previsto
   - regra de idempotencia prevista
+- **Entrega em:** `2026-03-28`
+- **Artefato:** `docs/flows/payment-flow.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - criterios de aceite: ok
+  - build: nao aplicavel
+  - testes: nao aplicavel
+  - commit: pendente
 
 ## FT-027 - Definir cobranca mensal da plataforma
 
@@ -506,7 +515,6 @@ Quando houver multiplas tasks `READY`, priorizar por:
 - `FT-014` - Definir estrategia oficial de autenticacao
 - `FT-024` - Definir regra de capacidade por janela de tempo
 - `FT-025` - Definir regra de estoque diario
-- `FT-026` - Definir fluxo oficial de pagamento do pedido
 - `FT-027` - Definir cobranca mensal da plataforma
 - `FT-028` - Definir estrategia de push e SMS
 - `FT-030` - Definir estrategia minima de testes do MVP
@@ -516,11 +524,11 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-026` - Definir fluxo oficial de pagamento do pedido
-2. `FT-014` - Definir estrategia oficial de autenticacao
-3. `FT-028` - Definir estrategia de push e SMS
-4. `FT-001` - Inicializar monorepo base
-5. `FT-006` - Definir jornadas oficiais das 3 personas
-6. `FT-024` - Definir regra de capacidade por janela de tempo
-7. `FT-025` - Definir regra de estoque diario
-8. `FT-030` - Definir estrategia minima de testes do MVP
+1. `FT-014` - Definir estrategia oficial de autenticacao
+2. `FT-028` - Definir estrategia de push e SMS
+3. `FT-001` - Inicializar monorepo base
+4. `FT-006` - Definir jornadas oficiais das 3 personas
+5. `FT-024` - Definir regra de capacidade por janela de tempo
+6. `FT-025` - Definir regra de estoque diario
+7. `FT-030` - Definir estrategia minima de testes do MVP
+8. `FT-031` - Definir estrategia minima de logs e rastreabilidade
