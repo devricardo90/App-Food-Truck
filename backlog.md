@@ -237,7 +237,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-014 - Definir estrategia oficial de autenticacao
 
 - **Skill dona:** `auth-rbac`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Decidir e documentar a estrategia oficial de autenticacao do MVP.
 - **Dependencias:** nenhuma
@@ -246,11 +246,20 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - fluxo mobile definido
   - fluxo web definido
   - integracao com backend prevista
+- **Entrega em:** `2026-03-28`
+- **Artefato:** `docs/auth/auth-strategy.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - criterios de aceite: ok
+  - build: nao aplicavel
+  - testes: nao aplicavel
+  - commit: pendente
 
 ## FT-015 - Definir roles e permissoes do sistema
 
 - **Skill dona:** `auth-rbac`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Definir papeis e permissoes minimas por area.
 - **Dependencias:** `FT-014`
@@ -513,7 +522,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 - `FT-001` - Inicializar monorepo base
 - `FT-006` - Definir jornadas oficiais das 3 personas
-- `FT-014` - Definir estrategia oficial de autenticacao
+- `FT-015` - Definir roles e permissoes do sistema
 - `FT-024` - Definir regra de capacidade por janela de tempo
 - `FT-025` - Definir regra de estoque diario
 - `FT-027` - Definir cobranca mensal da plataforma
@@ -525,10 +534,10 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-014` - Definir estrategia oficial de autenticacao
-2. `FT-028` - Definir estrategia de push e SMS
-3. `FT-001` - Inicializar monorepo base
-4. `FT-006` - Definir jornadas oficiais das 3 personas
+1. `FT-028` - Definir estrategia de push e SMS
+2. `FT-001` - Inicializar monorepo base
+3. `FT-006` - Definir jornadas oficiais das 3 personas
+4. `FT-015` - Definir roles e permissoes do sistema
 5. `FT-024` - Definir regra de capacidade por janela de tempo
 6. `FT-025` - Definir regra de estoque diario
 7. `FT-030` - Definir estrategia minima de testes do MVP
