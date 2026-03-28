@@ -49,7 +49,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-001 - Inicializar monorepo base
 
 - **Skill dona:** `deployment-infra`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Criar a base do monorepo com Turborepo, pnpm workspace, apps e packages compartilhados.
 - **Dependencias:** nenhuma
@@ -59,11 +59,29 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - apps `mobile`, `admin` e `api` criados
   - packages compartilhados criados
   - scripts base funcionando na raiz
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `package.json`
+  - `pnpm-workspace.yaml`
+  - `turbo.json`
+  - `pnpm-lock.yaml`
+  - `apps/*`
+  - `packages/*`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - pnpm install: ok
+  - lint: ok
+  - typecheck: ok
+  - test: ok
+  - build: ok com warnings esperados de scaffold sem outputs reais
+  - clean: ok
+  - commit: pendente
 
 ## FT-002 - Configurar TypeScript compartilhado
 
 - **Skill dona:** `deployment-infra`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `nao`
 - **Descricao:** Criar configuracao base de TypeScript para todos os apps e packages.
 - **Dependencias:** `FT-001`
@@ -76,7 +94,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-003 - Configurar ESLint e Prettier do monorepo
 
 - **Skill dona:** `deployment-infra`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `nao`
 - **Descricao:** Padronizar lint e formatacao em todos os apps e packages.
 - **Dependencias:** `FT-001`
@@ -88,7 +106,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-004 - Criar README raiz e documentacao minima
 
 - **Skill dona:** `product-system-design`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `nao`
 - **Descricao:** Documentar objetivo do projeto, stack, estrutura do monorepo e fluxo MVP inicial.
 - **Dependencias:** `FT-001`
@@ -531,7 +549,9 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-001` - Inicializar monorepo base
+- `FT-002` - Configurar TypeScript compartilhado
+- `FT-003` - Configurar ESLint e Prettier do monorepo
+- `FT-004` - Criar README raiz e documentacao minima
 - `FT-006` - Definir jornadas oficiais das 3 personas
 - `FT-015` - Definir roles e permissoes do sistema
 - `FT-024` - Definir regra de capacidade por janela de tempo
@@ -544,11 +564,11 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-001` - Inicializar monorepo base
-2. `FT-006` - Definir jornadas oficiais das 3 personas
-3. `FT-015` - Definir roles e permissoes do sistema
-4. `FT-024` - Definir regra de capacidade por janela de tempo
-5. `FT-025` - Definir regra de estoque diario
-6. `FT-030` - Definir estrategia minima de testes do MVP
-7. `FT-031` - Definir estrategia minima de logs e rastreabilidade
-8. `FT-027` - Definir cobranca mensal da plataforma
+1. `FT-002` - Configurar TypeScript compartilhado
+2. `FT-003` - Configurar ESLint e Prettier do monorepo
+3. `FT-004` - Criar README raiz e documentacao minima
+4. `FT-006` - Definir jornadas oficiais das 3 personas
+5. `FT-015` - Definir roles e permissoes do sistema
+6. `FT-024` - Definir regra de capacidade por janela de tempo
+7. `FT-025` - Definir regra de estoque diario
+8. `FT-030` - Definir estrategia minima de testes do MVP

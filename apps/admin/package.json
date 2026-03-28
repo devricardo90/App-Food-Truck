@@ -1,0 +1,13 @@
+{
+  "name": "@foodtrucks/admin",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "node -e \"console.log('admin dev scaffold pending FT-020')\"",
+    "build": "node -e \"console.log('admin build scaffold pending FT-020')\"",
+    "lint": "node -e \"console.log('admin lint scaffold pending FT-003')\"",
+    "typecheck": "node -e \"console.log('admin typecheck scaffold pending FT-002')\"",
+    "test": "node -e \"console.log('admin test scaffold pending FT-029')\"",
+    "clean": "node -e \"console.log('admin clean ok')\""
+  }
+}

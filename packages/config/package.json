@@ -1,0 +1,11 @@
+{
+  "name": "@foodtrucks/config",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "lint": "node -e \"console.log('config lint scaffold pending FT-003')\"",
+    "typecheck": "node -e \"console.log('config typecheck scaffold pending FT-002')\"",
+    "test": "node -e \"console.log('config test scaffold pending FT-029')\"",
+    "clean": "node -e \"console.log('config clean ok')\""
+  }
+}

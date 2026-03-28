@@ -1,0 +1,13 @@
+{
+  "name": "@foodtrucks/api",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "node -e \"console.log('api dev scaffold pending FT-009')\"",
+    "build": "node -e \"console.log('api build scaffold pending FT-009')\"",
+    "lint": "node -e \"console.log('api lint scaffold pending FT-003')\"",
+    "typecheck": "node -e \"console.log('api typecheck scaffold pending FT-002')\"",
+    "test": "node -e \"console.log('api test scaffold pending FT-029')\"",
+    "clean": "node -e \"console.log('api clean ok')\""
+  }
+}
