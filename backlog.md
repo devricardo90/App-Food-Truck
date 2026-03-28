@@ -607,7 +607,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-031 - Definir estrategia minima de logs e rastreabilidade
 
 - **Skill dona:** `observability-support`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Definir logs minimos para suporte de pedidos, pagamentos e notificacoes.
 - **Dependencias:** nenhuma
@@ -615,6 +615,16 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - eventos criticos listados
   - identificadores de rastreio definidos
   - logs minimos por fluxo definidos
+- **Entrega em:** `2026-03-28`
+- **Artefato:** `docs/quality/logs-traceability-strategy.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - criterios de aceite: ok
+  - build: nao aplicavel
+  - testes: nao aplicavel
+  - commit: ok
+- **Commit:** `docs(observability): define mvp logs and traceability`
 
 ## FT-032 - Definir ambientes e deploy inicial
 
@@ -692,7 +702,6 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-031` - Definir estrategia minima de logs e rastreabilidade
 - `FT-036` - Definir politica de versoes e upgrades
 - `FT-002` - Configurar TypeScript compartilhado
 - `FT-003` - Configurar ESLint e Prettier do monorepo
@@ -703,9 +712,8 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-031` - Definir estrategia minima de logs e rastreabilidade
-2. `FT-036` - Definir politica de versoes e upgrades
-3. `FT-002` - Configurar TypeScript compartilhado
-4. `FT-003` - Configurar ESLint e Prettier do monorepo
-5. `FT-004` - Criar README raiz e documentacao minima
-6. `FT-027` - Definir cobranca mensal da plataforma
+1. `FT-036` - Definir politica de versoes e upgrades
+2. `FT-002` - Configurar TypeScript compartilhado
+3. `FT-003` - Configurar ESLint e Prettier do monorepo
+4. `FT-004` - Criar README raiz e documentacao minima
+5. `FT-027` - Definir cobranca mensal da plataforma
