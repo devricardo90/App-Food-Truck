@@ -123,6 +123,10 @@ NestJS
 - Prisma nao garante instalacao automatica do driver PostgreSQL.
 - Prisma nao deve ser instanciado sem `adapter` nesse setup.
 - `pg` deve ser instalado explicitamente e ser compativel com Node 22 LTS.
+- revisar pool e timeout do `pg` como parte do runtime da API.
+- validar SSL explicitamente quando o banco for remoto.
+- se o app da API migrar o Prisma Client para setup ESM, validar coerencia de `package.json` e runtime.
+- `prisma://` e `prisma+postgres://` pertencem ao fluxo de Accelerate e nao ao fluxo de adapter TCP direto.
 - Swagger entra no Sprint 1 da API.
 - Scalar entra logo apos Swagger.
 - Servir Swagger UI via `SwaggerModule.setup(...)` sem adicionar dependencia HTTP extra separada.
@@ -218,3 +222,4 @@ NestJS
 - `prisma` e `@prisma/client` devem permanecer sincronizados na mesma versao.
 - `@prisma/adapter-pg` faz parte obrigatoria do runtime Prisma 7 com PostgreSQL.
 - `pg` e parte obrigatoria do runtime quando Prisma 7 falar com PostgreSQL.
+- Metrics preview antigo do Prisma nao entra no plano do projeto.

@@ -237,6 +237,7 @@ Se a API utilizar Prisma 7 com PostgreSQL:
 - nao assumir que Prisma instala o driver automaticamente
 - nunca instanciar `new PrismaClient()` sem `adapter`
 - manter uma unica instancia do Prisma Client na aplicacao
+- validar consistencia de ESM do app quando o setup do client exigir esse modo
 
 #### Dependencia obrigatoria
 
@@ -256,6 +257,7 @@ Antes de aprovar qualquer task relacionada a banco de dados:
 7. validar se nao ha erro de driver no runtime
 8. revisar pool e timeout do adapter `pg`
 9. validar SSL quando o ambiente for remoto
+10. validar se o projeto esta usando conexao direta TCP e nao URL de Accelerate por engano
 
 Se `@prisma/adapter-pg` ou `pg` nao estiverem presentes:
 
@@ -271,6 +273,8 @@ Nenhuma task envolvendo Prisma pode ser marcada como `DONE` sem:
 - driver `pg` presente e funcional
 - `@prisma/adapter-pg` presente e funcional
 - Prisma Client instanciado com `adapter`
+- revisao de pool/timeout quando houver impacto de runtime
+- revisao de SSL quando o banco for remoto
 
 #### Checklist curto antes do push da API
 
@@ -309,6 +313,19 @@ Se a task envolver Prisma com PostgreSQL:
 - garantir que o pacote `pg` esta instalado
 - validar compatibilidade com Node.js do projeto
 - bloquear execucao se o adapter ou o driver nao estiverem presentes
+
+#### Excecao - Prisma Accelerate
+
+Se a conexao usar `prisma://` ou `prisma+postgres://`:
+
+- nao usar `PrismaPg`
+- nao tratar como conexao direta TCP por adapter
+- seguir a estrategia oficial de Accelerate em task propria
+
+#### Observabilidade
+
+- nao planejar uso da antiga feature de Metrics preview do Prisma 6
+- para Prisma 7, observabilidade deve seguir por logs, driver e ferramentas externas aprovadas
 
 ---
 

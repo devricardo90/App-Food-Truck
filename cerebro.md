@@ -88,6 +88,8 @@ Regra operacional:
 - em Prisma 7 com PostgreSQL, usar `prisma.config.ts`, `provider = "prisma-client"` e `output` explicito
 - quando o projeto migrar para output customizado, o import do client nao pode continuar vindo de `@prisma/client`
 - nunca aprovar `new PrismaClient()` sem `adapter` nesse setup
+- validar coerencia de ESM quando o setup do Prisma Client exigir esse modo
+- se a URL for `prisma://` ou `prisma+postgres://`, tratar como caso de Accelerate e nao de adapter TCP direto
 
 ## Fonte de Verdade do Status
 
@@ -162,6 +164,8 @@ Regra operacional:
 - se faltar adapter ou driver, a task deve ser bloqueada antes de `REVIEW`
 - se o generator nao estiver em `provider = "prisma-client"` com `output` explicito, a task deve ser bloqueada
 - se o client continuar sendo importado de `@prisma/client` depois da migracao para output customizado, a task deve ser bloqueada
+- se houver banco remoto, SSL deve entrar explicitamente no checklist de validacao
+- pool e timeout do adapter `pg` devem ser revisados antes de aprovar runtime novo
 
 ## Regra de Commit
 
@@ -338,8 +342,14 @@ Ao trabalhar com Prisma 7 + PostgreSQL, o subagente deve:
 - validar conexao com o banco
 - revisar pool e timeout do adapter `pg`
 - validar SSL quando o ambiente for remoto
+- tratar `prisma://` e `prisma+postgres://` como caso de Accelerate, nao de `PrismaPg`
 - executar `prisma generate` apos alteracoes no schema
 - reportar qualquer erro de driver ou conexao
+
+Para observabilidade de Prisma 7:
+
+- nao planejar uso da antiga feature de Metrics preview
+- preferir logs, instrumentacao do driver e ferramentas externas aprovadas
 
 ## Regra de Documentacao da API
 
