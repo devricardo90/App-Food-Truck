@@ -53,7 +53,7 @@ App Cliente
 - react-dom: `18.3.1 via expo install`
 - react-native-web: `~0.19.13 via expo install`
 - NativeWind: `4.1.23`
-- react-native-css-interop: `obrigatorio junto com NativeWind`
+- react-native-css-interop: `0.1.22`
 - tailwindcss: `3.4.17`
 - Zustand: `5.0.12`
 - `@tanstack/react-query`: `5.95.2`
