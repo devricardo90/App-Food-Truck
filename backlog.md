@@ -254,7 +254,8 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - criterios de aceite: ok
   - build: nao aplicavel
   - testes: nao aplicavel
-  - commit: pendente
+  - commit: ok
+- **Commit:** `docs(auth): define mvp authentication strategy`
 
 ## FT-015 - Definir roles e permissoes do sistema
 
