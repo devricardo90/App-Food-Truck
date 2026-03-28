@@ -97,7 +97,7 @@ Next.js
 - `@tanstack/react-query`: `5.x`
 - react-hook-form: `7.x`
 - zod: `4.x`
-- Clerk Next.js SDK: `linha atual compativel com Next 16 do projeto`
+- Clerk Next.js SDK: `BLOCKED pending package and version with clean Next 16.2.x build`
 
 ## Politica do admin
 

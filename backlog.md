@@ -1146,10 +1146,11 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-037 - Integrar auth no admin web
 
 - **Skill dona:** `next-admin-architecture`
-- **Status:** `READY`
+- **Status:** `BLOCKED`
 - **Fluxo critico:** `sim`
 - **Descricao:** Conectar o admin ao provider de auth, proteger rotas e resolver sessao base no painel.
-- **Dependencias:** `FT-020`, `FT-021`, `FT-022`, `FT-014`, `FT-015`, `FT-040`
+- **Dependencias:** `FT-020`, `FT-021`, `FT-022`, `FT-014`, `FT-015`, `FT-040`, `FT-046`
+- **Bloqueio atual:** `@clerk/nextjs@6.31.9` instala, mas falha no `next build` com `Next 16.2.1`.
 - **Criterios de aceite:**
   - auth no admin configurada
   - rotas autenticadas protegidas
@@ -1159,10 +1160,11 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-038 - Integrar auth no app mobile
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `READY`
+- **Status:** `BLOCKED`
 - **Fluxo critico:** `sim`
 - **Descricao:** Conectar o app cliente ao provider de auth, proteger entrada do app e resolver sessao base no mobile.
-- **Dependencias:** `FT-017`, `FT-018`, `FT-019`, `FT-014`, `FT-040`
+- **Dependencias:** `FT-017`, `FT-018`, `FT-019`, `FT-014`, `FT-040`, `FT-046`
+- **Bloqueio atual:** o `version-matrix.md` ainda nao tem package e versao com build limpo para auth no Expo SDK 52.
 - **Criterios de aceite:**
   - auth no mobile configurada
   - fluxo de entrada autenticada preparado
@@ -1311,21 +1313,34 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - catalogo vem da API
   - estados de loading e erro previstos
 
+## FT-046 - Definir baseline oficial de auth frontend
+
+- **Skill dona:** `auth-rbac`
+- **Status:** `READY`
+- **Fluxo critico:** `sim`
+- **Descricao:** Formalizar o provider e as versoes oficiais de auth para admin e mobile com base em compatibilidade real de build.
+- **Dependencias:** `FT-014`, `FT-036`, `FT-040`
+- **Criterios de aceite:**
+  - baseline oficial do auth web definida
+  - baseline oficial do auth mobile definida
+  - riscos e bloqueios de compatibilidade registrados
+  - impacto no backlog e na version-matrix atualizado
+
 ---
 
 # READY atuais
 
-- `FT-037` - Integrar auth no admin web
-- `FT-038` - Integrar auth no app mobile
+- `FT-046` - Definir baseline oficial de auth frontend
 
 ---
 
 # Ordem sugerida para comecar
 
-1. `FT-037` - Integrar auth no admin web
-2. `FT-038` - Integrar auth no app mobile
-3. `FT-041` - Integrar admin com contexto autenticado de foodtruck da API
-6. `FT-042` - Integrar mobile com contexto autenticado de foodtruck da API
-7. `FT-043` - Implementar leitura inicial de foodtrucks e catalogo na API
-8. `FT-044` - Integrar admin ao catalogo real de foodtruck da API
-9. `FT-045` - Integrar mobile a foodtrucks e catalogo reais
+1. `FT-046` - Definir baseline oficial de auth frontend
+2. `FT-037` - Integrar auth no admin web
+3. `FT-038` - Integrar auth no app mobile
+4. `FT-041` - Integrar admin com contexto autenticado de foodtruck da API
+5. `FT-042` - Integrar mobile com contexto autenticado de foodtruck da API
+6. `FT-043` - Implementar leitura inicial de foodtrucks e catalogo na API
+7. `FT-044` - Integrar admin ao catalogo real de foodtruck da API
+8. `FT-045` - Integrar mobile a foodtrucks e catalogo reais
