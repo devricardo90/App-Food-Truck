@@ -1,8 +1,16 @@
-import type { MembershipRole, UserRole } from '../../generated/prisma/enums';
+import type {
+  MembershipRole,
+  MembershipStatus,
+  UserRole,
+} from '../../generated/prisma/enums';
 
 export type AuthMembershipContext = {
-  truckId: string;
+  id: string;
+  foodtruckId: string;
+  foodtruckSlug: string;
+  foodtruckName: string;
   role: MembershipRole;
+  status: MembershipStatus;
 };
 
 export type AuthenticatedRequestUser = {

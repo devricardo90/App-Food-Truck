@@ -1172,7 +1172,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-039 - Implementar modulo de users e memberships do foodtruck no backend
 
 - **Skill dona:** `auth-rbac`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Implementar modulos de usuarios e memberships de foodtruck para sustentar contexto operacional real.
 - **Dependencias:** `FT-011`, `FT-013`, `FT-015`, `FT-016`
@@ -1181,11 +1181,38 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - modulo de memberships criado
   - servicos base de leitura implementados
   - fronteira com auth e foodtrucks prevista
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/api/src/modules/users/users.module.ts`
+  - `apps/api/src/modules/users/users.service.ts`
+  - `apps/api/src/modules/users/users.types.ts`
+  - `apps/api/src/modules/foodtruck-memberships/foodtruck-memberships.module.ts`
+  - `apps/api/src/modules/foodtruck-memberships/foodtruck-memberships.service.ts`
+  - `apps/api/src/modules/foodtruck-memberships/foodtruck-memberships.types.ts`
+  - `apps/api/src/modules/auth/auth.module.ts`
+  - `apps/api/src/modules/auth/auth.service.ts`
+  - `apps/api/src/modules/auth/auth.types.ts`
+  - `apps/api/src/modules/app.module.ts`
+  - `.prettierignore`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - modulo de users: ok
+  - modulo de memberships: ok
+  - servicos base de leitura: ok
+  - fronteira com auth e foodtrucks: ok
+  - lint API: ok
+  - typecheck API: ok
+  - build API: ok
+  - formatacao raiz: ok
+  - lint raiz: ok
+  - typecheck raiz: ok
+  - build raiz: ok
+  - commit: ok
 
 ## FT-040 - Expor contexto autenticado estavel do foodtruck na API
 
 - **Skill dona:** `nest-api-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Consolidar endpoints e contratos estaveis de contexto autenticado de foodtruck para consumo do admin e do mobile.
 - **Dependencias:** `FT-016`, `FT-039`, `FT-034`, `FT-035`
@@ -1263,17 +1290,16 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-039` - Implementar modulo de users e memberships do foodtruck no backend
+- `FT-040` - Expor contexto autenticado estavel do foodtruck na API
 
 ---
 
 # Ordem sugerida para comecar
 
-1. `FT-039` - Implementar modulo de users e memberships do foodtruck no backend
-2. `FT-040` - Expor contexto autenticado estavel do foodtruck na API
-3. `FT-037` - Integrar auth no admin web
-4. `FT-038` - Integrar auth no app mobile
-5. `FT-041` - Integrar admin com contexto autenticado de foodtruck da API
+1. `FT-040` - Expor contexto autenticado estavel do foodtruck na API
+2. `FT-037` - Integrar auth no admin web
+3. `FT-038` - Integrar auth no app mobile
+4. `FT-041` - Integrar admin com contexto autenticado de foodtruck da API
 6. `FT-042` - Integrar mobile com contexto autenticado de foodtruck da API
 7. `FT-043` - Implementar leitura inicial de foodtrucks e catalogo na API
 8. `FT-044` - Integrar admin ao catalogo real de foodtruck da API

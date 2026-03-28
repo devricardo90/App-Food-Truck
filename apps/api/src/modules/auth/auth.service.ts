@@ -5,8 +5,8 @@ import {
 } from '@nestjs/common';
 import { verifyToken } from '@clerk/backend';
 
-import { MembershipStatus, UserRole } from '../../generated/prisma/enums';
-import { PrismaService } from '../../prisma/prisma.service';
+import { FoodtruckMembershipsService } from '../foodtruck-memberships/foodtruck-memberships.service';
+import { UsersService } from '../users/users.service';
 import type { AuthenticatedRequestUser } from './auth.types';
 
 type ClerkClaims = {
@@ -20,7 +20,10 @@ type ClerkClaims = {
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly foodtruckMembershipsService: FoodtruckMembershipsService,
+  ) {}
 
   async authenticateBearerToken(token: string) {
     const secretKey = process.env.CLERK_SECRET_KEY;
@@ -53,16 +56,8 @@ export class AuthService {
     }
 
     const user = await this.syncDomainUser(externalAuthId, claims);
-    const memberships = await this.prisma.truckMembership.findMany({
-      where: {
-        userId: user.id,
-        status: MembershipStatus.active,
-      },
-      select: {
-        truckId: true,
-        role: true,
-      },
-    });
+    const memberships =
+      await this.foodtruckMembershipsService.listActiveForUser(user.id);
 
     const authUser: AuthenticatedRequestUser = {
       userId: user.id,
@@ -97,33 +92,12 @@ export class AuthService {
     const email = claims.email?.trim() || null;
     const phone = claims.phone_number?.trim() || null;
     const name = claims.full_name?.trim() || this.buildName(claims);
-    const existingUser = await this.prisma.user.findUnique({
-      where: {
-        externalAuthId,
-      },
-    });
 
-    if (!existingUser) {
-      return this.prisma.user.create({
-        data: {
-          externalAuthId,
-          email,
-          phone,
-          name,
-          role: UserRole.customer,
-        },
-      });
-    }
-
-    return this.prisma.user.update({
-      where: {
-        id: existingUser.id,
-      },
-      data: {
-        email,
-        phone,
-        name,
-      },
+    return this.usersService.upsertAuthUser({
+      externalAuthId,
+      email,
+      phone,
+      name,
     });
   }
 
