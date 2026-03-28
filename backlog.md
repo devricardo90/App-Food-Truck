@@ -437,7 +437,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-013 - Definir modulos do backend
 
 - **Skill dona:** `nest-api-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Definir modulos iniciais do backend e fronteiras entre eles.
 - **Dependencias:** `FT-005`, `FT-009`, `FT-011`
@@ -445,6 +445,18 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - modulos listados
   - responsabilidades por modulo definidas
   - dependencias entre modulos anotadas
+- **Entrega em:** `2026-03-28`
+- **Artefato:** `docs/architecture/backend-modules.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - modulos listados: ok
+  - responsabilidades por modulo: ok
+  - dependencias entre modulos: ok
+  - build: nao aplicavel
+  - testes: nao aplicavel
+  - commit: ok
+- **Commit:** `docs(api): define backend module boundaries`
 
 ---
 
@@ -873,16 +885,14 @@ Quando houver multiplas tasks `READY`, priorizar por:
 - `FT-027` - Definir cobranca mensal da plataforma
 - `FT-029` - Configurar scripts de lint, typecheck e test
 - `FT-034` - Configurar Swagger no backend
-- `FT-013` - Definir modulos do backend
 
 ---
 
 # Ordem sugerida para comecar
 
-1. `FT-013` - Definir modulos do backend
-2. `FT-034` - Configurar Swagger no backend
-3. `FT-017` - Inicializar app Expo
-4. `FT-020` - Inicializar app admin Next.js
-5. `FT-016` - Integrar auth no backend
-6. `FT-027` - Definir cobranca mensal da plataforma
-7. `FT-029` - Configurar scripts de lint, typecheck e test
+1. `FT-034` - Configurar Swagger no backend
+2. `FT-017` - Inicializar app Expo
+3. `FT-020` - Inicializar app admin Next.js
+4. `FT-016` - Integrar auth no backend
+5. `FT-027` - Definir cobranca mensal da plataforma
+6. `FT-029` - Configurar scripts de lint, typecheck e test
