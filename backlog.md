@@ -164,7 +164,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-004 - Criar README raiz e documentacao minima
 
 - **Skill dona:** `product-system-design`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Documentar objetivo do projeto, stack, estrutura do monorepo e fluxo MVP inicial.
 - **Dependencias:** `FT-001`
@@ -173,6 +173,21 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - `docs/product/mvp.md` criado
   - `docs/architecture/monorepo.md` criado
   - `docs/flows/order-flow.md` criado
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `README.md`
+  - `docs/architecture/monorepo.md`
+  - `docs/product/mvp.md`
+  - `docs/flows/order-flow.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - criterios de aceite: ok
+  - format:check: ok
+  - lint: ok
+  - typecheck: ok
+  - commit: ok
+- **Commit:** `docs(project): add root readme and monorepo overview`
 
 ---
 
@@ -757,7 +772,6 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-004` - Criar README raiz e documentacao minima
 - `FT-009` - Inicializar backend NestJS
 - `FT-017` - Inicializar app Expo
 - `FT-020` - Inicializar app admin Next.js
@@ -768,9 +782,8 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-004` - Criar README raiz e documentacao minima
-2. `FT-009` - Inicializar backend NestJS
-3. `FT-017` - Inicializar app Expo
-4. `FT-020` - Inicializar app admin Next.js
-5. `FT-027` - Definir cobranca mensal da plataforma
-6. `FT-029` - Configurar scripts de lint, typecheck e test
+1. `FT-009` - Inicializar backend NestJS
+2. `FT-017` - Inicializar app Expo
+3. `FT-020` - Inicializar app admin Next.js
+4. `FT-027` - Definir cobranca mensal da plataforma
+5. `FT-029` - Configurar scripts de lint, typecheck e test
