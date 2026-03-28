@@ -359,7 +359,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-023 - Definir maquina de estados do pedido
 
 - **Skill dona:** `order-operations`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Formalizar os estados do pedido e transicoes permitidas.
 - **Dependencias:** nenhuma
@@ -368,11 +368,20 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - transicoes validas definidas
   - origem de cada transicao documentada
   - casos de erro anotados
+- **Entrega em:** `2026-03-28`
+- **Artefato:** `docs/flows/order-flow.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - criterios de aceite: ok
+  - build: nao aplicavel
+  - testes: nao aplicavel
+  - commit: pendente
 
 ## FT-024 - Definir regra de capacidade por janela de tempo
 
 - **Skill dona:** `order-operations`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Definir throttling por slot de tempo para evitar sobrecarga da barraca.
 - **Dependencias:** `FT-023`
@@ -384,7 +393,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-025 - Definir regra de estoque diario
 
 - **Skill dona:** `order-operations`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Definir como o estoque do dia sera controlado no MVP.
 - **Dependencias:** `FT-023`
@@ -494,7 +503,8 @@ Quando houver multiplas tasks `READY`, priorizar por:
 - `FT-001` - Inicializar monorepo base
 - `FT-006` - Definir jornadas oficiais das 3 personas
 - `FT-014` - Definir estrategia oficial de autenticacao
-- `FT-023` - Definir maquina de estados do pedido
+- `FT-024` - Definir regra de capacidade por janela de tempo
+- `FT-025` - Definir regra de estoque diario
 - `FT-026` - Definir fluxo oficial de pagamento do pedido
 - `FT-027` - Definir cobranca mensal da plataforma
 - `FT-028` - Definir estrategia de push e SMS
@@ -505,11 +515,11 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-023` - Definir maquina de estados do pedido
-2. `FT-026` - Definir fluxo oficial de pagamento do pedido
-3. `FT-014` - Definir estrategia oficial de autenticacao
-4. `FT-028` - Definir estrategia de push e SMS
-5. `FT-001` - Inicializar monorepo base
-6. `FT-006` - Definir jornadas oficiais das 3 personas
-7. `FT-030` - Definir estrategia minima de testes do MVP
-8. `FT-031` - Definir estrategia minima de logs e rastreabilidade
+1. `FT-026` - Definir fluxo oficial de pagamento do pedido
+2. `FT-014` - Definir estrategia oficial de autenticacao
+3. `FT-028` - Definir estrategia de push e SMS
+4. `FT-001` - Inicializar monorepo base
+5. `FT-006` - Definir jornadas oficiais das 3 personas
+6. `FT-024` - Definir regra de capacidade por janela de tempo
+7. `FT-025` - Definir regra de estoque diario
+8. `FT-030` - Definir estrategia minima de testes do MVP
