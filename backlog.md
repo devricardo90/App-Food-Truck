@@ -698,7 +698,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-021 - Configurar UI base do admin
 
 - **Skill dona:** `next-admin-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Configurar componentes e layout base do painel.
 - **Dependencias:** `FT-020`, `FT-008`
@@ -706,11 +706,30 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - layout autenticado criado
   - navegacao lateral/topo criada
   - paginas base acessiveis
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/admin/app/page.tsx`
+  - `apps/admin/app/login/page.tsx`
+  - `apps/admin/app/(console)/layout.tsx`
+  - `apps/admin/app/(console)/truck/*`
+  - `apps/admin/app/(console)/central/*`
+  - `apps/admin/src/components/console-shell.tsx`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - layout autenticado: ok
+  - navegacao lateral/topo: ok
+  - paginas base acessiveis: ok
+  - separacao barraca/central: ok
+  - login e redirecionamento base: ok
+  - lint admin: ok
+  - typecheck admin: ok
+  - build admin: ok
+  - commit: ok
 
 ## FT-022 - Criar estrutura de rotas do admin
 
 - **Skill dona:** `next-admin-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `nao`
 - **Descricao:** Criar rotas base para dashboard, pedidos, cardapio, relatorios e setup central.
 - **Dependencias:** `FT-021`
@@ -1042,7 +1061,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 # READY atuais
 
 - `FT-016` - Integrar auth no backend
-- `FT-021` - Configurar UI base do admin
+- `FT-022` - Criar estrutura de rotas do admin
 - `FT-027` - Definir cobranca mensal da plataforma
 - `FT-029` - Configurar scripts de lint, typecheck e test
 
@@ -1050,7 +1069,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-021` - Configurar UI base do admin
+1. `FT-022` - Criar estrutura de rotas do admin
 2. `FT-016` - Integrar auth no backend
 3. `FT-027` - Definir cobranca mensal da plataforma
 4. `FT-029` - Configurar scripts de lint, typecheck e test
