@@ -688,7 +688,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-036 - Definir politica de versoes e upgrades
 
 - **Skill dona:** `deployment-infra`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Formalizar a politica operacional de versoes, upgrades incrementais e instalacao segura.
 - **Dependencias:** nenhuma
@@ -697,12 +697,21 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - regra de instalacao segura documentada
   - regra de alteracao de versao documentada
   - impacto no protocolo registrado
+- **Entrega em:** `2026-03-28`
+- **Artefato:** `docs/architecture/version-upgrade-policy.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - criterios de aceite: ok
+  - build: nao aplicavel
+  - testes: nao aplicavel
+  - commit: ok
+- **Commit:** `docs(infra): define version upgrade policy`
 
 ---
 
 # READY atuais
 
-- `FT-036` - Definir politica de versoes e upgrades
 - `FT-002` - Configurar TypeScript compartilhado
 - `FT-003` - Configurar ESLint e Prettier do monorepo
 - `FT-004` - Criar README raiz e documentacao minima
@@ -712,8 +721,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-036` - Definir politica de versoes e upgrades
-2. `FT-002` - Configurar TypeScript compartilhado
-3. `FT-003` - Configurar ESLint e Prettier do monorepo
-4. `FT-004` - Criar README raiz e documentacao minima
-5. `FT-027` - Definir cobranca mensal da plataforma
+1. `FT-002` - Configurar TypeScript compartilhado
+2. `FT-003` - Configurar ESLint e Prettier do monorepo
+3. `FT-004` - Criar README raiz e documentacao minima
+4. `FT-027` - Definir cobranca mensal da plataforma
