@@ -654,7 +654,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-020 - Inicializar app admin Next.js
 
 - **Skill dona:** `next-admin-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Criar base do painel web em Next.js.
 - **Dependencias:** `FT-001`, `FT-002`
@@ -662,11 +662,43 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - app Next criado
   - Tailwind configurado
   - estrutura base criada
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/admin/package.json`
+  - `apps/admin/tsconfig.json`
+  - `apps/admin/next-env.d.ts`
+  - `apps/admin/next.config.ts`
+  - `apps/admin/postcss.config.mjs`
+  - `apps/admin/app/layout.tsx`
+  - `apps/admin/app/page.tsx`
+  - `apps/admin/app/globals.css`
+  - `.gitignore`
+  - `.prettierignore`
+  - `docs/architecture/version-matrix.md`
+  - `pnpm-lock.yaml`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - version-matrix: ok
+  - compatibilidade: ok
+  - ordem de instalacao: ok
+  - Next 16.2.1: ok
+  - React 19.2.4: ok
+  - Tailwind 4.2.2: ok
+  - app scaffold: ok
+  - App Router: ok
+  - typecheck admin: ok
+  - lint admin: ok
+  - build admin: ok
+  - format:check: ok
+  - lint raiz: ok
+  - typecheck raiz: ok
+  - build raiz: ok
+  - commit: ok
 
 ## FT-021 - Configurar UI base do admin
 
 - **Skill dona:** `next-admin-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `nao`
 - **Descricao:** Configurar componentes e layout base do painel.
 - **Dependencias:** `FT-020`, `FT-008`
@@ -1010,7 +1042,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 # READY atuais
 
 - `FT-016` - Integrar auth no backend
-- `FT-020` - Inicializar app admin Next.js
+- `FT-021` - Configurar UI base do admin
 - `FT-027` - Definir cobranca mensal da plataforma
 - `FT-029` - Configurar scripts de lint, typecheck e test
 
@@ -1018,7 +1050,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-020` - Inicializar app admin Next.js
+1. `FT-021` - Configurar UI base do admin
 2. `FT-016` - Integrar auth no backend
 3. `FT-027` - Definir cobranca mensal da plataforma
 4. `FT-029` - Configurar scripts de lint, typecheck e test

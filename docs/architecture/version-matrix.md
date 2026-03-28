@@ -82,10 +82,14 @@ App Cliente
 
 Next.js
 
-- Next.js: `16.2.x`
-- React: `19.x`
-- React DOM: `19.x`
-- Tailwind CSS: `4.2.x`
+- Next.js: `16.2.1`
+- React: `19.2.4`
+- React DOM: `19.2.4`
+- `@types/react`: `19.2.14`
+- `@types/react-dom`: `19.2.3`
+- `@types/node`: `24.5.2`
+- Tailwind CSS: `4.2.2`
+- `@tailwindcss/postcss`: `4.2.2`
 - `@tanstack/react-query`: `5.x`
 - react-hook-form: `7.x`
 - zod: `4.x`

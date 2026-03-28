@@ -3,11 +3,23 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "dev": "node -e \"console.log('admin dev scaffold pending FT-020')\"",
-    "build": "node -e \"console.log('admin build scaffold pending FT-020')\"",
-    "lint": "eslint \"**/*.{js,cjs,mjs,ts,tsx}\" --max-warnings=0 --no-error-on-unmatched-pattern",
-    "typecheck": "tsc -p tsconfig.json",
+    "dev": "next dev",
+    "build": "next build",
+    "lint": "eslint app next.config.ts postcss.config.mjs --max-warnings=0 --no-error-on-unmatched-pattern",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "node -e \"console.log('admin test scaffold pending FT-029')\"",
-    "clean": "node -e \"console.log('admin clean ok')\""
+    "clean": "node -e \"require('fs').rmSync('.next', { recursive: true, force: true }); require('fs').rmSync('tsconfig.tsbuildinfo', { force: true }); console.log('admin clean ok')\""
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "4.2.2",
+    "next": "16.2.1",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tailwindcss": "4.2.2"
+  },
+  "devDependencies": {
+    "@types/node": "24.5.2",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3"
   }
 }
