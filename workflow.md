@@ -1,0 +1,193 @@
+# Workflow
+
+## Regras adicionais obrigatorias
+
+Protocolo Rick V1.0
+
+### 1. Commits tambem existem na Fase 1
+
+Mesmo tasks sem implementacao de feature devem gerar commit quando produzirem:
+
+- definicao de escopo
+- definicao de fluxos
+- definicao de auth
+- definicao de pagamentos
+- definicao de notificacoes
+- definicao de testes
+- definicao de observabilidade
+- definicao de politica de versoes
+
+#### Regra
+
+Nenhuma task documental estrategica pode virar `DONE` sem:
+
+- documento salvo no repositorio
+- backlog atualizado
+- revisao do orquestrador
+- commit aprovado
+
+#### Exemplos de commit
+
+- `docs(product): define mvp scope and non-goals`
+- `docs(orders): define order lifecycle and transitions`
+- `docs(payments): define payment lifecycle and webhook rules`
+- `docs(auth): define auth strategy and role model`
+- `docs(infra): define version matrix and install policy`
+
+---
+
+### 2. Fonte oficial de versoes
+
+Toda dependencia critica deve obedecer a matriz oficial do projeto.
+
+#### Arquivo fonte
+
+- `docs/architecture/version-matrix.md`
+
+#### Regra
+
+- Nunca instalar dependencia critica com `latest`
+- Nunca instalar versao sem validar compatibilidade
+- Nunca atualizar versao critica fora de task especifica
+- Se a versao nao estiver definida no `version-matrix.md`, a task deve parar e voltar para revisao
+
+---
+
+### 3. Ordem obrigatoria de instalacao
+
+Toda instalacao deve seguir a ordem correta para minimizar incompatibilidades.
+
+#### Ordem global
+
+1. framework-base
+2. ecossistema oficial compativel
+3. tooling compartilhado
+4. libs transversais
+5. integracoes externas
+6. features especificas
+
+#### Ordem do mobile
+
+1. Expo app base
+2. fixar SDK Expo
+3. instalar libs do ecossistema Expo com `npx expo install`
+4. Expo Router
+5. NativeWind
+6. estado global
+7. server state
+8. forms e validacao
+9. auth
+10. notificacoes
+11. pagamentos
+
+#### Ordem do admin web
+
+1. Next.js base
+2. React / React DOM compativeis
+3. Tailwind
+4. UI kit
+5. server state
+6. forms e validacao
+7. auth
+8. features
+
+#### Ordem da API
+
+1. Nest base
+2. config e estrutura de modulos
+3. Prisma + PostgreSQL
+4. Swagger
+5. Scalar
+6. auth
+7. payments
+8. notifications
+9. relatorios e observabilidade
+
+---
+
+### 4. Regra obrigatoria para Expo
+
+Para o ecossistema Expo:
+
+- sempre usar `npx expo install` quando aplicavel
+- nunca instalar manualmente dependencias centrais do ecossistema Expo sem checagem
+- upgrades devem ser incrementais e documentados
+
+---
+
+### 5. Documentacao da API e obrigatoria
+
+Toda API HTTP do projeto deve ter documentacao viva.
+
+#### Ferramentas padrao
+
+- Swagger
+- Scalar
+
+#### Regra
+
+- Endpoint novo sem documentacao minima nao pode virar `DONE`
+- Mudanca de contrato exige atualizacao de documentacao no mesmo ciclo
+- DTO, params, query, body e response devem refletir o contrato real
+- Swagger deve servir a documentacao tecnica
+- Scalar deve servir a visualizacao navegavel da API
+
+---
+
+### 6. Regra do orquestrador antes de aprovar instalacao
+
+Antes de aprovar qualquer task que instale ou atualize dependencias, o orquestrador deve validar:
+
+- a versao esta no `version-matrix.md`?
+- a ordem de instalacao foi respeitada?
+- existe risco de compatibilidade?
+- houve registro documental da decisao?
+
+Se qualquer resposta for nao, a task nao pode virar `DONE`.
+
+---
+
+### 7. Regra do subagente antes de instalar dependencia
+
+O subagente executor deve:
+
+- consultar o `version-matrix.md`
+- respeitar a ordem de instalacao
+- evitar `latest`
+- reportar qualquer incompatibilidade
+- atualizar documentacao quando necessario
+
+---
+
+### 8. Regra da API antes de DONE
+
+Nenhuma task da API pode virar `DONE` sem verificar:
+
+- contrato documentado
+- Swagger funcional
+- Scalar funcional, quando aplicavel a etapa
+- coerencia entre implementacao e documentacao
+
+---
+
+### 9. Criterio extra de revisao para fluxo critico
+
+Se a task mexer em:
+
+- pedido
+- pagamento
+- auth
+- banco
+- notificacoes
+- contratos da API
+- versoes centrais
+
+a revisao deve ser mais rigida e explicita.
+
+---
+
+### 10. Frase operacional
+
+Sem matriz de versao nao ha instalacao segura.  
+Sem Swagger/Scalar nao ha contrato confiavel.  
+Sem commit nao ha decisao consolidada.

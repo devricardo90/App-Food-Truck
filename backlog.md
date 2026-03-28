@@ -546,6 +546,65 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - estrategia de secrets definida
   - deploy inicial planejado
 
+## FT-033 - Definir version-matrix oficial
+
+- **Skill dona:** `deployment-infra`
+- **Status:** `DONE`
+- **Fluxo critico:** `sim`
+- **Descricao:** Definir a matriz oficial de versoes e compatibilidade da stack do projeto.
+- **Dependencias:** nenhuma
+- **Criterios de aceite:**
+  - arquivo `docs/architecture/version-matrix.md` criado
+  - versoes centrais definidas
+  - ordem de instalacao definida
+  - politica de upgrade registrada
+- **Entrega em:** `2026-03-28`
+- **Artefato:** `docs/architecture/version-matrix.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - criterios de aceite: ok
+  - build: nao aplicavel
+  - testes: nao aplicavel
+  - commit: pendente
+
+## FT-034 - Configurar Swagger no backend
+
+- **Skill dona:** `nest-api-architecture`
+- **Status:** `BLOCKED`
+- **Fluxo critico:** `sim`
+- **Descricao:** Configurar Swagger no backend para expor a documentacao tecnica da API.
+- **Dependencias:** `FT-009`
+- **Criterios de aceite:**
+  - Swagger configurado
+  - OpenAPI base gerado
+  - rota de documentacao disponivel
+
+## FT-035 - Configurar Scalar no backend
+
+- **Skill dona:** `nest-api-architecture`
+- **Status:** `BLOCKED`
+- **Fluxo critico:** `sim`
+- **Descricao:** Configurar Scalar consumindo o documento OpenAPI da API.
+- **Dependencias:** `FT-034`
+- **Criterios de aceite:**
+  - Scalar configurado
+  - referencia navegavel disponivel
+  - coerencia com o documento OpenAPI
+
+## FT-036 - Definir politica de versoes e upgrades
+
+- **Skill dona:** `deployment-infra`
+- **Status:** `READY`
+- **Fluxo critico:** `sim`
+- **Descricao:** Formalizar a politica operacional de versoes, upgrades incrementais e instalacao segura.
+- **Dependencias:** nenhuma
+- **Criterios de aceite:**
+  - politica de upgrade definida
+  - regra de instalacao segura documentada
+  - regra de alteracao de versao documentada
+  - impacto no protocolo registrado
+
 ---
 
 # READY atuais
@@ -560,16 +619,17 @@ Quando houver multiplas tasks `READY`, priorizar por:
 - `FT-027` - Definir cobranca mensal da plataforma
 - `FT-030` - Definir estrategia minima de testes do MVP
 - `FT-031` - Definir estrategia minima de logs e rastreabilidade
+- `FT-036` - Definir politica de versoes e upgrades
 
 ---
 
 # Ordem sugerida para comecar
 
-1. `FT-002` - Configurar TypeScript compartilhado
-2. `FT-003` - Configurar ESLint e Prettier do monorepo
-3. `FT-004` - Criar README raiz e documentacao minima
-4. `FT-006` - Definir jornadas oficiais das 3 personas
-5. `FT-015` - Definir roles e permissoes do sistema
-6. `FT-024` - Definir regra de capacidade por janela de tempo
-7. `FT-025` - Definir regra de estoque diario
-8. `FT-030` - Definir estrategia minima de testes do MVP
+1. `FT-006` - Definir jornadas oficiais das 3 personas
+2. `FT-015` - Definir roles e permissoes do sistema
+3. `FT-024` - Definir regra de capacidade por janela de tempo
+4. `FT-025` - Definir regra de estoque diario
+5. `FT-030` - Definir estrategia minima de testes do MVP
+6. `FT-031` - Definir estrategia minima de logs e rastreabilidade
+7. `FT-033` - Definir version-matrix oficial
+8. `FT-036` - Definir politica de versoes e upgrades

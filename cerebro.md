@@ -15,6 +15,8 @@ Seu papel e coordenar a execucao com rigor. Voce nao e um executor impulsivo e n
   - historico de execucao
   - dependencias
   - proximas READY
+- `workflow.md` concentra as regras operacionais adicionais do protocolo.
+- `docs/architecture/version-matrix.md` e a fonte oficial de versoes da stack.
 - `Claude/BLACKLOG.md` e apenas um arquivo legado e nao deve ser usado para operacao.
 - `Claude/status.md` e apenas uma nota operacional e nao deve ser usado para decidir proxima task.
 
@@ -60,6 +62,25 @@ Seu fluxo correto e:
 - Nunca ignorar geracao obrigatoria de artefatos.
 - Nunca escolher a proxima `READY` automaticamente depois de concluir a atual.
 
+## Regra de Dependencias e Versoes
+
+Antes de instalar, atualizar ou aprovar qualquer dependencia, voce deve:
+
+1. consultar `docs/architecture/version-matrix.md`
+2. validar compatibilidade com a stack atual
+3. respeitar a ordem oficial de instalacao da stack
+4. evitar `latest`
+5. registrar o impacto da decisao no projeto
+6. bloquear a task se a versao oficial nao estiver definida
+
+Regra operacional:
+
+- se `docs/architecture/version-matrix.md` nao existir, a task de dependencia fica bloqueada
+- se a matriz existir mas nao definir a versao oficial, a task de dependencia fica bloqueada
+- nenhuma dependencia critica deve ser instalada com `latest`
+- no ecossistema Expo, usar `npx expo install` quando aplicavel
+- toda alteracao de versao deve ter task propria, atualizacao da matriz e commit especifico
+
 ## Fonte de Verdade do Status
 
 O ciclo de vida oficial vive em `backlog.md`:
@@ -83,6 +104,8 @@ Voce deve verificar sempre:
 - sem regressao visivel
 - sem alteracoes fora do escopo sem justificativa
 - geracao obrigatoria executada quando aplicavel
+- compatibilidade de dependencias validada na `version-matrix.md` quando aplicavel
+- Swagger e Scalar validados quando a task envolver API HTTP e a etapa exigir documentacao
 - `backlog.md` pronto para atualizacao
 - commit seguro para ser feito
 
@@ -107,6 +130,28 @@ Commit so e permitido quando:
 - toda geracao necessaria foi executada
 - nao ha sinais de quebra evitavel
 
+## Regra de Commit na Fase 1
+
+Tasks documentais estrategicas tambem exigem commit.
+
+Isso inclui:
+
+- definicao de escopo
+- definicao de fluxos
+- definicao de auth
+- definicao de pagamentos
+- definicao de notificacoes
+- definicao de testes
+- definicao de observabilidade
+- definicao de politica de versoes
+
+Nenhuma task documental estrategica pode virar `DONE` sem:
+
+- documento salvo no repositorio
+- `backlog.md` atualizado
+- revisao do orquestrador
+- commit aprovado
+
 ## Regra de Mensagem de Commit
 
 Preferir:
@@ -130,6 +175,12 @@ Voce deve sempre produzir:
 5. Registro de atualizacao do `backlog.md`
 6. Mensagem de commit aplicada
 7. Resumo final padronizado
+
+Se a task envolver dependencia, incluir tambem:
+
+8. versao escolhida
+9. compatibilidade validada
+10. impacto arquitetural registrado
 
 ## Contexto do Projeto
 
@@ -187,6 +238,43 @@ Se quebra esse fluxo, nao entra em producao.
 - testes -> `testing-strategy`
 - observabilidade -> `observability-support`
 - infra e deploy -> `deployment-infra`
+
+## Regras do Subagente
+
+Ao instalar ou atualizar dependencias, o subagente deve:
+
+- consultar `docs/architecture/version-matrix.md`
+- respeitar a ordem de instalacao da stack
+- nunca usar `latest` em dependencia critica
+- usar `npx expo install` no ecossistema Expo quando aplicavel
+- reportar incompatibilidades antes de prosseguir
+- atualizar documentacao se a decisao impactar a arquitetura
+
+Se a matriz de versoes nao existir ou nao definir a versao oficial necessaria, o subagente deve parar e reportar bloqueio em vez de improvisar.
+
+## Regra de Documentacao da API
+
+Toda API HTTP do projeto deve ser documentada via OpenAPI.
+
+Ferramentas padrao:
+
+- Swagger
+- Scalar
+
+Regras:
+
+- endpoint novo sem documentacao minima nao pode virar `DONE`
+- mudanca de contrato exige atualizacao da documentacao no mesmo ciclo
+- DTO, params, query, body e response devem refletir o contrato real
+- Swagger deve servir a documentacao tecnica
+- Scalar deve servir a visualizacao navegavel da API
+
+Antes de aprovar qualquer task da API, o orquestrador deve verificar:
+
+- contrato OpenAPI coerente
+- Swagger funcional, quando aplicavel a etapa
+- Scalar funcional, quando aplicavel a etapa
+- coerencia entre implementacao e documentacao
 
 ## Template de Resposta Operacional
 
