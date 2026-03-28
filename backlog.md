@@ -613,7 +613,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-019 - Criar estrutura de rotas do app cliente
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Criar rotas base para auth, trucks, menu, cart e orders.
 - **Dependencias:** `FT-018`, `FT-007`
@@ -621,6 +621,31 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - rotas principais criadas
   - layouts base definidos
   - navegacao inicial funcional
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/mobile/app/index.tsx`
+  - `apps/mobile/app/(auth)/*`
+  - `apps/mobile/app/(app)/*`
+  - `apps/mobile/src/mocks/trucks.ts`
+  - `apps/mobile/src/mocks/orders.ts`
+  - `apps/mobile/src/mocks/cart.ts`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - rotas principais: ok
+  - layouts base: ok
+  - navegacao inicial: ok
+  - auth placeholder: ok
+  - fluxo de descoberta: ok
+  - fluxo de pedido: ok
+  - historico e conta: ok
+  - expo config: ok
+  - lint mobile: ok
+  - typecheck mobile: ok
+  - format:check: ok
+  - lint raiz: ok
+  - typecheck raiz: ok
+  - build raiz: ok
+  - commit: ok
 
 ---
 
@@ -985,7 +1010,6 @@ Quando houver multiplas tasks `READY`, priorizar por:
 # READY atuais
 
 - `FT-016` - Integrar auth no backend
-- `FT-019` - Criar estrutura de rotas do app cliente
 - `FT-020` - Inicializar app admin Next.js
 - `FT-027` - Definir cobranca mensal da plataforma
 - `FT-029` - Configurar scripts de lint, typecheck e test
@@ -994,8 +1018,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-019` - Criar estrutura de rotas do app cliente
-2. `FT-020` - Inicializar app admin Next.js
-3. `FT-016` - Integrar auth no backend
-4. `FT-027` - Definir cobranca mensal da plataforma
-5. `FT-029` - Configurar scripts de lint, typecheck e test
+1. `FT-020` - Inicializar app admin Next.js
+2. `FT-016` - Integrar auth no backend
+3. `FT-027` - Definir cobranca mensal da plataforma
+4. `FT-029` - Configurar scripts de lint, typecheck e test
