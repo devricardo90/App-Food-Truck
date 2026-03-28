@@ -59,3 +59,29 @@ Proxima(s) READY:
 
 Deseja que eu execute a proxima task READY?
 ```
+
+Antes de instalar, atualizar ou aprovar qualquer dependência:
+
+1. consultar docs/architecture/version-matrix.md
+2. validar compatibilidade
+3. respeitar ordem de instalação
+4. evitar latest
+5. registrar impacto no projeto
+6. bloquear a task se a versão oficial não estiver definida
+
+Antes de instalar, atualizar ou aprovar qualquer dependência:
+
+1. consultar docs/architecture/version-matrix.md
+2. validar compatibilidade oficial
+3. respeitar a ordem de instalação
+4. evitar latest
+5. bloquear a task se a versão oficial não estiver definida
+6. exigir atualização de docs se a decisão impactar a arquitetura
+7. Ao instalar ou atualizar dependências:
+
+- consulte o version-matrix.md
+- respeite a ordem de instalação
+- nunca use latest em dependência crítica
+- use npx expo install no ecossistema Expo quando aplicável
+- reporte incompatibilidades antes de prosseguir
+- atualize a documentação se a decisão alterar a base do projeto
