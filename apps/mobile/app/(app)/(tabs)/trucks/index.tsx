@@ -1,9 +1,15 @@
+import { useQuery } from '@tanstack/react-query';
 import { Link } from 'expo-router';
 import { Text, View } from 'react-native';
 
-import { trucks } from '../../../../src/mocks/trucks';
+import { listFoodtrucks } from '../../../../src/lib/foodtrucks-api';
 
 export default function TrucksHomeScreen() {
+  const foodtrucksQuery = useQuery({
+    queryKey: ['foodtrucks'],
+    queryFn: listFoodtrucks,
+  });
+
   return (
     <View className="flex-1 bg-sand px-6 pt-16">
       <Text className="text-xs font-semibold uppercase tracking-[2px] text-ember">
@@ -18,17 +24,31 @@ export default function TrucksHomeScreen() {
       </Text>
 
       <View className="mt-8 gap-4">
-        {trucks.map((truck) => (
-          <Link asChild href={`/(app)/trucks/${truck.id}`} key={truck.id}>
-            <Text className="rounded-[24px] border border-amber-950/10 bg-white px-5 py-5 text-base font-medium text-ink shadow-sm">
-              {truck.name}
-              {'\n'}
-              <Text className="text-sm font-normal text-neutral-500">
-                {truck.category} • {truck.status}
+        {foodtrucksQuery.isPending ? (
+          <Text className="rounded-[24px] border border-amber-950/10 bg-white px-5 py-5 text-sm leading-6 text-neutral-500 shadow-sm">
+            Carregando foodtrucks do evento ativo...
+          </Text>
+        ) : foodtrucksQuery.isError ? (
+          <Text className="rounded-[24px] border border-rose-200 bg-rose-50 px-5 py-5 text-sm leading-6 text-rose-900 shadow-sm">
+            {foodtrucksQuery.error.message}
+          </Text>
+        ) : (
+          foodtrucksQuery.data.map((truck) => (
+            <Link asChild href={`/(app)/trucks/${truck.slug}`} key={truck.slug}>
+              <Text className="rounded-[24px] border border-amber-950/10 bg-white px-5 py-5 text-base font-medium text-ink shadow-sm">
+                {truck.displayName}
+                {'\n'}
+                <Text className="text-sm font-normal text-neutral-500">
+                  {truck.acceptsOrders
+                    ? 'Aceitando pedidos'
+                    : 'Pedidos pausados'}
+                  {' | '}
+                  janela {truck.capacityWindowMinutes} min
+                </Text>
               </Text>
-            </Text>
-          </Link>
-        ))}
+            </Link>
+          ))
+        )}
       </View>
     </View>
   );

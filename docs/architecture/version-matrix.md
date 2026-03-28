@@ -59,7 +59,7 @@ App Cliente
 - `@tanstack/react-query`: `5.95.2`
 - react-hook-form: `7.72.0`
 - zod: `4.3.6`
-- Clerk Expo SDK: `BLOCKED pending Expo SDK 52 compatible package and version`
+- Clerk Expo SDK: `@clerk/clerk-expo@^2.19.31` validated with lint, typecheck and web export on Expo SDK 52
 - Push: `expo-notifications` no app + FCM/OneSignal conforme task especifica
 
 ## Politica do mobile
@@ -77,7 +77,9 @@ App Cliente
 - Depois de mudar dependencia do app mobile, limpar cache do Expo antes de estabilizar a task.
 - Nenhuma task com `nativewind` pode virar `DONE` sem `build` validado apos a instalacao.
 - `@clerk/expo@3.1.3` nao entra no app com Expo SDK 52 porque exige Expo `>=53`.
-- A decisao de Clerk no mobile fica bloqueada ate existir package e versao compativeis com Expo SDK 52.
+- `@clerk/clerk-expo@^2.19.31` e a baseline atual para a camada de auth do app.
+- Em Expo SDK 52 com `pnpm` neste monorepo, usar `node-linker=hoisted` para evitar falhas de resolucao de pacotes `metro*` no export web.
+- A auto-configuracao de monorepo do `expo/metro-config` permanece como base oficial; nao reintroduzir overrides legados de `watchFolders`, `resolver.nodeModulesPaths` ou hacks equivalentes sem evidencia real.
 - Se houver duvida entre compatibilidade do Expo e de biblioteca third-party, prevalece a compatibilidade do Expo.
 
 ---
@@ -97,7 +99,7 @@ Next.js
 - `@tanstack/react-query`: `5.x`
 - react-hook-form: `7.x`
 - zod: `4.x`
-- Clerk Next.js SDK: `BLOCKED pending package and version with clean Next 16.2.x build`
+- Clerk Next.js SDK: `@clerk/nextjs@^7.0.7` validated with clean `next build` on Next `16.2.1`
 
 ## Politica do admin
 

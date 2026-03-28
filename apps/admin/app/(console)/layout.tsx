@@ -1,5 +1,9 @@
+import { UserButton } from '@clerk/nextjs';
 import type { Route } from 'next';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+
+import { resolveAdminAuthContext } from '../../src/lib/auth-context';
 
 type ConsoleLayoutProps = {
   children: React.ReactNode;
@@ -19,7 +23,18 @@ const centralNav = [
   { href: '/central/support' as Route, label: 'Suporte' },
 ];
 
-export default function ConsoleLayout({ children }: ConsoleLayoutProps) {
+export default async function ConsoleLayout({ children }: ConsoleLayoutProps) {
+  const backendAuthContext = await resolveAdminAuthContext();
+
+  if (backendAuthContext.status === 'ready') {
+    const hasTruckAccess = Boolean(backendAuthContext.data.activeFoodtruck);
+    const hasPlatformAccess = backendAuthContext.data.canAccessPlatform;
+
+    if (!hasTruckAccess && !hasPlatformAccess) {
+      redirect('/login' as const);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-stone-100 text-stone-900">
       <div className="grid min-h-screen lg:grid-cols-[280px,1fr]">
@@ -87,9 +102,15 @@ export default function ConsoleLayout({ children }: ConsoleLayoutProps) {
               </div>
 
               <div className="flex items-center gap-3">
+                <div className="rounded-full border border-stone-300 bg-stone-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-stone-700">
+                  {backendAuthContext.status === 'ready'
+                    ? backendAuthContext.data?.role
+                    : 'auth pendente'}
+                </div>
                 <span className="rounded-full bg-emerald-100 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">
                   Ambiente local
                 </span>
+                <UserButton />
                 <Link
                   className="rounded-full border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-700"
                   href={'/login' as const}
@@ -100,7 +121,49 @@ export default function ConsoleLayout({ children }: ConsoleLayoutProps) {
             </div>
           </header>
 
-          <main className="flex-1 px-6 py-6">{children}</main>
+          <main className="flex-1 px-6 py-6">
+            <section className="mb-6 rounded-[1.5rem] border border-stone-200 bg-white p-5 shadow-sm">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-stone-500">
+                    Backend auth context
+                  </p>
+                  <h2 className="mt-2 text-lg font-semibold text-stone-950">
+                    `/auth/me` como contrato oficial do painel
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-stone-600">
+                    {backendAuthContext.message}
+                  </p>
+                </div>
+
+                {backendAuthContext.data ? (
+                  <div className="rounded-[1.25rem] bg-stone-950 px-4 py-4 text-sm text-white">
+                    <p className="font-semibold">
+                      {backendAuthContext.data.name ?? 'Usuario autenticado'}
+                    </p>
+                    <p className="mt-1 text-stone-300">
+                      {backendAuthContext.data.email ?? 'sem email no dominio'}
+                    </p>
+                    <p className="mt-3 text-xs uppercase tracking-[0.2em] text-amber-300">
+                      {backendAuthContext.data.activeFoodtruck
+                        ? `${backendAuthContext.data.activeFoodtruck.foodtruckName} - ${backendAuthContext.data.activeFoodtruck.role}`
+                        : backendAuthContext.data.canAccessPlatform
+                          ? 'Escopo central habilitado'
+                          : 'Nenhum foodtruck ativo selecionado'}
+                    </p>
+                    {backendAuthContext.data.requiresFoodtruckSelection ? (
+                      <p className="mt-3 text-xs leading-5 text-stone-300">
+                        O usuario possui multiplos foodtrucks e ainda precisa
+                        selecionar o contexto operacional.
+                      </p>
+                    ) : null}
+                  </div>
+                ) : null}
+              </div>
+            </section>
+
+            {children}
+          </main>
         </div>
       </div>
     </div>

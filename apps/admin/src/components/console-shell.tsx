@@ -9,6 +9,7 @@ type ConsoleShellProps = {
   title: string;
   description: string;
   cards: ConsoleCard[];
+  children?: React.ReactNode;
 };
 
 export function ConsoleShell({
@@ -16,6 +17,7 @@ export function ConsoleShell({
   title,
   description,
   cards,
+  children,
 }: ConsoleShellProps) {
   return (
     <section className="space-y-6">
@@ -45,6 +47,8 @@ export function ConsoleShell({
           </article>
         ))}
       </div>
+
+      {children}
     </section>
   );
 }

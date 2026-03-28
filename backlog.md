@@ -1146,30 +1146,72 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-037 - Integrar auth no admin web
 
 - **Skill dona:** `next-admin-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Conectar o admin ao provider de auth, proteger rotas e resolver sessao base no painel.
 - **Dependencias:** `FT-020`, `FT-021`, `FT-022`, `FT-014`, `FT-015`, `FT-040`, `FT-046`
-- **Bloqueio atual:** `@clerk/nextjs@6.31.9` instala, mas falha no `next build` com `Next 16.2.1`.
 - **Criterios de aceite:**
   - auth no admin configurada
   - rotas autenticadas protegidas
   - sessao base resolvida no painel
   - regra de acesso por area preparada com contexto de foodtruck
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/admin/app/layout.tsx`
+  - `apps/admin/app/login/page.tsx`
+  - `apps/admin/app/page.tsx`
+  - `apps/admin/app/(console)/layout.tsx`
+  - `apps/admin/proxy.ts`
+  - `apps/admin/package.json`
+  - `docs/architecture/version-matrix.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - auth no admin configurada: ok
+  - rotas autenticadas protegidas: ok
+  - sessao base resolvida no painel: ok
+  - contexto base via `/auth/me`: ok com fallback de erro
+  - lint admin: ok
+  - typecheck admin: ok
+  - build admin: ok
+  - commit: pendente
 
 ## FT-038 - Integrar auth no app mobile
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Conectar o app cliente ao provider de auth, proteger entrada do app e resolver sessao base no mobile.
 - **Dependencias:** `FT-017`, `FT-018`, `FT-019`, `FT-014`, `FT-040`, `FT-046`
-- **Bloqueio atual:** o `version-matrix.md` ainda nao tem package e versao com build limpo para auth no Expo SDK 52.
 - **Criterios de aceite:**
   - auth no mobile configurada
   - fluxo de entrada autenticada preparado
   - sessao base resolvida no app
   - rotas publicas e autenticadas separadas
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `.npmrc`
+  - `apps/mobile/app.json`
+  - `apps/mobile/app/_layout.tsx`
+  - `apps/mobile/app/(auth)/_layout.tsx`
+  - `apps/mobile/app/(auth)/sign-in.tsx`
+  - `apps/mobile/app/(app)/_layout.tsx`
+  - `apps/mobile/app/(app)/(tabs)/account.tsx`
+  - `apps/mobile/src/providers/app-providers.tsx`
+  - `apps/mobile/src/lib/auth-api.ts`
+  - `apps/mobile/package.json`
+  - `docs/architecture/version-matrix.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - auth no mobile configurada: ok
+  - fluxo de entrada autenticada preparado: ok
+  - sessao base resolvida no app: ok
+  - rotas publicas e autenticadas separadas: ok
+  - lint mobile: ok
+  - typecheck mobile: ok
+  - expo doctor: ok
+  - build/export mobile: ok
+  - auth preservada apos ajuste de Metro/pnpm: ok
+  - commit: pendente
 
 ## FT-039 - Implementar modulo de users e memberships do foodtruck no backend
 
@@ -1252,7 +1294,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-041 - Integrar admin com contexto autenticado de foodtruck da API
 
 - **Skill dona:** `next-admin-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Conectar o admin autenticado ao contexto real do backend e preparar guardas por area e foodtruck.
 - **Dependencias:** `FT-037`, `FT-040`
@@ -1261,11 +1303,29 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - area do foodtruck usa contexto real
   - area central usa contexto real
   - fallback de sessao invalida previsto
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/admin/src/lib/auth-context.ts`
+  - `apps/admin/app/(console)/layout.tsx`
+  - `apps/admin/app/(console)/truck/layout.tsx`
+  - `apps/admin/app/(console)/central/layout.tsx`
+  - `apps/admin/app/(console)/truck/page.tsx`
+  - `apps/admin/app/(console)/central/page.tsx`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - admin consome `/auth/me`: ok
+  - area do foodtruck usa contexto real: ok
+  - area central usa contexto real: ok
+  - fallback de sessao invalida previsto: ok
+  - lint admin: ok
+  - typecheck admin: ok
+  - build admin: ok
+  - commit: pendente
 
 ## FT-042 - Integrar mobile com contexto autenticado de foodtruck da API
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Conectar o app autenticado ao contexto real do backend e preparar bootstrap de sessao do cliente.
 - **Dependencias:** `FT-038`, `FT-040`
@@ -1274,11 +1334,29 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - bootstrap de sessao implementado
   - rotas autenticadas usam contexto real
   - fallback de token invalido previsto
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/mobile/src/lib/auth-api.ts`
+  - `apps/mobile/src/providers/app-providers.tsx`
+  - `apps/mobile/src/providers/auth-bootstrap-provider.tsx`
+  - `apps/mobile/app/(app)/_layout.tsx`
+  - `apps/mobile/app/(app)/(tabs)/account.tsx`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - mobile consome `/auth/me`: ok
+  - bootstrap de sessao implementado: ok
+  - rotas autenticadas usam contexto real: ok
+  - fallback de token invalido previsto: ok com sign-out em `401/403`
+  - lint mobile: ok
+  - typecheck mobile: ok
+  - expo doctor: ok
+  - build/export mobile: ok
+  - commit: pendente
 
 ## FT-043 - Implementar leitura inicial de foodtrucks e catalogo na API
 
 - **Skill dona:** `nest-api-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Criar primeira leitura funcional de foodtrucks, evento e catalogo para destravar consumo real nos frontends.
 - **Dependencias:** `FT-011`, `FT-013`, `FT-023`, `FT-024`, `FT-025`, `FT-041`, `FT-042`
@@ -1287,11 +1365,29 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - endpoint de detalhes do foodtruck criado
   - endpoint de catalogo inicial criado
   - contratos documentados em OpenAPI
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/api/src/modules/foodtrucks/foodtrucks.dto.ts`
+  - `apps/api/src/modules/foodtrucks/foodtrucks.service.ts`
+  - `apps/api/src/modules/foodtrucks/foodtrucks.controller.ts`
+  - `apps/api/src/modules/foodtrucks/foodtrucks.module.ts`
+  - `apps/api/src/modules/app.module.ts`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - endpoint de listagem de foodtrucks criado: ok
+  - endpoint de detalhes do foodtruck criado: ok
+  - endpoint de catalogo inicial criado: ok
+  - contratos documentados em OpenAPI: ok
+  - lint api: ok
+  - typecheck api: ok
+  - build api: ok
+  - validacao runtime local dos endpoints: pendente por ausencia de `.env` local da API
+  - commit: pendente
 
 ## FT-044 - Integrar admin ao catalogo real de foodtruck da API
 
 - **Skill dona:** `next-admin-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Substituir placeholders do admin por leitura real de foodtruck e catalogo onde fizer sentido.
 - **Dependencias:** `FT-041`, `FT-043`
@@ -1299,11 +1395,25 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - dados reais exibidos no admin
   - carregamento e estado vazio previstos
   - erro de API tratado
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/admin/src/lib/foodtrucks-api.ts`
+  - `apps/admin/src/components/console-shell.tsx`
+  - `apps/admin/app/(console)/truck/menu/page.tsx`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - dados reais exibidos no admin: ok
+  - carregamento e estado vazio previstos: ok
+  - erro de API tratado: ok
+  - lint admin: ok
+  - typecheck admin: ok
+  - build admin: ok
+  - commit: pendente
 
 ## FT-045 - Integrar mobile a foodtrucks e catalogo reais
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Substituir mocks do app cliente por leitura real de foodtrucks e catalogo.
 - **Dependencias:** `FT-042`, `FT-043`
@@ -1312,11 +1422,29 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - detalhe do foodtruck vem da API
   - catalogo vem da API
   - estados de loading e erro previstos
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/mobile/src/lib/foodtrucks-api.ts`
+  - `apps/mobile/app/(app)/(tabs)/trucks/index.tsx`
+  - `apps/mobile/app/(app)/trucks/[truckId]/index.tsx`
+  - `apps/mobile/app/(app)/trucks/[truckId]/menu/index.tsx`
+  - `apps/mobile/app/(app)/trucks/[truckId]/menu/[itemId].tsx`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - lista de foodtrucks vem da API: ok
+  - detalhe do foodtruck vem da API: ok
+  - catalogo vem da API: ok
+  - estados de loading e erro previstos: ok
+  - lint mobile: ok
+  - typecheck mobile: ok
+  - expo doctor: ok
+  - build/export mobile: ok
+  - commit: pendente
 
 ## FT-046 - Definir baseline oficial de auth frontend
 
 - **Skill dona:** `auth-rbac`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Formalizar o provider e as versoes oficiais de auth para admin e mobile com base em compatibilidade real de build.
 - **Dependencias:** `FT-014`, `FT-036`, `FT-040`
@@ -1325,22 +1453,28 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - baseline oficial do auth mobile definida
   - riscos e bloqueios de compatibilidade registrados
   - impacto no backlog e na version-matrix atualizado
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `docs/architecture/version-matrix.md`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - baseline oficial do auth web definida: ok
+  - baseline oficial do auth mobile definida: ok
+  - riscos e bloqueios registrados: ok
+  - impacto no backlog e na version-matrix atualizado: ok
+  - commit: pendente
 
 ---
 
 # READY atuais
 
-- `FT-046` - Definir baseline oficial de auth frontend
+- nenhuma
+- `FT-045` - Integrar mobile a foodtrucks e catalogo reais
 
 ---
 
 # Ordem sugerida para comecar
 
-1. `FT-046` - Definir baseline oficial de auth frontend
-2. `FT-037` - Integrar auth no admin web
-3. `FT-038` - Integrar auth no app mobile
-4. `FT-041` - Integrar admin com contexto autenticado de foodtruck da API
-5. `FT-042` - Integrar mobile com contexto autenticado de foodtruck da API
-6. `FT-043` - Implementar leitura inicial de foodtrucks e catalogo na API
-7. `FT-044` - Integrar admin ao catalogo real de foodtruck da API
-8. `FT-045` - Integrar mobile a foodtrucks e catalogo reais
+1. Reavaliar backlog e abrir a proxima task funcional do MVP
+2. `FT-044` - Integrar admin ao catalogo real de foodtruck da API

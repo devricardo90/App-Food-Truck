@@ -1,26 +1,43 @@
+import { resolveAdminAuthContext } from '../../../src/lib/auth-context';
 import { ConsoleShell } from '../../../src/components/console-shell';
 
-export default function CentralDashboardPage() {
+export default async function CentralDashboardPage() {
+  const backendAuthContext = await resolveAdminAuthContext();
+  const canAccessPlatform =
+    backendAuthContext.status === 'ready'
+      ? backendAuthContext.data.canAccessPlatform
+      : false;
+
   return (
     <ConsoleShell
       eyebrow="Area central"
       title="Dashboard central"
-      description="Ponto de entrada para governanca, alertas operacionais e visao consolidada da plataforma."
+      description={
+        canAccessPlatform
+          ? 'Escopo central confirmado pelo backend para governanca e suporte operacional.'
+          : 'Ponto de entrada para governanca, alertas operacionais e visao consolidada da plataforma.'
+      }
       cards={[
         {
-          title: 'Barracas ativas',
-          value: '24',
-          hint: 'Operando no evento atual.',
+          title: 'Role global',
+          value:
+            backendAuthContext.status === 'ready'
+              ? backendAuthContext.data.role
+              : 'pendente',
+          hint: 'Role principal recebida do contrato /auth/me.',
         },
         {
-          title: 'Alertas',
-          value: '3',
-          hint: 'Incidentes aguardando triagem.',
+          title: 'Acesso central',
+          value: canAccessPlatform ? 'liberado' : 'negado',
+          hint: 'Resultado direto do campo canAccessPlatform no backend.',
         },
         {
-          title: 'Acessos admins',
-          value: '11',
-          hint: 'Usuarios com role central ativa.',
+          title: 'Memberships',
+          value:
+            backendAuthContext.status === 'ready'
+              ? String(backendAuthContext.data.memberships.length)
+              : '0',
+          hint: 'Memberships carregados junto com o contexto autenticado.',
         },
       ]}
     />
