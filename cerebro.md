@@ -79,6 +79,8 @@ Regra operacional:
 - se a matriz existir mas nao definir a versao oficial, a task de dependencia fica bloqueada
 - nenhuma dependencia critica deve ser instalada com `latest`
 - no ecossistema Expo, usar `npx expo install` quando aplicavel
+- se a task usar `nativewind`, `react-native-css-interop` passa a ser obrigatorio no app
+- se a task usar `nativewind`, validar `build` apos a instalacao e limpar cache do Expo antes de aprovar
 - toda alteracao de versao deve ter task propria, atualizacao da matriz e commit especifico
 - para ESLint e Prettier, usar as versoes oficiais da matriz e evitar ranges abertos
 - em projetos Next.js 16, usar ESLint via CLI e nao `next lint`

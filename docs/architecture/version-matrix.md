@@ -53,6 +53,7 @@ App Cliente
 - react-dom: `18.3.1 via expo install`
 - react-native-web: `~0.19.13 via expo install`
 - NativeWind: `4.1.23`
+- react-native-css-interop: `obrigatorio junto com NativeWind`
 - tailwindcss: `3.4.17`
 - Zustand: `5.0.12`
 - `@tanstack/react-query`: `5.95.2`
@@ -72,6 +73,9 @@ App Cliente
 - Se a documentacao do Expo ajustar a versao interna de React Native dentro da mesma linha de SDK, prevalece a compatibilidade oficial do SDK.
 - Nao usar NativeWind v5 no MVP; v5 esta em pre-release.
 - Preferir NativeWind v4.1.23 para estabilidade.
+- Se usar `nativewind`, instalar `react-native-css-interop` no mesmo ciclo.
+- Depois de mudar dependencia do app mobile, limpar cache do Expo antes de estabilizar a task.
+- Nenhuma task com `nativewind` pode virar `DONE` sem `build` validado apos a instalacao.
 - `@clerk/expo@3.1.3` nao entra no app com Expo SDK 52 porque exige Expo `>=53`.
 - A decisao de Clerk no mobile fica bloqueada ate existir package e versao compativeis com Expo SDK 52.
 - Se houver duvida entre compatibilidade do Expo e de biblioteca third-party, prevalece a compatibilidade do Expo.

@@ -113,6 +113,21 @@ Para o ecossistema Expo:
 - nunca instalar manualmente dependencias centrais do ecossistema Expo sem checagem
 - upgrades devem ser incrementais e documentados
 
+### 4.1. Regra NativeWind
+
+Se usar `nativewind`:
+
+- instalar `react-native-css-interop` obrigatoriamente
+- validar `build` apos a instalacao
+- limpar cache do Expo apos mudanca de dependencia
+
+Fluxo minimo:
+
+1. instalar `nativewind`
+2. instalar `react-native-css-interop`
+3. validar `typecheck` e `build`
+4. limpar cache do Expo antes de considerar o setup estavel
+
 ---
 
 ### 5. Documentacao da API e obrigatoria
