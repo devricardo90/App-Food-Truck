@@ -76,7 +76,8 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - test: ok
   - build: ok com warnings esperados de scaffold sem outputs reais
   - clean: ok
-  - commit: pendente
+  - commit: ok
+- **Commit:** `chore(repo): initialize turborepo workspace base`
 
 ## FT-002 - Configurar TypeScript compartilhado
 
