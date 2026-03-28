@@ -100,6 +100,7 @@ NestJS
 - prisma: `7.4.1`
 - @prisma/client: `7.4.1`
 - PostgreSQL: `16.13`
+- `pg`: `8.x`
 - `@nestjs/swagger`: `11.2.6`
 - `@scalar/nestjs-api-reference`: `1.1.4`
 - Stripe SDK: `linha atual estavel compativel com Node 22`
@@ -112,6 +113,9 @@ NestJS
 - Manter `prisma` e `@prisma/client` na versao exata `7.4.1`.
 - `prisma` e `@prisma/client` devem sempre ficar na mesma versao.
 - Fixar PostgreSQL 16.13 para o baseline inicial.
+- `pg` e obrigatorio para Prisma 7 com PostgreSQL.
+- Prisma nao garante instalacao automatica do driver PostgreSQL.
+- `pg` deve ser instalado explicitamente e ser compativel com Node 22 LTS.
 - Swagger entra no Sprint 1 da API.
 - Scalar entra logo apos Swagger.
 - Servir Swagger UI via `SwaggerModule.setup(...)` sem adicionar dependencia HTTP extra separada.
@@ -205,3 +209,4 @@ NestJS
 - PostgreSQL 16.13 e a baseline proposta; upgrade de major so com task propria.
 - Swagger e Scalar sao parte do produto interno da API, nao detalhe opcional.
 - `prisma` e `@prisma/client` devem permanecer sincronizados na mesma versao.
+- `pg` e parte obrigatoria do runtime quando Prisma 7 falar com PostgreSQL.

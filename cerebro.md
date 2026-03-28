@@ -83,6 +83,8 @@ Regra operacional:
 - para ESLint e Prettier, usar as versoes oficiais da matriz e evitar ranges abertos
 - em projetos Next.js 16, usar ESLint via CLI e nao `next lint`
 - para Prisma, `prisma` e `@prisma/client` devem sempre usar exatamente a mesma versao da matriz
+- se a task envolver Prisma 7 com PostgreSQL, o driver `pg` e obrigatorio e deve estar explicitamente instalado
+- nao assumir que Prisma instala o driver PostgreSQL automaticamente
 
 ## Fonte de Verdade do Status
 
@@ -153,6 +155,8 @@ Regra operacional:
 - se o Prisma estiver em outro app ou package do monorepo, os comandos devem ser executados no lugar correto
 - sem gerar novamente o client, a task deve ser bloqueada
 - `prisma` e `@prisma/client` nao podem ficar em versoes diferentes
+- se a API usar Prisma 7 com PostgreSQL, `pg` deve estar instalado e funcional antes de aprovar a task
+- se faltar `pg`, a task deve ser bloqueada antes de `REVIEW`
 
 ## Regra de Commit
 
@@ -315,6 +319,14 @@ Se a task tocar Prisma ou schema do banco, o subagente deve:
 - rodar `build` da API
 - revisar migration quando aplicavel
 - reportar bloqueio antes de seguir se qualquer item falhar
+
+Ao trabalhar com Prisma 7 + PostgreSQL, o subagente deve:
+
+- verificar se `pg` esta instalado
+- instalar `pg` se nao estiver presente e a task incluir install aprovado
+- validar conexao com o banco
+- executar `prisma generate` apos alteracoes no schema
+- reportar qualquer erro de driver ou conexao
 
 ## Regra de Documentacao da API
 

@@ -226,6 +226,40 @@ Nenhuma task da API que altere Prisma pode virar `DONE` sem essa validacao.
 - baseline oficial atual: `7.4.1`
 - nunca misturar versoes entre CLI e client
 
+### Regra obrigatoria - Prisma 7 + PostgreSQL
+
+Se a API utilizar Prisma 7 com PostgreSQL:
+
+- e obrigatorio garantir a presenca do driver `pg`
+- o pacote `pg` deve estar instalado e compativel com o Node do projeto
+- nao assumir que Prisma instala o driver automaticamente
+
+#### Dependencia obrigatoria
+
+- `pg`
+
+#### Regra
+
+Antes de aprovar qualquer task relacionada a banco de dados:
+
+1. verificar se `pg` esta instalado
+2. validar se a conexao com PostgreSQL funciona
+3. validar se o Prisma Client conecta corretamente
+4. validar se nao ha erro de driver no runtime
+
+Se `pg` nao estiver presente:
+
+- bloquear a task
+- solicitar instalacao antes de prosseguir
+
+#### Criterio de DONE adicional
+
+Nenhuma task envolvendo Prisma pode ser marcada como `DONE` sem:
+
+- `prisma generate` executado
+- conexao com banco validada
+- driver `pg` presente e funcional
+
 #### Checklist curto antes do push da API
 
 Se mexeu em Prisma:
@@ -235,6 +269,7 @@ Se mexeu em Prisma:
 - `prisma migrate dev` ou revisao de migration
 - `typecheck`
 - `build`
+- validar driver `pg`
 
 #### Risco de nao gerar novamente o client
 
@@ -252,6 +287,12 @@ Sem `prisma generate`, a task pode quebrar:
 Se a task tocar Prisma ou schema do banco, e obrigatorio rodar `prisma generate` antes de marcar como `REVIEW` ou `DONE`.
 
 Sem isso, a task nao pode ser aprovada para commit ou push.
+
+Se a task envolver Prisma com PostgreSQL:
+
+- garantir que o pacote `pg` esta instalado
+- validar compatibilidade com Node.js do projeto
+- bloquear execucao se o driver nao estiver presente
 
 ---
 
