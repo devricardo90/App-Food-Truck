@@ -6,11 +6,19 @@ export type FoodtruckListItem = {
   acceptsOrders: boolean;
   capacityWindowMinutes: number;
   maxOrdersPerWindow: number;
+  primaryCategory: string | null;
+  instagram: string | null;
+  whatsapp: string | null;
+  heroImageKey: string | null;
 };
 
 export type FoodtruckDetail = FoodtruckListItem & {
   eventSlug: string;
   eventName: string;
+  logoImageKey: string | null;
+  operatingDays: string | null;
+  openingTime: string | null;
+  closingTime: string | null;
 };
 
 export type FoodtruckCatalogItem = {
@@ -18,9 +26,11 @@ export type FoodtruckCatalogItem = {
   name: string;
   description: string | null;
   price: string;
+  currency: string;
   isAvailable: boolean;
   dailyStockRemaining: number | null;
   sortOrder: number;
+  imageKey: string | null;
 };
 
 export type FoodtruckCatalogCategory = {
@@ -73,7 +83,7 @@ export function getFoodtruckCatalog(foodtruckSlug: string) {
   );
 }
 
-export function formatPrice(price: string) {
+export function formatPrice(price: string, currency = 'EUR') {
   const numericValue = Number(price);
 
   if (Number.isNaN(numericValue)) {
@@ -82,6 +92,6 @@ export function formatPrice(price: string) {
 
   return new Intl.NumberFormat('de-DE', {
     style: 'currency',
-    currency: 'EUR',
+    currency,
   }).format(numericValue);
 }

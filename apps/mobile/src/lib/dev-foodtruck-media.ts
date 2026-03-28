@@ -1,0 +1,55 @@
+export const devFoodtruckMedia = {
+  'casa-brasil/acai-premium': require('../../assets/dev-foodtrucks/casa-brasil/acai-premium.png'),
+  'casa-brasil/acai-tradicional': require('../../assets/dev-foodtrucks/casa-brasil/acai-tradicional.png'),
+  'casa-brasil/beijinho-box': require('../../assets/dev-foodtrucks/casa-brasil/beijinho-box.png'),
+  'casa-brasil/brigadeiro-box': require('../../assets/dev-foodtrucks/casa-brasil/brigadeiro-box.png'),
+  'casa-brasil/coxinha': require('../../assets/dev-foodtrucks/casa-brasil/coxinha.png'),
+  'casa-brasil/exterior': require('../../assets/dev-foodtrucks/casa-brasil/exterior.png'),
+  'casa-brasil/guarana': require('../../assets/dev-foodtrucks/casa-brasil/guarana.png'),
+  'casa-brasil/hero': require('../../assets/dev-foodtrucks/casa-brasil/hero.png'),
+  'casa-brasil/logo': require('../../assets/dev-foodtrucks/casa-brasil/logo.png'),
+  'casa-brasil/pao-de-queijo': require('../../assets/dev-foodtrucks/casa-brasil/pao-de-queijo.png'),
+  'casa-brasil/pastel-de-queijo': require('../../assets/dev-foodtrucks/casa-brasil/pastel-de-queijo.png'),
+  'formosa-bubble-and-bites/brown-sugar-bubble-tea': require('../../assets/dev-foodtrucks/formosa-bubble-and-bites/brown-sugar-bubble-tea.png'),
+  'formosa-bubble-and-bites/exterior': require('../../assets/dev-foodtrucks/formosa-bubble-and-bites/exterior.png'),
+  'formosa-bubble-and-bites/hero': require('../../assets/dev-foodtrucks/formosa-bubble-and-bites/hero.png'),
+  'formosa-bubble-and-bites/logo': require('../../assets/dev-foodtrucks/formosa-bubble-and-bites/logo.png'),
+  'formosa-bubble-and-bites/night-market-snack': require('../../assets/dev-foodtrucks/formosa-bubble-and-bites/night-market-snack.png'),
+  'formosa-bubble-and-bites/popcorn-chicken': require('../../assets/dev-foodtrucks/formosa-bubble-and-bites/popcorn-chicken.png'),
+  'sabores-do-brasil-truck/exterior': require('../../assets/dev-foodtrucks/sabores-do-brasil-truck/exterior.png'),
+  'sabores-do-brasil-truck/feijoada': require('../../assets/dev-foodtrucks/sabores-do-brasil-truck/feijoada.png'),
+  'sabores-do-brasil-truck/hero': require('../../assets/dev-foodtrucks/sabores-do-brasil-truck/hero.png'),
+  'sabores-do-brasil-truck/logo': require('../../assets/dev-foodtrucks/sabores-do-brasil-truck/logo.png'),
+  'sabores-do-brasil-truck/prato-feito': require('../../assets/dev-foodtrucks/sabores-do-brasil-truck/prato-feito.png'),
+  'sabores-do-brasil-truck/salgados': require('../../assets/dev-foodtrucks/sabores-do-brasil-truck/salgados.png'),
+  'ceylon-food-truck/curry': require('../../assets/dev-foodtrucks/ceylon-food-truck/curry.png'),
+  'ceylon-food-truck/exterior': require('../../assets/dev-foodtrucks/ceylon-food-truck/exterior.png'),
+  'ceylon-food-truck/hero': require('../../assets/dev-foodtrucks/ceylon-food-truck/hero.png'),
+  'ceylon-food-truck/logo': require('../../assets/dev-foodtrucks/ceylon-food-truck/logo.png'),
+  'ceylon-food-truck/street-food': require('../../assets/dev-foodtrucks/ceylon-food-truck/street-food.png'),
+  'ceylon-food-truck/tea-dessert': require('../../assets/dev-foodtrucks/ceylon-food-truck/tea-dessert.png'),
+  'fuego-del-sur-grill/choripan': require('../../assets/dev-foodtrucks/fuego-del-sur-grill/choripan.png'),
+  'fuego-del-sur-grill/exterior': require('../../assets/dev-foodtrucks/fuego-del-sur-grill/exterior.png'),
+  'fuego-del-sur-grill/hero': require('../../assets/dev-foodtrucks/fuego-del-sur-grill/hero.png'),
+  'fuego-del-sur-grill/logo': require('../../assets/dev-foodtrucks/fuego-del-sur-grill/logo.png'),
+  'fuego-del-sur-grill/parrilla-plate': require('../../assets/dev-foodtrucks/fuego-del-sur-grill/parrilla-plate.png'),
+  'fuego-del-sur-grill/steak-sandwich': require('../../assets/dev-foodtrucks/fuego-del-sur-grill/steak-sandwich.png'),
+  'funky-chicken/hero': require('../../assets/dev-foodtrucks/funky-chicken/hero.png'),
+  'funky-chicken/logo': require('../../assets/dev-foodtrucks/funky-chicken/logo.png'),
+  'funky-chicken/exterior': require('../../assets/dev-foodtrucks/funky-chicken/exterior.png'),
+  'funky-chicken/burger': require('../../assets/dev-foodtrucks/funky-chicken/burger.png'),
+  'soulistic-food-truck/hero': require('../../assets/dev-foodtrucks/soulistic-food-truck/hero.png'),
+  'soulistic-food-truck/logo': require('../../assets/dev-foodtrucks/soulistic-food-truck/logo.png'),
+  'soulistic-food-truck/exterior': require('../../assets/dev-foodtrucks/soulistic-food-truck/exterior.png'),
+  'soulistic-food-truck/grain-bowl': require('../../assets/dev-foodtrucks/soulistic-food-truck/grain-bowl.png'),
+  'soulistic-food-truck/smoothie': require('../../assets/dev-foodtrucks/soulistic-food-truck/smoothie.png'),
+  'soulistic-food-truck/wrap': require('../../assets/dev-foodtrucks/soulistic-food-truck/wrap.png'),
+} as const;
+
+export function resolveDevFoodtruckImage(imageKey?: string | null) {
+  if (!imageKey) {
+    return null;
+  }
+
+  return devFoodtruckMedia[imageKey as keyof typeof devFoodtruckMedia] ?? null;
+}

@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
-import { Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 
+import { resolveDevFoodtruckImage } from '../../../../../src/lib/dev-foodtruck-media';
 import {
   formatPrice,
   getFoodtruckCatalog,
@@ -47,6 +48,7 @@ export default function MenuItemDetailScreen() {
   }
 
   const catalog = catalogQuery.data;
+  const itemImage = resolveDevFoodtruckImage(item.imageKey);
 
   return (
     <View className="flex-1 bg-sand px-6 pt-16">
@@ -58,12 +60,20 @@ export default function MenuItemDetailScreen() {
         {item.description ?? 'Sem descricao cadastrada para este item.'}
       </Text>
 
+      {itemImage ? (
+        <Image
+          className="mt-6 h-56 w-full rounded-[28px]"
+          resizeMode="cover"
+          source={itemImage}
+        />
+      ) : null}
+
       <View className="mt-8 rounded-[28px] border border-amber-950/10 bg-white p-6 shadow-sm">
         <Text className="text-sm uppercase tracking-[1.5px] text-neutral-500">
           Preco
         </Text>
         <Text className="mt-2 text-xl font-semibold text-ink">
-          {formatPrice(item.price)}
+          {formatPrice(item.price, item.currency)}
         </Text>
         <Text className="mt-4 text-sm text-neutral-500">
           Barraca ativa: {catalog.foodtruckName}

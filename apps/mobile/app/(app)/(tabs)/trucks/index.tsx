@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'expo-router';
-import { Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 
+import { resolveDevFoodtruckImage } from '../../../../src/lib/dev-foodtruck-media';
 import { listFoodtrucks } from '../../../../src/lib/foodtrucks-api';
 
 export default function TrucksHomeScreen() {
@@ -35,17 +36,38 @@ export default function TrucksHomeScreen() {
         ) : (
           foodtrucksQuery.data.map((truck) => (
             <Link asChild href={`/(app)/trucks/${truck.slug}`} key={truck.slug}>
-              <Text className="rounded-[24px] border border-amber-950/10 bg-white px-5 py-5 text-base font-medium text-ink shadow-sm">
-                {truck.displayName}
-                {'\n'}
-                <Text className="text-sm font-normal text-neutral-500">
-                  {truck.acceptsOrders
-                    ? 'Aceitando pedidos'
-                    : 'Pedidos pausados'}
-                  {' | '}
-                  janela {truck.capacityWindowMinutes} min
-                </Text>
-              </Text>
+              <View className="overflow-hidden rounded-[24px] border border-amber-950/10 bg-white shadow-sm">
+                {resolveDevFoodtruckImage(truck.heroImageKey) ? (
+                  <Image
+                    source={resolveDevFoodtruckImage(truck.heroImageKey)}
+                    className="h-40 w-full"
+                    resizeMode="cover"
+                  />
+                ) : null}
+
+                <View className="px-5 py-5">
+                  <Text className="text-base font-medium text-ink">
+                    {truck.displayName}
+                  </Text>
+                  {truck.primaryCategory ? (
+                    <Text className="mt-1 text-xs font-semibold uppercase tracking-[1.5px] text-ember">
+                      {truck.primaryCategory}
+                    </Text>
+                  ) : null}
+                  {truck.description ? (
+                    <Text className="mt-3 text-sm leading-6 text-neutral-600">
+                      {truck.description}
+                    </Text>
+                  ) : null}
+                  <Text className="mt-4 text-sm font-normal text-neutral-500">
+                    {truck.acceptsOrders
+                      ? 'Aceitando pedidos'
+                      : 'Pedidos pausados'}
+                    {' | '}
+                    janela {truck.capacityWindowMinutes} min
+                  </Text>
+                </View>
+              </View>
             </Link>
           ))
         )}

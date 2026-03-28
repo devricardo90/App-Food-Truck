@@ -1,12 +1,13 @@
 import 'reflect-metadata';
 
+process.loadEnvFile?.('.env');
+
 import { NestFactory } from '@nestjs/core';
 import { apiReference } from '@scalar/nestjs-api-reference';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-import { AppModule } from './modules/app.module';
-
 async function bootstrap() {
+  const { AppModule } = await import('./modules/app.module');
   const app = await NestFactory.create(AppModule);
   const port = Number(process.env.PORT ?? 3000);
   const swaggerConfig = new DocumentBuilder()

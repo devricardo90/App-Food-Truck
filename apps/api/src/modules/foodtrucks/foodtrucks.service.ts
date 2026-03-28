@@ -7,13 +7,22 @@ import type {
   FoodtruckDetailDto,
   FoodtruckListItemDto,
 } from './foodtrucks.dto';
+import {
+  getDevelopmentFoodtruckCatalog,
+  getDevelopmentFoodtruckDetail,
+  listDevelopmentFoodtrucks,
+} from './dev-foodtrucks.data';
 
 @Injectable()
 export class FoodtrucksService {
   constructor(private readonly prisma: PrismaService) {}
 
   async listActiveFoodtrucks(): Promise<FoodtruckListItemDto[]> {
-    const activeEvent = await this.findActiveEventOrThrow();
+    const activeEvent = await this.findActiveEvent();
+
+    if (!activeEvent) {
+      return listDevelopmentFoodtrucks();
+    }
     const eventTrucks = await this.prisma.eventTruck.findMany({
       where: {
         eventId: activeEvent.id,
@@ -45,10 +54,20 @@ export class FoodtrucksService {
       acceptsOrders: eventTruck.acceptsOrders,
       capacityWindowMinutes: eventTruck.capacityWindowMinutes,
       maxOrdersPerWindow: eventTruck.maxOrdersPerWindow,
+      primaryCategory: null,
+      instagram: null,
+      whatsapp: null,
+      heroImageKey: null,
     }));
   }
 
   async getFoodtruckDetail(foodtruckSlug: string): Promise<FoodtruckDetailDto> {
+    const developmentDetail = getDevelopmentFoodtruckDetail(foodtruckSlug);
+
+    if (developmentDetail) {
+      return developmentDetail;
+    }
+
     const activeEvent = await this.findActiveEventOrThrow();
     const eventTruck = await this.findActiveEventTruckOrThrow(foodtruckSlug);
 
@@ -62,12 +81,26 @@ export class FoodtrucksService {
       maxOrdersPerWindow: eventTruck.maxOrdersPerWindow,
       eventSlug: activeEvent.slug,
       eventName: activeEvent.name,
+      primaryCategory: null,
+      instagram: null,
+      whatsapp: null,
+      heroImageKey: null,
+      logoImageKey: null,
+      operatingDays: null,
+      openingTime: null,
+      closingTime: null,
     };
   }
 
   async getFoodtruckCatalog(
     foodtruckSlug: string,
   ): Promise<FoodtruckCatalogResponseDto> {
+    const developmentCatalog = getDevelopmentFoodtruckCatalog(foodtruckSlug);
+
+    if (developmentCatalog) {
+      return developmentCatalog;
+    }
+
     const activeEvent = await this.findActiveEventOrThrow();
     const eventTruck = await this.findActiveEventTruckOrThrow(foodtruckSlug);
 
@@ -84,16 +117,18 @@ export class FoodtrucksService {
           name: item.name,
           description: item.description,
           price: item.price.toString(),
+          currency: 'EUR',
           isAvailable: item.isAvailable,
           dailyStockRemaining: item.dailyStockRemaining,
           sortOrder: item.sortOrder,
+          imageKey: null,
         })),
       })),
     };
   }
 
-  private async findActiveEventOrThrow() {
-    const activeEvent = await this.prisma.event.findFirst({
+  private async findActiveEvent() {
+    return this.prisma.event.findFirst({
       where: {
         status: EventStatus.active,
       },
@@ -106,6 +141,10 @@ export class FoodtrucksService {
         name: true,
       },
     });
+  }
+
+  private async findActiveEventOrThrow() {
+    const activeEvent = await this.findActiveEvent();
 
     if (!activeEvent) {
       throw new NotFoundException(

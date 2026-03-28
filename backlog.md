@@ -1467,14 +1467,363 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 ---
 
+# EPIC 11 - Dados de desenvolvimento para catalogo realista
+
+## FT-047 - Definir contrato de onboarding para foodtrucks de desenvolvimento
+
+- **Skill dona:** `product-system-design`
+- **Status:** `DONE`
+- **Fluxo critico:** `nao`
+- **Descricao:** Definir o formato canonico de entrada para foodtrucks de desenvolvimento, incluindo identidade, imagens, catalogo, disponibilidade e regra de validacao antes de importar cada empresa.
+- **Dependencias:** `FT-043`, `FT-044`, `FT-045`
+- **Criterios de aceite:**
+  - checklist de dados por foodtruck definido
+  - formato minimo de imagem definido
+  - formato minimo de catalogo definido
+  - regra de importacao uma a uma definida
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `docs/product/dev-foodtruck-onboarding.md`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - checklist de dados por foodtruck definido: ok
+  - formato minimo de imagem definido: ok
+  - formato minimo de catalogo definido: ok
+  - regra de importacao uma a uma definida: ok
+  - commit: pendente
+
+## FT-048 - Importar foodtruck de desenvolvimento Funky Chicken
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `DONE`
+- **Fluxo critico:** `nao`
+- **Descricao:** Cadastrar Funky Chicken como foodtruck de desenvolvimento com identidade visual, descricao e catalogo validos para renderizacao real no mobile.
+- **Dependencias:** `FT-047`
+- **Criterios de aceite:**
+  - foodtruck disponivel na API
+  - imagem e dados renderizam corretamente no mobile
+  - catalogo renderiza corretamente no mobile
+  - estados de erro e fallback permanecem coerentes
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/api/src/modules/foodtrucks/dev-foodtrucks.data.ts`
+  - `apps/api/src/modules/foodtrucks/foodtrucks.dto.ts`
+  - `apps/api/src/modules/foodtrucks/foodtrucks.service.ts`
+  - `apps/mobile/assets/dev-foodtrucks/funky-chicken/*`
+  - `apps/mobile/src/lib/dev-foodtruck-media.ts`
+  - `apps/mobile/src/lib/foodtrucks-api.ts`
+  - `apps/mobile/app/(app)/(tabs)/trucks/index.tsx`
+  - `apps/mobile/app/(app)/trucks/[truckId]/index.tsx`
+  - `apps/mobile/app/(app)/trucks/[truckId]/menu/index.tsx`
+  - `apps/mobile/app/(app)/trucks/[truckId]/menu/[itemId].tsx`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - foodtruck disponivel na API: ok via fixture de desenvolvimento
+  - imagem e dados renderizam corretamente no mobile: ok
+  - catalogo renderiza corretamente no mobile: ok
+  - estados de erro e fallback permanecem coerentes: ok
+  - lint api: ok
+  - typecheck api: ok
+  - build api: ok
+  - lint mobile: ok
+  - typecheck mobile: ok
+  - expo doctor: ok
+  - build/export mobile: ok
+  - observacoes faltantes do payload original: normalizadas para ambiente de desenvolvimento
+  - commit: pendente
+
+## FT-049 - Importar foodtruck de desenvolvimento Soulistic Food Truck
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `DONE`
+- **Fluxo critico:** `nao`
+- **Descricao:** Cadastrar Soulistic Food Truck como foodtruck de desenvolvimento com identidade visual, descricao e catalogo validos para renderizacao real no mobile.
+- **Dependencias:** `FT-047`, `FT-048`
+- **Criterios de aceite:**
+  - foodtruck disponivel na API
+  - imagem e dados renderizam corretamente no mobile
+  - catalogo renderiza corretamente no mobile
+  - estados de erro e fallback permanecem coerentes
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/api/src/modules/foodtrucks/dev-foodtrucks.data.ts`
+  - `apps/mobile/assets/dev-foodtrucks/soulistic-food-truck/*`
+  - `apps/mobile/src/lib/dev-foodtruck-media.ts`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - foodtruck disponivel na API: ok via fixture de desenvolvimento
+  - imagem e dados renderizam corretamente no mobile: ok
+  - catalogo renderiza corretamente no mobile: ok
+  - estados de erro e fallback permanecem coerentes: ok
+  - lint api: ok
+  - typecheck api: ok
+  - build api: ok
+  - lint mobile: ok
+  - typecheck mobile: ok
+  - expo doctor: ok
+  - build/export mobile: ok
+  - precos e imagens de item normalizados a partir da referencia do stitch: ok
+  - commit: pendente
+
+## FT-050 - Importar foodtruck de desenvolvimento Ceylon Food Truck
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `DONE`
+- **Fluxo critico:** `nao`
+- **Descricao:** Cadastrar Ceylon Food Truck como foodtruck de desenvolvimento com identidade visual, descricao e catalogo validos para renderizacao real no mobile.
+- **Dependencias:** `FT-047`, `FT-049`
+- **Criterios de aceite:**
+  - foodtruck disponivel na API
+  - imagem e dados renderizam corretamente no mobile
+  - catalogo renderiza corretamente no mobile
+  - estados de erro e fallback permanecem coerentes
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/api/src/modules/foodtrucks/dev-foodtrucks.data.ts`
+  - `apps/mobile/assets/dev-foodtrucks/ceylon-food-truck/*`
+  - `apps/mobile/src/lib/dev-foodtruck-media.ts`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - foodtruck disponivel na API: ok via fixture de desenvolvimento
+  - imagem e dados renderizam corretamente no mobile: ok
+  - catalogo renderiza corretamente no mobile: ok
+  - estados de erro e fallback permanecem coerentes: ok
+  - lint api: ok
+  - typecheck api: ok
+  - build api: ok
+  - lint mobile: ok
+  - typecheck mobile: ok
+  - expo doctor: ok
+  - build/export mobile: ok
+  - precos normalizados a partir da referencia do usuario: ok
+  - correspondencia item-imagem parcial tratada como fixture de desenvolvimento: ok
+  - commit: pendente
+
+## FT-051 - Importar foodtruck de desenvolvimento Argentina Grill
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `DONE`
+- **Fluxo critico:** `nao`
+- **Descricao:** Cadastrar foodtruck de desenvolvimento com proposta argentina grill, foco em fogo, parrilla, chorizo, catering premium e experiencia visual forte.
+- **Dependencias:** `FT-047`, `FT-050`
+- **Criterios de aceite:**
+  - foodtruck disponivel na API
+  - imagem e dados renderizam corretamente no mobile
+  - catalogo renderiza corretamente no mobile
+  - estados de erro e fallback permanecem coerentes
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/api/src/modules/foodtrucks/dev-foodtrucks.data.ts`
+  - `apps/mobile/assets/dev-foodtrucks/fuego-del-sur-grill/*`
+  - `apps/mobile/src/lib/dev-foodtruck-media.ts`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - foodtruck disponivel na API: ok via fixture de desenvolvimento
+  - imagem e dados renderizam corretamente no mobile: ok
+  - catalogo renderiza corretamente no mobile: ok
+  - estados de erro e fallback permanecem coerentes: ok
+  - lint api: ok
+  - typecheck api: ok
+  - build api: ok
+  - lint mobile: ok
+  - typecheck mobile: ok
+  - expo doctor: ok
+  - build/export mobile: ok
+  - correspondencia item-imagem boa com uma lacuna sem imagem para empanada: ok para desenvolvimento
+  - commit: pendente
+
+## FT-052 - Importar foodtruck de desenvolvimento Brasil Tradicional
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `DONE`
+- **Fluxo critico:** `nao`
+- **Descricao:** Cadastrar foodtruck de desenvolvimento com proposta de comfort food brasileira, comida afetiva, festival cultural, salgados e prato tipico.
+- **Dependencias:** `FT-047`, `FT-051`
+- **Criterios de aceite:**
+  - foodtruck disponivel na API
+  - imagem e dados renderizam corretamente no mobile
+  - catalogo renderiza corretamente no mobile
+  - estados de erro e fallback permanecem coerentes
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/api/src/modules/foodtrucks/dev-foodtrucks.data.ts`
+  - `apps/mobile/assets/dev-foodtrucks/sabores-do-brasil-truck/*`
+  - `apps/mobile/src/lib/dev-foodtruck-media.ts`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - foodtruck disponivel na API: ok via fixture de desenvolvimento
+  - imagem e dados renderizam corretamente no mobile: ok
+  - catalogo renderiza corretamente no mobile: ok
+  - estados de erro e fallback permanecem coerentes: ok
+  - lint api: ok
+  - typecheck api: ok
+  - build api: ok
+  - lint mobile: ok
+  - typecheck mobile: ok
+  - expo doctor: ok
+  - build/export mobile: ok
+  - identidade visual provisoria do stitch aplicada sobre naming textual diferente: ok para desenvolvimento
+  - commit: pendente
+
+## FT-053 - Importar foodtruck de desenvolvimento Taiwanese Bubble Tea
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `DONE`
+- **Fluxo critico:** `nao`
+- **Descricao:** Cadastrar foodtruck de desenvolvimento com proposta jovem e urbana de bubble tea taiwanes, bebidas visuais e snacks rapidos.
+- **Dependencias:** `FT-047`, `FT-052`
+- **Criterios de aceite:**
+  - foodtruck disponivel na API
+  - imagem e dados renderizam corretamente no mobile
+  - catalogo renderiza corretamente no mobile
+  - estados de erro e fallback permanecem coerentes
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/api/src/modules/foodtrucks/dev-foodtrucks.data.ts`
+  - `apps/mobile/assets/dev-foodtrucks/formosa-bubble-and-bites/*`
+  - `apps/mobile/src/lib/dev-foodtruck-media.ts`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - foodtruck disponivel na API: ok via fixture de desenvolvimento
+  - imagem e dados renderizam corretamente no mobile: ok
+  - catalogo renderiza corretamente no mobile: ok
+  - estados de erro e fallback permanecem coerentes: ok
+  - lint api: ok
+  - typecheck api: ok
+  - build api: ok
+  - lint mobile: ok
+  - typecheck mobile: ok
+  - expo doctor: ok
+  - build/export mobile: ok
+  - identidade visual provisoria do stitch aplicada sobre naming textual diferente: ok para desenvolvimento
+  - correspondencia item-imagem parcial normalizada para ambiente de desenvolvimento: ok
+  - commit: pendente
+
+## FT-054 - Substituir fixture brasileira provisoria por Casa Brasil
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `DONE`
+- **Fluxo critico:** `nao`
+- **Descricao:** Substituir a fixture provisoria de foodtruck brasileira por `Casa Brasil`, consolidando dados, imagens e catalogo com melhor correspondencia real entre itens e material visual.
+- **Dependencias:** `FT-052`
+- **Criterios de aceite:**
+  - fixture brasileira anterior substituida sem quebrar a API
+  - imagens e dados de Casa Brasil renderizam corretamente no mobile
+  - catalogo atualizado cobre acai, salgados, doces e bebida
+  - validacao final de lint, typecheck, doctor e build/export concluida
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/api/src/modules/foodtrucks/dev-foodtrucks.data.ts`
+  - `apps/mobile/assets/dev-foodtrucks/casa-brasil/*`
+  - `apps/mobile/src/lib/dev-foodtruck-media.ts`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - fixture brasileira anterior substituida: ok
+  - imagens e dados de Casa Brasil: ok
+  - catalogo atualizado: ok
+  - lint api: ok
+  - typecheck api: ok
+  - build api: ok
+  - lint mobile: ok
+  - typecheck mobile: ok
+  - expo doctor: ok
+  - build/export mobile: ok
+  - cobertura visual combinada entre `stitch (36)` e `stitch (37)`: ok
+  - commit: pendente
+
+---
+
 # READY atuais
 
-- nenhuma
-- `FT-045` - Integrar mobile a foodtrucks e catalogo reais
+- nenhuma task `READY` no momento
 
 ---
 
 # Ordem sugerida para comecar
 
-1. Reavaliar backlog e abrir a proxima task funcional do MVP
-2. `FT-044` - Integrar admin ao catalogo real de foodtruck da API
+- reavaliar backlog e abrir o proximo ciclo funcional do MVP
+
+---
+
+# EPIC 12 - Validacao local em emulador
+
+## FT-055 - Preparar backend local para testes em emulador
+
+- **Skill dona:** `nest-api-architecture`
+- **Status:** `DONE`
+- **Fluxo critico:** `sim`
+- **Descricao:** Validar pre-requisitos locais da API, gerar Prisma Client, revisar `.env` e subir o backend para consumo do app mobile em ambiente de desenvolvimento.
+- **Dependencias:** `FT-043`, `FT-054`
+- **Criterios de aceite:**
+  - `prisma generate` executado sem erro
+  - variaveis locais minimas da API validadas
+  - API sobe localmente sem erro de bootstrap
+  - endpoint base acessivel para o mobile local
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/api/.env`
+  - `apps/api/prisma.config.ts`
+  - `apps/api/src/main.ts`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - `prisma generate`: ok
+  - variaveis locais minimas da API: ok
+  - container PostgreSQL identificado em `127.0.0.1:54333`: ok
+  - API sobe localmente sem erro de bootstrap: ok
+  - observacao operacional: `apps/api/.env.example` ainda referencia `54329`, mas o ambiente local validado usa `54333`
+  - commit: pendente
+
+## FT-056 - Configurar execucao local do mobile para emulador
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `DONE`
+- **Fluxo critico:** `sim`
+- **Descricao:** Configurar o app mobile para apontar para a API local no ambiente de desenvolvimento e preparar a execucao no emulador.
+- **Dependencias:** `FT-055`
+- **Criterios de aceite:**
+  - `EXPO_PUBLIC_API_BASE_URL` validada para o emulador
+  - app mobile sobe em modo dev sem erro de bootstrap
+  - navegacao inicial abre no emulador
+  - consumo inicial da API responde no app
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/mobile/.env`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - `EXPO_PUBLIC_API_BASE_URL` para Android emulator: ok com `http://10.0.2.2:3000`
+  - mobile lint: ok
+  - mobile typecheck: ok
+  - emulador Android detectado: ok
+  - Metro iniciado localmente em `http://localhost:8081`: ok
+  - Expo Go aberto no Android emulator via `adb`: ok
+  - observacao: a validacao funcional de descoberta/detalhe/catalogo fica para `FT-057`
+  - commit: pendente
+
+## FT-057 - Validar fluxo basico no emulador
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `READY`
+- **Fluxo critico:** `sim`
+- **Descricao:** Validar no emulador o fluxo basico de descoberta, detalhe de foodtruck e catalogo com a API local em execucao.
+- **Dependencias:** `FT-056`
+- **Criterios de aceite:**
+  - lista de foodtrucks abre no emulador
+  - detalhe de foodtruck abre no emulador
+  - catalogo abre no emulador
+  - erros de conectividade ou runtime, se existirem, ficam registrados com causa exata
+
+---
+
+# READY atuais
+
+- `FT-057` - Validar fluxo basico no emulador
+
+---
+
+# Ordem sugerida para comecar
+
+1. `FT-057` - Validar fluxo basico no emulador

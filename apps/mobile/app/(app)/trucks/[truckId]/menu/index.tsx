@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
-import { Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 
+import { resolveDevFoodtruckImage } from '../../../../../src/lib/dev-foodtruck-media';
 import {
   formatPrice,
   getFoodtruckCatalog,
@@ -64,25 +65,37 @@ export default function MenuScreen() {
               {category.name}
             </Text>
             <View className="mt-4 gap-4">
-              {category.items.map((item) => (
-                <Link
-                  asChild
-                  href={`/(app)/trucks/${catalog.foodtruckSlug}/menu/${item.id}`}
-                  key={item.id}
-                >
-                  <Text className="text-base font-medium text-ink">
-                    {item.name}
-                    {'\n'}
-                    <Text className="text-sm font-normal text-neutral-500">
-                      {item.description ?? 'Sem descricao'}
-                      {' | '}
-                      {formatPrice(item.price)}
-                      {' | '}
-                      {item.isAvailable ? 'Disponivel' : 'Pausado'}
-                    </Text>
-                  </Text>
-                </Link>
-              ))}
+              {category.items.map((item) => {
+                const itemImage = resolveDevFoodtruckImage(item.imageKey);
+
+                return (
+                  <Link
+                    asChild
+                    href={`/(app)/trucks/${catalog.foodtruckSlug}/menu/${item.id}`}
+                    key={item.id}
+                  >
+                    <View className="rounded-[20px] bg-stone-50 p-4">
+                      <Text className="text-base font-medium text-ink">
+                        {item.name}
+                      </Text>
+                      <Text className="mt-2 text-sm leading-6 text-neutral-500">
+                        {item.description ?? 'Sem descricao'}
+                        {' | '}
+                        {formatPrice(item.price, item.currency)}
+                        {' | '}
+                        {item.isAvailable ? 'Disponivel' : 'Pausado'}
+                      </Text>
+                      {itemImage ? (
+                        <Image
+                          className="mt-4 h-40 w-full rounded-[18px]"
+                          resizeMode="cover"
+                          source={itemImage}
+                        />
+                      ) : null}
+                    </View>
+                  </Link>
+                );
+              })}
             </View>
           </View>
         ))}
