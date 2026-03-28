@@ -510,7 +510,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-016 - Integrar auth no backend
 
 - **Skill dona:** `auth-rbac`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Preparar backend para validar identidade e autorizacao.
 - **Dependencias:** `FT-009`, `FT-014`, `FT-015`
@@ -518,6 +518,40 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - guard base criado
   - user context resolvido
   - autorizacao por role prevista
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/api/package.json`
+  - `apps/api/.env.example`
+  - `apps/api/src/main.ts`
+  - `apps/api/src/modules/app.module.ts`
+  - `apps/api/src/modules/health/health.controller.ts`
+  - `apps/api/src/modules/auth/auth.constants.ts`
+  - `apps/api/src/modules/auth/auth.controller.ts`
+  - `apps/api/src/modules/auth/auth.guard.ts`
+  - `apps/api/src/modules/auth/auth.module.ts`
+  - `apps/api/src/modules/auth/auth.service.ts`
+  - `apps/api/src/modules/auth/auth.types.ts`
+  - `apps/api/src/modules/auth/current-auth-user.decorator.ts`
+  - `apps/api/src/modules/auth/public.decorator.ts`
+  - `apps/api/src/modules/auth/roles.decorator.ts`
+  - `apps/api/src/modules/auth/roles.guard.ts`
+  - `apps/admin/next-env.d.ts`
+  - `apps/admin/tsconfig.json`
+  - `docs/architecture/version-matrix.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - guard base: ok
+  - user context: ok
+  - autorizacao por role: ok
+  - swagger bearer auth: ok
+  - lint api: ok
+  - typecheck api: ok
+  - build api: ok
+  - lint raiz: ok
+  - typecheck raiz: ok
+  - build raiz: ok
+  - runtime auth end-to-end: pendente por indisponibilidade de ambiente local com banco e secrets
+  - commit: ok
 
 ---
 
@@ -1080,7 +1114,6 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-016` - Integrar auth no backend
 - `FT-027` - Definir cobranca mensal da plataforma
 - `FT-029` - Configurar scripts de lint, typecheck e test
 
@@ -1088,6 +1121,5 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-016` - Integrar auth no backend
-2. `FT-027` - Definir cobranca mensal da plataforma
-3. `FT-029` - Configurar scripts de lint, typecheck e test
+1. `FT-027` - Definir cobranca mensal da plataforma
+2. `FT-029` - Configurar scripts de lint, typecheck e test

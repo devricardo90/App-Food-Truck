@@ -13,6 +13,15 @@ async function bootstrap() {
     .setTitle('Foodtrucks API')
     .setDescription('Technical OpenAPI reference for the Foodtrucks backend.')
     .setVersion('0.1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'Clerk session token sent by mobile or admin clients.',
+      },
+      'clerk',
+    )
     .build();
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
 

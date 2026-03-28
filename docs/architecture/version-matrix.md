@@ -116,6 +116,7 @@ NestJS
 - `pg`: `8.16.0`
 - `@nestjs/swagger`: `11.2.6`
 - `@scalar/nestjs-api-reference`: `1.1.4`
+- `@clerk/backend`: `3.2.3`
 - Stripe SDK: `linha atual estavel compativel com Node 22`
 - Firebase Admin SDK: `linha atual estavel compativel com Node 22`
 - Twilio SDK: `linha atual estavel compativel com Node 22`
