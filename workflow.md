@@ -141,7 +141,9 @@ Antes de aprovar qualquer task que instale ou atualize dependencias, o orquestra
 - a versao esta no `version-matrix.md`?
 - a ordem de instalacao foi respeitada?
 - existe risco de compatibilidade?
+- `latest` foi evitado em dependencia critica?
 - houve registro documental da decisao?
+- houve registro do impacto no projeto quando necessario?
 
 Se qualquer resposta for nao, a task nao pode virar `DONE`.
 
@@ -154,6 +156,7 @@ O subagente executor deve:
 - consultar o `version-matrix.md`
 - respeitar a ordem de instalacao
 - evitar `latest`
+- usar `npx expo install` no ecossistema Expo quando aplicavel
 - reportar qualquer incompatibilidade
 - atualizar documentacao quando necessario
 

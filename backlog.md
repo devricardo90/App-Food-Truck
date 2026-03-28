@@ -5,6 +5,9 @@
 ## Regras do fluxo
 
 - Apenas tasks com status `READY` podem ser executadas.
+- Toda task documental estrategica tambem exige commit antes de virar `DONE`.
+- Toda task que instalar ou atualizar dependencia deve consultar `docs/architecture/version-matrix.md` antes de prosseguir.
+- Nenhuma task da API pode virar `DONE` sem documentacao minima coerente em OpenAPI, Swagger e Scalar quando aplicavel a etapa.
 - Toda task deve ter:
   - ID
   - titulo
@@ -41,6 +44,15 @@ Quando houver multiplas tasks `READY`, priorizar por:
 2. dependencia para outras tasks
 3. risco tecnico
 4. valor para o MVP
+
+## Checkpoint atual consolidado
+
+- Fonte canonica de status: `backlog.md`
+- Fonte oficial de versoes: `docs/architecture/version-matrix.md`
+- Regras operacionais adicionais: `workflow.md`
+- Swagger e Scalar entram cedo no backend e nao sao opcionais
+- Tasks documentais estrategicas da Fase 1 tambem exigem commit
+- O Agente Master humano segue como unico gatilho para iniciar novo ciclo
 
 ---
 
@@ -610,17 +622,17 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-002` - Configurar TypeScript compartilhado
-- `FT-003` - Configurar ESLint e Prettier do monorepo
-- `FT-004` - Criar README raiz e documentacao minima
 - `FT-006` - Definir jornadas oficiais das 3 personas
 - `FT-015` - Definir roles e permissoes do sistema
 - `FT-024` - Definir regra de capacidade por janela de tempo
 - `FT-025` - Definir regra de estoque diario
-- `FT-027` - Definir cobranca mensal da plataforma
 - `FT-030` - Definir estrategia minima de testes do MVP
 - `FT-031` - Definir estrategia minima de logs e rastreabilidade
 - `FT-036` - Definir politica de versoes e upgrades
+- `FT-002` - Configurar TypeScript compartilhado
+- `FT-003` - Configurar ESLint e Prettier do monorepo
+- `FT-004` - Criar README raiz e documentacao minima
+- `FT-027` - Definir cobranca mensal da plataforma
 
 ---
 
@@ -632,5 +644,8 @@ Quando houver multiplas tasks `READY`, priorizar por:
 4. `FT-025` - Definir regra de estoque diario
 5. `FT-030` - Definir estrategia minima de testes do MVP
 6. `FT-031` - Definir estrategia minima de logs e rastreabilidade
-7. `FT-033` - Definir version-matrix oficial
-8. `FT-036` - Definir politica de versoes e upgrades
+7. `FT-036` - Definir politica de versoes e upgrades
+8. `FT-002` - Configurar TypeScript compartilhado
+9. `FT-003` - Configurar ESLint e Prettier do monorepo
+10. `FT-004` - Criar README raiz e documentacao minima
+11. `FT-027` - Definir cobranca mensal da plataforma

@@ -55,6 +55,8 @@ App Cliente
 - Criar o app primeiro com Expo SDK 52.
 - Instalar `expo-router`, `react-native-reanimated`, `expo-notifications` e demais libs do ecossistema com `npx expo install`.
 - Nao pinar manualmente React Native, React ou Expo Router fora do que o Expo resolver.
+- Tratar o Expo SDK como ancora de compatibilidade do app mobile.
+- Se a documentacao do Expo ajustar a versao interna de React Native dentro da mesma linha de SDK, prevalece a compatibilidade oficial do SDK.
 - Nao usar NativeWind v5 no MVP; v5 esta em pre-release.
 - Preferir NativeWind v4.1.x para estabilidade.
 - Clerk no Expo deve seguir a documentacao oficial do SDK Expo da Clerk.
