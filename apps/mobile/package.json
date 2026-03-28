@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "node -e \"console.log('mobile dev scaffold pending FT-017')\"",
     "build": "node -e \"console.log('mobile build scaffold pending FT-017')\"",
-    "lint": "node -e \"console.log('mobile lint scaffold pending FT-003')\"",
+    "lint": "eslint \"**/*.{js,cjs,mjs,ts,tsx}\" --max-warnings=0 --no-error-on-unmatched-pattern",
     "typecheck": "tsc -p tsconfig.json",
     "test": "node -e \"console.log('mobile test scaffold pending FT-029')\"",
     "clean": "node -e \"console.log('mobile clean ok')\""

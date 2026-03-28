@@ -1,0 +1,12 @@
+node_modules
+.turbo
+dist
+build
+coverage
+pnpm-lock.yaml
+docs
+Claude
+backlog.md
+cerebro.md
+workflow.md
+status.md
