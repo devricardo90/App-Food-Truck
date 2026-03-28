@@ -6,6 +6,9 @@
     "dev": "node dist/main.js",
     "build": "tsc -p tsconfig.build.json",
     "lint": "eslint \"**/*.{js,cjs,mjs,ts,tsx}\" --max-warnings=0 --no-error-on-unmatched-pattern",
+    "prisma": "prisma",
+    "prisma:validate": "prisma validate --schema prisma/schema.prisma",
+    "prisma:generate": "prisma generate --schema prisma/schema.prisma",
     "typecheck": "tsc -p tsconfig.json",
     "test": "node -e \"console.log('api test scaffold pending FT-029')\"",
     "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true }); console.log('api clean ok')\""
@@ -14,8 +17,12 @@
     "@nestjs/common": "11.1.8",
     "@nestjs/core": "11.1.8",
     "@nestjs/platform-express": "11.1.8",
+    "@prisma/client": "7.4.1",
     "@types/node": "24.5.2",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2"
+  },
+  "devDependencies": {
+    "prisma": "7.4.1"
   }
 }

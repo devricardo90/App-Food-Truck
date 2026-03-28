@@ -328,7 +328,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-010 - Configurar Prisma + PostgreSQL
 
 - **Skill dona:** `database-design`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Integrar Prisma ao backend e configurar conexao com PostgreSQL.
 - **Dependencias:** `FT-009`
@@ -337,12 +337,40 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - datasource funcionando
   - Prisma Client gerado
   - primeira conexao com banco validada
-- **Observacao:** baseline oficial definida com `prisma` e `@prisma/client` em `7.4.1`; a conexao inicial pode ser validada via ambiente local ou container compativel com PostgreSQL `16.13`
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/api/package.json`
+  - `apps/api/prisma.config.ts`
+  - `apps/api/prisma/schema.prisma`
+  - `apps/api/.env.example`
+  - `apps/api/src/prisma/prisma.module.ts`
+  - `apps/api/src/prisma/prisma.service.ts`
+  - `.gitignore`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - version-matrix: ok
+  - compatibilidade: ok
+  - ordem de instalacao: ok
+  - prisma validate: ok
+  - prisma generate: ok
+  - Prisma Client atualizado: ok
+  - conexao inicial PostgreSQL 16.13: ok via container temporario
+  - migration: nao aplicavel nesta etapa sem schema de dominio
+  - lint API: ok
+  - typecheck API: ok
+  - build API: ok
+  - format:check: ok
+  - lint raiz: ok
+  - typecheck raiz: ok
+  - build raiz: ok
+  - commit: ok
+- **Commit:** `feat(api): configure prisma and postgres baseline`
 
 ## FT-011 - Modelar schema inicial do dominio
 
 - **Skill dona:** `database-design`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Criar schema inicial com entidades principais do MVP.
 - **Dependencias:** `FT-005`, `FT-010`
@@ -797,19 +825,19 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-010` - Configurar Prisma + PostgreSQL
 - `FT-016` - Integrar auth no backend
 - `FT-017` - Inicializar app Expo
 - `FT-020` - Inicializar app admin Next.js
 - `FT-027` - Definir cobranca mensal da plataforma
 - `FT-029` - Configurar scripts de lint, typecheck e test
 - `FT-034` - Configurar Swagger no backend
+- `FT-011` - Modelar schema inicial do dominio
 
 ---
 
 # Ordem sugerida para comecar
 
-1. `FT-010` - Configurar Prisma + PostgreSQL
+1. `FT-011` - Modelar schema inicial do dominio
 2. `FT-034` - Configurar Swagger no backend
 3. `FT-017` - Inicializar app Expo
 4. `FT-020` - Inicializar app admin Next.js

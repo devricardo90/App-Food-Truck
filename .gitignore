@@ -5,3 +5,7 @@ build
 .expo
 .next
 coverage
+.env
+.env.*
+!.env.example
+!**/.env.example
