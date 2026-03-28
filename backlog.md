@@ -370,7 +370,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-011 - Modelar schema inicial do dominio
 
 - **Skill dona:** `database-design`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Criar schema inicial com entidades principais do MVP.
 - **Dependencias:** `FT-005`, `FT-010`
@@ -379,11 +379,32 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - relacoes definidas
   - enums principais definidos
   - schema revisado para historico e multi-barraca
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/api/prisma/schema.prisma`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - entidades principais: ok
+  - relacoes: ok
+  - enums principais: ok
+  - historico e multi-barraca: ok
+  - prisma validate: ok
+  - prisma generate: ok
+  - Prisma Client atualizado: ok
+  - typecheck API: ok
+  - build API: ok
+  - format:check: ok
+  - lint raiz: ok
+  - typecheck raiz: ok
+  - build raiz: ok
+  - commit: ok
+- **Commit:** `feat(db): model initial mvp domain schema`
 
 ## FT-012 - Criar migration inicial
 
 - **Skill dona:** `database-design`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Gerar migration inicial do banco.
 - **Dependencias:** `FT-011`
@@ -395,7 +416,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-013 - Definir modulos do backend
 
 - **Skill dona:** `nest-api-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `nao`
 - **Descricao:** Definir modulos iniciais do backend e fronteiras entre eles.
 - **Dependencias:** `FT-005`, `FT-009`, `FT-011`
@@ -831,16 +852,18 @@ Quando houver multiplas tasks `READY`, priorizar por:
 - `FT-027` - Definir cobranca mensal da plataforma
 - `FT-029` - Configurar scripts de lint, typecheck e test
 - `FT-034` - Configurar Swagger no backend
-- `FT-011` - Modelar schema inicial do dominio
+- `FT-012` - Criar migration inicial
+- `FT-013` - Definir modulos do backend
 
 ---
 
 # Ordem sugerida para comecar
 
-1. `FT-011` - Modelar schema inicial do dominio
-2. `FT-034` - Configurar Swagger no backend
-3. `FT-017` - Inicializar app Expo
-4. `FT-020` - Inicializar app admin Next.js
-5. `FT-016` - Integrar auth no backend
-6. `FT-027` - Definir cobranca mensal da plataforma
-7. `FT-029` - Configurar scripts de lint, typecheck e test
+1. `FT-012` - Criar migration inicial
+2. `FT-013` - Definir modulos do backend
+3. `FT-034` - Configurar Swagger no backend
+4. `FT-017` - Inicializar app Expo
+5. `FT-020` - Inicializar app admin Next.js
+6. `FT-016` - Integrar auth no backend
+7. `FT-027` - Definir cobranca mensal da plataforma
+8. `FT-029` - Configurar scripts de lint, typecheck e test

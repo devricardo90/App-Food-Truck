@@ -5,3 +5,262 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum UserRole {
+  customer
+  truck_operator
+  truck_manager
+  platform_admin
+}
+
+enum MembershipRole {
+  truck_operator
+  truck_manager
+}
+
+enum MembershipStatus {
+  active
+  inactive
+  removed
+}
+
+enum EventStatus {
+  draft
+  active
+  completed
+  cancelled
+}
+
+enum TruckStatus {
+  active
+  inactive
+  suspended
+}
+
+enum OrderStatus {
+  pending_payment
+  new
+  in_progress
+  ready
+  completed
+  cancelled
+}
+
+enum OrderActorType {
+  system
+  customer
+  truck_operator
+  truck_manager
+  platform_admin
+  payment_provider
+}
+
+enum PaymentStatus {
+  pending
+  authorized
+  paid
+  failed
+  cancelled
+  refunded
+}
+
+model User {
+  id                     String               @id @default(cuid())
+  externalAuthId         String               @unique
+  email                  String?              @unique
+  name                   String?
+  phone                  String?
+  role                   UserRole             @default(customer)
+  orders                 Order[]
+  memberships            TruckMembership[]
+  orderStatusEvents      OrderStatusHistory[] @relation("OrderStatusHistoryActor")
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+}
+
+model Event {
+  id        String      @id @default(cuid())
+  slug      String      @unique
+  name      String
+  status    EventStatus @default(draft)
+  startsAt  DateTime
+  endsAt    DateTime?
+  trucks    EventTruck[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model Truck {
+  id          String            @id @default(cuid())
+  slug        String            @unique
+  name        String
+  description String?
+  status      TruckStatus       @default(active)
+  memberships TruckMembership[]
+  events      EventTruck[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model TruckMembership {
+  id        String           @id @default(cuid())
+  userId    String
+  truckId   String
+  role      MembershipRole
+  status    MembershipStatus @default(active)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  truck     Truck            @relation(fields: [truckId], references: [id], onDelete: Cascade)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@unique([userId, truckId])
+  @@index([truckId, status])
+}
+
+/// EventTruck is the operational boundary for multi-barraca and event-specific capacity.
+model EventTruck {
+  id                    String         @id @default(cuid())
+  eventId               String
+  truckId               String
+  displayName           String?
+  acceptsOrders         Boolean        @default(true)
+  capacityWindowMinutes Int            @default(15)
+  maxOrdersPerWindow    Int            @default(12)
+  event                 Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  truck                 Truck          @relation(fields: [truckId], references: [id], onDelete: Cascade)
+  categories            MenuCategory[]
+  items                 MenuItem[]
+  orders                Order[]
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  @@unique([eventId, truckId])
+  @@index([eventId, acceptsOrders])
+}
+
+model MenuCategory {
+  id           String     @id @default(cuid())
+  eventTruckId String
+  name         String
+  slug         String
+  sortOrder    Int        @default(0)
+  eventTruck   EventTruck @relation(fields: [eventTruckId], references: [id], onDelete: Cascade)
+  items        MenuItem[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([eventTruckId, slug])
+  @@index([eventTruckId, sortOrder])
+}
+
+/// Daily availability stays on MenuItem in the MVP to keep stock control simple.
+model MenuItem {
+  id                  String       @id @default(cuid())
+  eventTruckId        String
+  categoryId          String?
+  name                String
+  description         String?
+  price               Decimal      @db.Decimal(10, 2)
+  isAvailable         Boolean      @default(true)
+  dailyStockQuantity  Int?
+  dailyStockRemaining Int?
+  sortOrder           Int          @default(0)
+  eventTruck          EventTruck   @relation(fields: [eventTruckId], references: [id], onDelete: Cascade)
+  category            MenuCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  orderItems          OrderItem[]
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  @@index([eventTruckId, isAvailable])
+  @@index([categoryId, sortOrder])
+}
+
+/// Orders keep event/truck context and snapshot data to preserve history.
+model Order {
+  id                  String               @id @default(cuid())
+  publicCode          String               @unique @default(cuid())
+  customerId          String
+  eventTruckId        String
+  status              OrderStatus          @default(pending_payment)
+  subtotalAmount      Decimal              @db.Decimal(10, 2)
+  totalAmount         Decimal              @db.Decimal(10, 2)
+  specialInstructions String?
+  capacityWindowStart DateTime?
+  capacityWindowEnd   DateTime?
+  cancelledReason     String?
+  customer            User                 @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  eventTruck          EventTruck           @relation(fields: [eventTruckId], references: [id], onDelete: Restrict)
+  items               OrderItem[]
+  payments            Payment[]
+  statusHistory       OrderStatusHistory[]
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  @@index([customerId, createdAt])
+  @@index([eventTruckId, status])
+}
+
+model OrderItem {
+  id                String    @id @default(cuid())
+  orderId           String
+  menuItemId        String?
+  itemNameSnapshot  String
+  unitPriceSnapshot Decimal   @db.Decimal(10, 2)
+  quantity          Int
+  note              String?
+  order             Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItem          MenuItem? @relation(fields: [menuItemId], references: [id], onDelete: SetNull)
+  createdAt         DateTime  @default(now())
+
+  @@index([orderId])
+}
+
+model OrderStatusHistory {
+  id          String         @id @default(cuid())
+  orderId     String
+  fromStatus  OrderStatus?
+  toStatus    OrderStatus
+  actorType   OrderActorType
+  actorUserId String?
+  reason      String?
+  order       Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  actorUser   User?          @relation("OrderStatusHistoryActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+  createdAt   DateTime       @default(now())
+
+  @@index([orderId, createdAt])
+}
+
+/// Payments stay separate from orders to preserve idempotency and auditability.
+model Payment {
+  id                 String         @id @default(cuid())
+  orderId            String
+  provider           String
+  providerPaymentId  String?        @unique
+  status             PaymentStatus  @default(pending)
+  amount             Decimal        @db.Decimal(10, 2)
+  currency           String         @default("BRL")
+  paidAt             DateTime?
+  authorizedAt       DateTime?
+  failedAt           DateTime?
+  cancelledAt        DateTime?
+  refundedAt         DateTime?
+  order              Order          @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  events             PaymentEvent[]
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  @@index([orderId, status])
+}
+
+model PaymentEvent {
+  id              String   @id @default(cuid())
+  paymentId       String
+  providerEventId String?  @unique
+  eventType       String
+  providerStatus  String?
+  payload         Json?
+  payment         Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+
+  @@index([paymentId, createdAt])
+}
