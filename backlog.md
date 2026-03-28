@@ -940,7 +940,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-029 - Configurar scripts de lint, typecheck e test
 
 - **Skill dona:** `testing-strategy`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Padronizar scripts de qualidade no monorepo.
 - **Dependencias:** `FT-001`, `FT-002`, `FT-003`
@@ -948,6 +948,26 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - script de lint funcional
   - script de typecheck funcional
   - script de test funcional
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `package.json`
+  - `turbo.json`
+  - `apps/admin/package.json`
+  - `apps/api/package.json`
+  - `apps/mobile/package.json`
+  - `packages/api-client/package.json`
+  - `packages/config/package.json`
+  - `packages/schemas/package.json`
+  - `packages/types/package.json`
+  - `packages/utils/package.json`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - lint raiz: ok
+  - typecheck raiz: ok
+  - test raiz: ok
+  - scripts por workspace: ok
+  - orquestracao via turbo: ok
+  - commit: ok
 
 ## FT-030 - Definir estrategia minima de testes do MVP
 
@@ -1123,10 +1143,6 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-029` - Configurar scripts de lint, typecheck e test
-
 ---
 
 # Ordem sugerida para comecar
-
-1. `FT-029` - Configurar scripts de lint, typecheck e test
