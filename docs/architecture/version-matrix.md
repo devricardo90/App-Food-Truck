@@ -101,7 +101,7 @@ NestJS
 - @prisma/client: `7.4.1`
 - `@prisma/adapter-pg`: `7.4.1`
 - PostgreSQL: `16.13`
-- `pg`: `8.x`
+- `pg`: `8.16.0`
 - `@nestjs/swagger`: `11.2.6`
 - `@scalar/nestjs-api-reference`: `1.1.4`
 - Stripe SDK: `linha atual estavel compativel com Node 22`

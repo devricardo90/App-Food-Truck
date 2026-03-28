@@ -1,5 +1,35 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { PrismaPg } from '@prisma/adapter-pg';
+
+import { PrismaClient } from '../generated/prisma/client';
 
 @Injectable()
-export class PrismaService extends PrismaClient {}
+export class PrismaService
+  extends PrismaClient
+  implements OnModuleInit, OnModuleDestroy
+{
+  constructor() {
+    const connectionString = process.env.DATABASE_URL;
+
+    if (!connectionString) {
+      throw new Error('DATABASE_URL is required to initialize PrismaService.');
+    }
+
+    const adapter = new PrismaPg({
+      connectionString,
+      // Match key Prisma v6 timeout expectations on top of the pg driver.
+      connectionTimeoutMillis: 5_000,
+      idleTimeoutMillis: 300_000,
+    });
+
+    super({ adapter });
+  }
+
+  async onModuleInit() {
+    await this.$connect();
+  }
+
+  async onModuleDestroy() {
+    await this.$disconnect();
+  }
+}
