@@ -485,7 +485,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-025 - Definir regra de estoque diario
 
 - **Skill dona:** `order-operations`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Definir como o estoque do dia sera controlado no MVP.
 - **Dependencias:** `FT-023`
@@ -493,6 +493,16 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - regra de disponibilidade definida
   - impacto em menu e checkout definido
   - fallback manual previsto
+- **Entrega em:** `2026-03-28`
+- **Artefato:** `docs/flows/daily-stock-rule.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - criterios de aceite: ok
+  - build: nao aplicavel
+  - testes: nao aplicavel
+  - commit: ok
+- **Commit:** `docs(order): define daily stock rule for mvp`
 
 ---
 
@@ -672,7 +682,6 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-025` - Definir regra de estoque diario
 - `FT-030` - Definir estrategia minima de testes do MVP
 - `FT-031` - Definir estrategia minima de logs e rastreabilidade
 - `FT-036` - Definir politica de versoes e upgrades
@@ -685,11 +694,10 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-025` - Definir regra de estoque diario
-2. `FT-030` - Definir estrategia minima de testes do MVP
-3. `FT-031` - Definir estrategia minima de logs e rastreabilidade
-4. `FT-036` - Definir politica de versoes e upgrades
-5. `FT-002` - Configurar TypeScript compartilhado
-6. `FT-003` - Configurar ESLint e Prettier do monorepo
-7. `FT-004` - Criar README raiz e documentacao minima
-8. `FT-027` - Definir cobranca mensal da plataforma
+1. `FT-030` - Definir estrategia minima de testes do MVP
+2. `FT-031` - Definir estrategia minima de logs e rastreabilidade
+3. `FT-036` - Definir politica de versoes e upgrades
+4. `FT-002` - Configurar TypeScript compartilhado
+5. `FT-003` - Configurar ESLint e Prettier do monorepo
+6. `FT-004` - Criar README raiz e documentacao minima
+7. `FT-027` - Definir cobranca mensal da plataforma
