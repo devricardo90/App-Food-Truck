@@ -94,7 +94,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-002 - Configurar TypeScript compartilhado
 
 - **Skill dona:** `deployment-infra`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Criar configuracao base de TypeScript para todos os apps e packages.
 - **Dependencias:** `FT-001`
@@ -103,6 +103,29 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - apps herdando config compartilhada
   - packages herdando config compartilhada
   - typecheck basico funcionando
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `tsconfig.base.json`
+  - `apps/admin/tsconfig.json`
+  - `apps/api/tsconfig.json`
+  - `apps/mobile/tsconfig.json`
+  - `packages/api-client/tsconfig.json`
+  - `packages/config/tsconfig.json`
+  - `packages/schemas/tsconfig.json`
+  - `packages/types/tsconfig.json`
+  - `packages/utils/tsconfig.json`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - version-matrix: ok
+  - compatibilidade: ok
+  - ordem de instalacao: ok
+  - typecheck: ok
+  - lint: ok no scaffold atual
+  - test: ok no scaffold atual
+  - build: ok com warnings esperados de outputs ainda nao definidos
+  - commit: ok
+- **Commit:** `chore(repo): configure shared typescript base`
 
 ## FT-003 - Configurar ESLint e Prettier do monorepo
 
@@ -231,7 +254,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-009 - Inicializar backend NestJS
 
 - **Skill dona:** `nest-api-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `nao`
 - **Descricao:** Criar app NestJS com estrutura inicial de modulos e healthcheck.
 - **Dependencias:** `FT-001`, `FT-002`
@@ -359,7 +382,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-017 - Inicializar app Expo
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `nao`
 - **Descricao:** Criar base do app mobile com Expo.
 - **Dependencias:** `FT-001`, `FT-002`
@@ -401,7 +424,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-020 - Inicializar app admin Next.js
 
 - **Skill dona:** `next-admin-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `nao`
 - **Descricao:** Criar base do painel web em Next.js.
 - **Dependencias:** `FT-001`, `FT-002`
@@ -712,16 +735,20 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-002` - Configurar TypeScript compartilhado
 - `FT-003` - Configurar ESLint e Prettier do monorepo
 - `FT-004` - Criar README raiz e documentacao minima
+- `FT-009` - Inicializar backend NestJS
+- `FT-017` - Inicializar app Expo
+- `FT-020` - Inicializar app admin Next.js
 - `FT-027` - Definir cobranca mensal da plataforma
 
 ---
 
 # Ordem sugerida para comecar
 
-1. `FT-002` - Configurar TypeScript compartilhado
-2. `FT-003` - Configurar ESLint e Prettier do monorepo
-3. `FT-004` - Criar README raiz e documentacao minima
-4. `FT-027` - Definir cobranca mensal da plataforma
+1. `FT-003` - Configurar ESLint e Prettier do monorepo
+2. `FT-004` - Criar README raiz e documentacao minima
+3. `FT-009` - Inicializar backend NestJS
+4. `FT-017` - Inicializar app Expo
+5. `FT-020` - Inicializar app admin Next.js
+6. `FT-027` - Definir cobranca mensal da plataforma

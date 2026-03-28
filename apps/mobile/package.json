@@ -6,7 +6,7 @@
     "dev": "node -e \"console.log('mobile dev scaffold pending FT-017')\"",
     "build": "node -e \"console.log('mobile build scaffold pending FT-017')\"",
     "lint": "node -e \"console.log('mobile lint scaffold pending FT-003')\"",
-    "typecheck": "node -e \"console.log('mobile typecheck scaffold pending FT-002')\"",
+    "typecheck": "tsc -p tsconfig.json",
     "test": "node -e \"console.log('mobile test scaffold pending FT-029')\"",
     "clean": "node -e \"console.log('mobile clean ok')\""
   }

@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "scripts": {
     "lint": "node -e \"console.log('types lint scaffold pending FT-003')\"",
-    "typecheck": "node -e \"console.log('types typecheck scaffold pending FT-002')\"",
+    "typecheck": "tsc -p tsconfig.json",
     "test": "node -e \"console.log('types test scaffold pending FT-029')\"",
     "clean": "node -e \"console.log('types clean ok')\""
   }
