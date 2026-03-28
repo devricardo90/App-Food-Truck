@@ -291,7 +291,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-009 - Inicializar backend NestJS
 
 - **Skill dona:** `nest-api-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Criar app NestJS com estrutura inicial de modulos e healthcheck.
 - **Dependencias:** `FT-001`, `FT-002`
@@ -300,11 +300,35 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - modulo principal configurado
   - endpoint health funcionando
   - estrutura `modules`, `common`, `config`, `prisma` criada
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/api/package.json`
+  - `apps/api/tsconfig.json`
+  - `apps/api/tsconfig.build.json`
+  - `apps/api/src/main.ts`
+  - `apps/api/src/modules/app.module.ts`
+  - `apps/api/src/modules/health/*`
+  - `apps/api/src/common/index.ts`
+  - `apps/api/src/config/index.ts`
+  - `apps/api/src/prisma/index.ts`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - version-matrix: ok
+  - compatibilidade: ok
+  - ordem de instalacao: ok
+  - lint: ok
+  - typecheck: ok
+  - build: ok
+  - healthcheck: ok em `GET /health`
+  - test: ok no scaffold atual
+  - commit: ok
+- **Commit:** `feat(api): initialize nest backend base`
 
 ## FT-010 - Configurar Prisma + PostgreSQL
 
 - **Skill dona:** `database-design`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Integrar Prisma ao backend e configurar conexao com PostgreSQL.
 - **Dependencias:** `FT-009`
@@ -403,7 +427,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-016 - Integrar auth no backend
 
 - **Skill dona:** `auth-rbac`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Preparar backend para validar identidade e autorizacao.
 - **Dependencias:** `FT-009`, `FT-014`, `FT-015`
@@ -724,7 +748,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-034 - Configurar Swagger no backend
 
 - **Skill dona:** `nest-api-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Configurar Swagger no backend para expor a documentacao tecnica da API.
 - **Dependencias:** `FT-009`
@@ -772,18 +796,22 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-009` - Inicializar backend NestJS
+- `FT-010` - Configurar Prisma + PostgreSQL
+- `FT-016` - Integrar auth no backend
 - `FT-017` - Inicializar app Expo
 - `FT-020` - Inicializar app admin Next.js
 - `FT-027` - Definir cobranca mensal da plataforma
 - `FT-029` - Configurar scripts de lint, typecheck e test
+- `FT-034` - Configurar Swagger no backend
 
 ---
 
 # Ordem sugerida para comecar
 
-1. `FT-009` - Inicializar backend NestJS
-2. `FT-017` - Inicializar app Expo
-3. `FT-020` - Inicializar app admin Next.js
-4. `FT-027` - Definir cobranca mensal da plataforma
-5. `FT-029` - Configurar scripts de lint, typecheck e test
+1. `FT-010` - Configurar Prisma + PostgreSQL
+2. `FT-034` - Configurar Swagger no backend
+3. `FT-017` - Inicializar app Expo
+4. `FT-020` - Inicializar app admin Next.js
+5. `FT-016` - Integrar auth no backend
+6. `FT-027` - Definir cobranca mensal da plataforma
+7. `FT-029` - Configurar scripts de lint, typecheck e test
