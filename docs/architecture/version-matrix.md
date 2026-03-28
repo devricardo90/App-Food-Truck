@@ -44,27 +44,29 @@ Approved baseline for initial implementation.
 App Cliente
 
 - Expo SDK: `52`
-- React Native: `resolver via Expo SDK 52`
-- React: `resolver via Expo SDK 52`
-- expo-router: `resolver via Expo SDK 52`
-- react-native-reanimated: `resolver via Expo SDK 52`
-- NativeWind: `4.1.x`
-- Zustand: `5.x`
-- `@tanstack/react-query`: `5.x`
-- react-hook-form: `7.x`
-- zod: `4.x`
-- Clerk Expo SDK: `usar a linha atual compativel com Expo do projeto`
+- React Native: `managed by Expo SDK 52`
+- React: `managed by Expo SDK 52`
+- expo-router: `managed by Expo SDK 52 via expo install`
+- react-native-reanimated: `managed by Expo SDK 52 via expo install`
+- NativeWind: `4.1.23`
+- Zustand: `5.0.12`
+- `@tanstack/react-query`: `5.95.2`
+- react-hook-form: `7.72.0`
+- zod: `4.3.6`
+- `@clerk/expo`: `3.1.3`
 - Push: `expo-notifications` no app + FCM/OneSignal conforme task especifica
 
 ## Politica do mobile
 
 - Criar o app primeiro com Expo SDK 52.
 - Instalar `expo-router`, `react-native-reanimated`, `expo-notifications` e demais libs do ecossistema com `npx expo install`.
-- Nao pinar manualmente React Native, React ou Expo Router fora do que o Expo resolver.
+- Nao pinar manualmente React Native, React, Expo Router ou Reanimated fora do que o Expo resolver.
 - Tratar o Expo SDK como ancora de compatibilidade do app mobile.
+- As versoes exatas resolvidas pelo Expo devem ser copiadas do `package.json` para esta matriz apos o scaffold inicial quando o pacote pertencer ao ecossistema Expo.
+- Dependencias third-party fora do nucleo Expo podem ser fixadas exatamente desde ja.
 - Se a documentacao do Expo ajustar a versao interna de React Native dentro da mesma linha de SDK, prevalece a compatibilidade oficial do SDK.
 - Nao usar NativeWind v5 no MVP; v5 esta em pre-release.
-- Preferir NativeWind v4.1.x para estabilidade.
+- Preferir NativeWind v4.1.23 para estabilidade.
 - Clerk no Expo deve seguir a documentacao oficial do SDK Expo da Clerk.
 - Se houver duvida entre compatibilidade do Expo e de biblioteca third-party, prevalece a compatibilidade do Expo.
 

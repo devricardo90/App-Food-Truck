@@ -562,7 +562,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-018 - Configurar Expo Router + NativeWind + libs base
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `nao`
 - **Descricao:** Configurar roteamento, styling e libs de estado, forms e server state.
 - **Dependencias:** `FT-017`
@@ -948,6 +948,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 # READY atuais
 
 - `FT-016` - Integrar auth no backend
+- `FT-018` - Configurar Expo Router + NativeWind + libs base
 - `FT-020` - Inicializar app admin Next.js
 - `FT-027` - Definir cobranca mensal da plataforma
 - `FT-029` - Configurar scripts de lint, typecheck e test
@@ -956,7 +957,8 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-020` - Inicializar app admin Next.js
-2. `FT-016` - Integrar auth no backend
-3. `FT-027` - Definir cobranca mensal da plataforma
-4. `FT-029` - Configurar scripts de lint, typecheck e test
+1. `FT-018` - Configurar Expo Router + NativeWind + libs base
+2. `FT-020` - Inicializar app admin Next.js
+3. `FT-016` - Integrar auth no backend
+4. `FT-027` - Definir cobranca mensal da plataforma
+5. `FT-029` - Configurar scripts de lint, typecheck e test
