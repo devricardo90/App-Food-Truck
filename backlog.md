@@ -205,7 +205,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-008 - Definir mapa inicial de telas do admin
 
 - **Skill dona:** `ui-ux-pro-max`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Definir telas do painel da barraca e do painel central.
 - **Dependencias:** `FT-006`
@@ -213,6 +213,16 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - telas da barraca listadas
   - telas da gestao central listadas
   - acoes operacionais principais definidas
+- **Entrega em:** `2026-03-28`
+- **Artefato:** `docs/product/admin-screen-map.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - criterios de aceite: ok
+  - build: nao aplicavel
+  - testes: nao aplicavel
+  - commit: ok
+- **Commit:** `docs(product): define admin screen map for mvp`
 
 ---
 
@@ -652,7 +662,6 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-008` - Definir mapa inicial de telas do admin
 - `FT-024` - Definir regra de capacidade por janela de tempo
 - `FT-025` - Definir regra de estoque diario
 - `FT-030` - Definir estrategia minima de testes do MVP
@@ -667,13 +676,12 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-008` - Definir mapa inicial de telas do admin
-2. `FT-024` - Definir regra de capacidade por janela de tempo
-3. `FT-025` - Definir regra de estoque diario
-4. `FT-030` - Definir estrategia minima de testes do MVP
-5. `FT-031` - Definir estrategia minima de logs e rastreabilidade
-6. `FT-036` - Definir politica de versoes e upgrades
-7. `FT-002` - Configurar TypeScript compartilhado
-8. `FT-003` - Configurar ESLint e Prettier do monorepo
-9. `FT-004` - Criar README raiz e documentacao minima
-10. `FT-027` - Definir cobranca mensal da plataforma
+1. `FT-024` - Definir regra de capacidade por janela de tempo
+2. `FT-025` - Definir regra de estoque diario
+3. `FT-030` - Definir estrategia minima de testes do MVP
+4. `FT-031` - Definir estrategia minima de logs e rastreabilidade
+5. `FT-036` - Definir politica de versoes e upgrades
+6. `FT-002` - Configurar TypeScript compartilhado
+7. `FT-003` - Configurar ESLint e Prettier do monorepo
+8. `FT-004` - Criar README raiz e documentacao minima
+9. `FT-027` - Definir cobranca mensal da plataforma
