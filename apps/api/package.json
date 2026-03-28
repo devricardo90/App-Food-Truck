@@ -20,6 +20,7 @@
     "@nestjs/swagger": "11.2.6",
     "@prisma/adapter-pg": "7.4.1",
     "@prisma/client": "7.4.1",
+    "@scalar/nestjs-api-reference": "1.1.4",
     "@types/node": "24.5.2",
     "pg": "8.16.0",
     "reflect-metadata": "0.2.2",

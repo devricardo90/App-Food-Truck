@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 
 import { NestFactory } from '@nestjs/core';
+import { apiReference } from '@scalar/nestjs-api-reference';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './modules/app.module';
@@ -18,6 +19,16 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, swaggerDocument, {
     jsonDocumentUrl: 'docs-json',
   });
+  app.use(
+    '/reference',
+    apiReference({
+      content: {
+        openapi: {
+          url: '/docs-json',
+        },
+      },
+    }),
+  );
 
   await app.listen(port);
 }

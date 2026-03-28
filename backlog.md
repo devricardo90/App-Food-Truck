@@ -866,7 +866,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-035 - Configurar Scalar no backend
 
 - **Skill dona:** `nest-api-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Configurar Scalar consumindo o documento OpenAPI da API.
 - **Dependencias:** `FT-034`
@@ -874,6 +874,27 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - Scalar configurado
   - referencia navegavel disponivel
   - coerencia com o documento OpenAPI
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/api/package.json`
+  - `apps/api/src/main.ts`
+  - `pnpm-lock.yaml`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - version-matrix: ok
+  - compatibilidade: ok
+  - ordem de instalacao: ok
+  - lint API: ok
+  - typecheck API: ok
+  - build API: ok
+  - lint raiz: ok
+  - typecheck raiz: ok
+  - build raiz: ok
+  - `GET /docs-json`: ok
+  - `GET /reference`: ok
+  - coerencia com OpenAPI do Swagger: ok
+  - commit: ok
+- **Commit:** `feat(api): configure scalar api reference`
 
 ## FT-036 - Definir politica de versoes e upgrades
 
@@ -907,15 +928,13 @@ Quando houver multiplas tasks `READY`, priorizar por:
 - `FT-020` - Inicializar app admin Next.js
 - `FT-027` - Definir cobranca mensal da plataforma
 - `FT-029` - Configurar scripts de lint, typecheck e test
-- `FT-035` - Configurar Scalar no backend
 
 ---
 
 # Ordem sugerida para comecar
 
-1. `FT-035` - Configurar Scalar no backend
-2. `FT-017` - Inicializar app Expo
-3. `FT-020` - Inicializar app admin Next.js
-4. `FT-016` - Integrar auth no backend
-5. `FT-027` - Definir cobranca mensal da plataforma
-6. `FT-029` - Configurar scripts de lint, typecheck e test
+1. `FT-017` - Inicializar app Expo
+2. `FT-020` - Inicializar app admin Next.js
+3. `FT-016` - Integrar auth no backend
+4. `FT-027` - Definir cobranca mensal da plataforma
+5. `FT-029` - Configurar scripts de lint, typecheck e test
