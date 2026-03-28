@@ -427,7 +427,8 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - criterios de aceite: ok
   - build: nao aplicavel
   - testes: nao aplicavel
-  - commit: pendente
+  - commit: ok
+- **Commit:** `docs(payments): define payment confirmation flow`
 
 ## FT-027 - Definir cobranca mensal da plataforma
 
