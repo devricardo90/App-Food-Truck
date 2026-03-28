@@ -376,7 +376,8 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - criterios de aceite: ok
   - build: nao aplicavel
   - testes: nao aplicavel
-  - commit: pendente
+  - commit: ok
+- **Commit:** `docs(order): define order state machine`
 
 ## FT-024 - Definir regra de capacidade por janela de tempo
 
