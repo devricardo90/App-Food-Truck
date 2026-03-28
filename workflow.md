@@ -212,7 +212,27 @@ Nenhuma task da API pode virar `DONE` sem verificar:
 
 ---
 
-### 10. Regra obrigatoria para Prisma
+### 10. Regra da fase de integracao real
+
+Durante a fase de integracao real entre backend, admin e mobile:
+
+- o termo oficial do dominio e `foodtruck`
+- novas entregas nao devem usar `barraca`, `stand` ou `booth`
+- auth so conta como pronta com coerencia verificavel entre backend, admin e mobile
+- `GET /auth/me` e o contexto de foodtruck devem estabilizar antes de catalogo e pedidos
+- frontend nao pode assumir permissao ou escopo sem confirmacao do backend
+- `401`, `403`, troca de contexto e foodtruck ativo precisam ter comportamento definido
+- toda mudanca de contrato exige atualizacao de DTOs, docs e cliente consumidor
+- nenhuma mudanca estrutural de auth, membership, client API ou contexto pode acontecer fora de READY oficial
+- evidencia funcional real passa a ser obrigatoria para aprovar READY sensivel
+
+Referencia obrigatoria:
+
+- `docs/architecture/integration-real-risks.md`
+
+---
+
+### 11. Regra obrigatoria para Prisma
 
 Se qualquer task alterar:
 
@@ -344,7 +364,7 @@ Se a conexao usar `prisma://` ou `prisma+postgres://`:
 
 ---
 
-### 11. Criterio extra de revisao para fluxo critico
+### 12. Criterio extra de revisao para fluxo critico
 
 Se a task mexer em:
 
@@ -360,7 +380,7 @@ a revisao deve ser mais rigida e explicita.
 
 ---
 
-### 12. Frase operacional
+### 13. Frase operacional
 
 Sem matriz de versao nao ha instalacao segura.  
 Sem Swagger/Scalar nao ha contrato confiavel.  

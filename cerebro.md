@@ -93,6 +93,26 @@ Regra operacional:
 - validar coerencia de ESM quando o setup do Prisma Client exigir esse modo
 - se a URL for `prisma://` ou `prisma+postgres://`, tratar como caso de Accelerate e nao de adapter TCP direto
 
+## Regra da Fase de Integracao Real
+
+Durante a fase atual, o maior risco do projeto e a inconsistencia entre autenticacao, autorizacao, contexto de foodtruck e consumo real da API pelos frontends.
+
+Regras obrigatorias:
+
+- o termo oficial do dominio passa a ser `foodtruck`
+- novas entregas nao devem usar `barraca`, `stand` ou `booth`
+- auth so pode ser considerada pronta quando backend, admin e mobile estiverem coerentes e verificaveis
+- `GET /auth/me` e o contexto de foodtruck devem estabilizar antes de catalogo e pedidos
+- frontend nao pode assumir permissao, role ou escopo sem confirmacao do backend
+- `401`, `403`, logout, expiracao de sessao, foodtruck ativo e troca de contexto precisam ter comportamento definido
+- toda mudanca de contrato deve atualizar DTOs, documentacao e cliente consumidor no mesmo ciclo
+- nenhuma mudanca estrutural de auth, membership, client API ou contexto pode acontecer fora de READY oficial
+- nenhuma READY sensivel deve ser aprovada sem evidencia funcional real
+
+Referencia obrigatoria:
+
+- `docs/architecture/integration-real-risks.md`
+
 ## Fonte de Verdade do Status
 
 O ciclo de vida oficial vive em `backlog.md`:
@@ -118,6 +138,7 @@ Voce deve verificar sempre:
 - geracao obrigatoria executada quando aplicavel
 - compatibilidade de dependencias validada na `version-matrix.md` quando aplicavel
 - Swagger e Scalar validados quando a task envolver API HTTP e a etapa exigir documentacao
+- coerencia entre auth, membership, foodtruck ativo e contrato autenticado quando a fase exigir integracao real
 - `backlog.md` pronto para atualizacao
 - commit seguro para ser feito
 
