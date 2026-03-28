@@ -183,7 +183,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-007 - Definir mapa inicial de telas do mobile
 
 - **Skill dona:** `ui-ux-pro-max`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Definir telas do app do cliente no MVP.
 - **Dependencias:** `FT-006`
@@ -191,6 +191,16 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - telas essenciais listadas
   - navegacao principal definida
   - estados vazios e de erro previstos
+- **Entrega em:** `2026-03-28`
+- **Artefato:** `docs/product/mobile-screen-map.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - criterios de aceite: ok
+  - build: nao aplicavel
+  - testes: nao aplicavel
+  - commit: ok
+- **Commit:** `docs(product): define mobile screen map for mvp`
 
 ## FT-008 - Definir mapa inicial de telas do admin
 
@@ -642,7 +652,6 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-007` - Definir mapa inicial de telas do mobile
 - `FT-008` - Definir mapa inicial de telas do admin
 - `FT-024` - Definir regra de capacidade por janela de tempo
 - `FT-025` - Definir regra de estoque diario
@@ -658,14 +667,13 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-007` - Definir mapa inicial de telas do mobile
-2. `FT-008` - Definir mapa inicial de telas do admin
-3. `FT-024` - Definir regra de capacidade por janela de tempo
-4. `FT-025` - Definir regra de estoque diario
-5. `FT-030` - Definir estrategia minima de testes do MVP
-6. `FT-031` - Definir estrategia minima de logs e rastreabilidade
-7. `FT-036` - Definir politica de versoes e upgrades
-8. `FT-002` - Configurar TypeScript compartilhado
-9. `FT-003` - Configurar ESLint e Prettier do monorepo
-10. `FT-004` - Criar README raiz e documentacao minima
-11. `FT-027` - Definir cobranca mensal da plataforma
+1. `FT-008` - Definir mapa inicial de telas do admin
+2. `FT-024` - Definir regra de capacidade por janela de tempo
+3. `FT-025` - Definir regra de estoque diario
+4. `FT-030` - Definir estrategia minima de testes do MVP
+5. `FT-031` - Definir estrategia minima de logs e rastreabilidade
+6. `FT-036` - Definir politica de versoes e upgrades
+7. `FT-002` - Configurar TypeScript compartilhado
+8. `FT-003` - Configurar ESLint e Prettier do monorepo
+9. `FT-004` - Criar README raiz e documentacao minima
+10. `FT-027` - Definir cobranca mensal da plataforma
