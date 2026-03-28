@@ -162,7 +162,31 @@ O subagente executor deve:
 
 ---
 
-### 8. Regra da API antes de DONE
+### 8. Regra de ESLint e Prettier
+
+- ESLint deve usar versao major estavel atual `10.x`
+- Prettier deve usar versao exata `3.3.0`
+- Nunca usar `latest` nessas dependencias
+- Prettier e responsavel por formatacao
+- ESLint e responsavel por qualidade e regras
+
+#### Integracao obrigatoria
+
+- usar `eslint-config-prettier`
+- evitar conflito entre regras
+- em Next.js 16, usar ESLint CLI direto em vez de `next lint`
+
+#### Criterio de DONE
+
+Nenhuma task pode ser aprovada se:
+
+- lint falhar
+- typecheck falhar
+- formatacao estiver inconsistente
+
+---
+
+### 9. Regra da API antes de DONE
 
 Nenhuma task da API pode virar `DONE` sem verificar:
 
@@ -173,7 +197,7 @@ Nenhuma task da API pode virar `DONE` sem verificar:
 
 ---
 
-### 9. Regra obrigatoria para Prisma
+### 10. Regra obrigatoria para Prisma
 
 Se qualquer task alterar:
 
@@ -225,7 +249,7 @@ Sem isso, a task nao pode ser aprovada para commit ou push.
 
 ---
 
-### 10. Criterio extra de revisao para fluxo critico
+### 11. Criterio extra de revisao para fluxo critico
 
 Se a task mexer em:
 
@@ -241,7 +265,7 @@ a revisao deve ser mais rigida e explicita.
 
 ---
 
-### 11. Frase operacional
+### 12. Frase operacional
 
 Sem matriz de versao nao ha instalacao segura.  
 Sem Swagger/Scalar nao ha contrato confiavel.  

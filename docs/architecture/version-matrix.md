@@ -24,12 +24,18 @@ Approved baseline for initial implementation.
 - pnpm: `10.x`
 - TypeScript: `5.8.x`
 - Turbo: `2.5.x`
+- ESLint: `10.x`
+- Prettier: `3.3.0`
 
 ## Politica do ambiente base
 
 - Preferir Node 22 LTS pela estabilidade de producao.
 - Evitar Node Current na base do monorepo.
 - Fixar pnpm no repositorio para reduzir diferencas entre maquinas.
+- Usar ESLint na linha major estavel `10.x`.
+- Fixar Prettier em `3.3.0`, sem range.
+- Nunca usar `latest` para ESLint ou Prettier no projeto.
+- Em Next.js 16, usar ESLint via CLI e nao depender de `next lint`.
 
 ---
 

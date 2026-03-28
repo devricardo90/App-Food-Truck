@@ -130,7 +130,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-003 - Configurar ESLint e Prettier do monorepo
 
 - **Skill dona:** `deployment-infra`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `nao`
 - **Descricao:** Padronizar lint e formatacao em todos os apps e packages.
 - **Dependencias:** `FT-001`
@@ -138,7 +138,6 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - config compartilhada criada
   - scripts de lint funcionando
   - scripts de format/check funcionando
-- **Bloqueio atual:** `version-matrix.md` ainda nao define versoes oficiais para ESLint e Prettier
 
 ## FT-004 - Criar README raiz e documentacao minima
 
@@ -736,6 +735,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
+- `FT-003` - Configurar ESLint e Prettier do monorepo
 - `FT-004` - Criar README raiz e documentacao minima
 - `FT-009` - Inicializar backend NestJS
 - `FT-017` - Inicializar app Expo
@@ -746,8 +746,9 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-004` - Criar README raiz e documentacao minima
-2. `FT-009` - Inicializar backend NestJS
-3. `FT-017` - Inicializar app Expo
-4. `FT-020` - Inicializar app admin Next.js
-5. `FT-027` - Definir cobranca mensal da plataforma
+1. `FT-003` - Configurar ESLint e Prettier do monorepo
+2. `FT-004` - Criar README raiz e documentacao minima
+3. `FT-009` - Inicializar backend NestJS
+4. `FT-017` - Inicializar app Expo
+5. `FT-020` - Inicializar app admin Next.js
+6. `FT-027` - Definir cobranca mensal da plataforma

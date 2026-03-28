@@ -80,6 +80,8 @@ Regra operacional:
 - nenhuma dependencia critica deve ser instalada com `latest`
 - no ecossistema Expo, usar `npx expo install` quando aplicavel
 - toda alteracao de versao deve ter task propria, atualizacao da matriz e commit especifico
+- para ESLint e Prettier, usar as versoes oficiais da matriz e evitar ranges abertos
+- em projetos Next.js 16, usar ESLint via CLI e nao `next lint`
 
 ## Fonte de Verdade do Status
 
@@ -212,6 +214,11 @@ Se a task envolver dependencia, incluir tambem:
 9. compatibilidade validada
 10. impacto arquitetural registrado
 
+Se a task envolver ESLint e Prettier, incluir tambem:
+
+11. integracao com `eslint-config-prettier`
+12. validacao de lint, typecheck e formatacao
+
 Se a task envolver Prisma ou schema do banco, incluir tambem:
 
 11. resultado do `prisma validate`
@@ -288,6 +295,14 @@ Ao instalar ou atualizar dependencias, o subagente deve:
 - atualizar documentacao se a decisao impactar a arquitetura
 
 Se a matriz de versoes nao existir ou nao definir a versao oficial necessaria, o subagente deve parar e reportar bloqueio em vez de improvisar.
+
+Se a task tocar ESLint e Prettier, o subagente deve:
+
+- usar as versoes oficiais da matriz
+- evitar `latest`
+- integrar com `eslint-config-prettier`
+- usar ESLint CLI em projetos Next.js 16
+- validar lint, typecheck e formatacao antes de pedir aprovacao
 
 Se a task tocar Prisma ou schema do banco, o subagente deve:
 
