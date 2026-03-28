@@ -1,22 +1,36 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Headers } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiForbiddenResponse,
+  ApiHeader,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-import { UserRole } from '../../generated/prisma/enums';
+import { MembershipRole, UserRole } from '../../generated/prisma/enums';
+import {
+  AuthMeResponseDto,
+  FoodtruckContextResponseDto,
+  PlatformContextResponseDto,
+} from './auth.dto';
+import { CurrentActiveFoodtruck } from './current-active-foodtruck.decorator';
 import { CurrentAuthUser } from './current-auth-user.decorator';
+import { FoodtruckMembership } from './foodtruck-membership.decorator';
 import { Public } from './public.decorator';
 import { Roles } from './roles.decorator';
-import type { AuthenticatedRequestUser } from './auth.types';
+import type {
+  AuthMembershipContext,
+  AuthenticatedRequestUser,
+} from './auth.types';
+import { AuthService } from './auth.service';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
+  constructor(private readonly authService: AuthService) {}
+
   @Get('public')
   @Public()
   @ApiOperation({ summary: 'Return a public auth module heartbeat.' })
@@ -39,35 +53,61 @@ export class AuthController {
   @Get('me')
   @ApiBearerAuth('clerk')
   @ApiOperation({
-    summary: 'Resolve the authenticated user context from Clerk token.',
+    summary: 'Resolve the authenticated user and active foodtruck context.',
+  })
+  @ApiHeader({
+    name: 'x-foodtruck-id',
+    required: false,
+    description:
+      'Optional active foodtruck id. Required only when the user has multiple memberships and wants a specific context.',
   })
   @ApiOkResponse({
-    description: 'Authenticated user context.',
-    schema: {
-      example: {
-        userId: 'cm0auth123',
-        externalAuthId: 'user_123',
-        role: 'customer',
-        email: 'cliente@foodtrucks.app',
-        memberships: [],
-      },
-    },
+    description: 'Authenticated user context with stable foodtruck contract.',
+    type: AuthMeResponseDto,
   })
   @ApiUnauthorizedResponse({
     description: 'Missing or invalid Clerk bearer token.',
   })
-  getMe(@CurrentAuthUser() authUser: AuthenticatedRequestUser) {
-    return authUser;
+  @ApiForbiddenResponse({
+    description:
+      'Requested foodtruck does not belong to the authenticated user.',
+  })
+  getMe(
+    @CurrentAuthUser() authUser: AuthenticatedRequestUser,
+    @Headers('x-foodtruck-id') requestedFoodtruckId?: string,
+  ): AuthMeResponseDto {
+    return this.authService.buildMeContext(authUser, requestedFoodtruckId);
   }
 
-  @Get('truck-context')
-  @Roles(UserRole.truck_operator, UserRole.truck_manager)
+  @Get('foodtruck-context')
+  @FoodtruckMembership(
+    MembershipRole.truck_operator,
+    MembershipRole.truck_manager,
+  )
   @ApiBearerAuth('clerk')
-  @ApiOperation({ summary: 'Example protected route for truck roles.' })
-  @ApiForbiddenResponse({ description: 'Authenticated user lacks truck role.' })
-  getTruckContext(@CurrentAuthUser() authUser: AuthenticatedRequestUser) {
+  @ApiHeader({
+    name: 'x-foodtruck-id',
+    required: false,
+    description:
+      'Optional active foodtruck id. Required when the authenticated user has multiple foodtruck memberships.',
+  })
+  @ApiOperation({
+    summary: 'Resolve the operational context of the active foodtruck.',
+  })
+  @ApiOkResponse({
+    description: 'Resolved active foodtruck context for the current user.',
+    type: FoodtruckContextResponseDto,
+  })
+  @ApiForbiddenResponse({
+    description:
+      'Authenticated user lacks the required foodtruck membership or selection.',
+  })
+  getFoodtruckContext(
+    @CurrentAuthUser() authUser: AuthenticatedRequestUser,
+    @CurrentActiveFoodtruck() activeFoodtruck: AuthMembershipContext,
+  ): FoodtruckContextResponseDto {
     return {
-      role: authUser.role,
+      activeFoodtruck,
       memberships: authUser.memberships,
     };
   }
@@ -76,12 +116,19 @@ export class AuthController {
   @Roles(UserRole.platform_admin)
   @ApiBearerAuth('clerk')
   @ApiOperation({ summary: 'Example protected route for platform admin role.' })
+  @ApiOkResponse({
+    description: 'Resolved platform context for admin users.',
+    type: PlatformContextResponseDto,
+  })
   @ApiForbiddenResponse({
     description: 'Authenticated user lacks platform_admin role.',
   })
-  getPlatformContext(@CurrentAuthUser() authUser: AuthenticatedRequestUser) {
+  getPlatformContext(
+    @CurrentAuthUser() authUser: AuthenticatedRequestUser,
+  ): PlatformContextResponseDto {
     return {
       role: authUser.role,
+      canAccessPlatform: true,
       memberships: authUser.memberships,
       elevatedScope: 'platform_admin',
     };

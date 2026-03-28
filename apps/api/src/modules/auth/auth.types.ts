@@ -22,3 +22,7 @@ export type AuthenticatedRequestUser = {
   memberships: AuthMembershipContext[];
   tokenSubject: string;
 };
+
+export type ResolveActiveFoodtruckOptions = {
+  requireSelection?: boolean;
+};

@@ -1,13 +1,18 @@
 import {
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { verifyToken } from '@clerk/backend';
 
+import { UserRole } from '../../generated/prisma/enums';
 import { FoodtruckMembershipsService } from '../foodtruck-memberships/foodtruck-memberships.service';
 import { UsersService } from '../users/users.service';
-import type { AuthenticatedRequestUser } from './auth.types';
+import type {
+  AuthenticatedRequestUser,
+  ResolveActiveFoodtruckOptions,
+} from './auth.types';
 
 type ClerkClaims = {
   sub?: string;
@@ -86,6 +91,70 @@ export class AuthService {
     }
 
     return token;
+  }
+
+  resolveActiveFoodtruckContext(
+    authUser: AuthenticatedRequestUser,
+    requestedFoodtruckId?: string,
+    options?: ResolveActiveFoodtruckOptions,
+  ): AuthenticatedRequestUser['memberships'][number] | null {
+    const normalizedFoodtruckId = requestedFoodtruckId?.trim();
+    const memberships = authUser.memberships;
+
+    if (normalizedFoodtruckId) {
+      const matchingMembership = memberships.find(
+        (membership) => membership.foodtruckId === normalizedFoodtruckId,
+      );
+
+      if (!matchingMembership) {
+        throw new ForbiddenException(
+          'Requested foodtruck is not available for the authenticated user.',
+        );
+      }
+
+      return matchingMembership;
+    }
+
+    if (memberships.length === 1) {
+      return memberships[0] ?? null;
+    }
+
+    if (options?.requireSelection) {
+      if (!memberships.length) {
+        throw new ForbiddenException(
+          'Authenticated user has no active foodtruck membership.',
+        );
+      }
+
+      throw new ForbiddenException(
+        'x-foodtruck-id header is required when multiple foodtruck memberships exist.',
+      );
+    }
+
+    return null;
+  }
+
+  buildMeContext(
+    authUser: AuthenticatedRequestUser,
+    requestedFoodtruckId?: string,
+  ) {
+    const activeFoodtruck = this.resolveActiveFoodtruckContext(
+      authUser,
+      requestedFoodtruckId,
+    );
+
+    return {
+      userId: authUser.userId,
+      externalAuthId: authUser.externalAuthId,
+      role: authUser.role,
+      email: authUser.email,
+      name: authUser.name,
+      canAccessPlatform: authUser.role === UserRole.platform_admin,
+      requiresFoodtruckSelection:
+        authUser.memberships.length > 1 && !activeFoodtruck,
+      memberships: authUser.memberships,
+      activeFoodtruck,
+    };
   }
 
   private async syncDomainUser(externalAuthId: string, claims: ClerkClaims) {

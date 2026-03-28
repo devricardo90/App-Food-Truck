@@ -5,6 +5,7 @@ import { FoodtruckMembershipsModule } from '../foodtruck-memberships/foodtruck-m
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthGuard } from './auth.guard';
+import { FoodtruckMembershipGuard } from './foodtruck-membership.guard';
 import { AuthService } from './auth.service';
 import { RolesGuard } from './roles.guard';
 
@@ -20,6 +21,10 @@ import { RolesGuard } from './roles.guard';
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: FoodtruckMembershipGuard,
     },
   ],
   exports: [AuthService],

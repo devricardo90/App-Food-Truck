@@ -1146,7 +1146,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-037 - Integrar auth no admin web
 
 - **Skill dona:** `next-admin-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Conectar o admin ao provider de auth, proteger rotas e resolver sessao base no painel.
 - **Dependencias:** `FT-020`, `FT-021`, `FT-022`, `FT-014`, `FT-015`, `FT-040`
@@ -1159,7 +1159,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-038 - Integrar auth no app mobile
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Conectar o app cliente ao provider de auth, proteger entrada do app e resolver sessao base no mobile.
 - **Dependencias:** `FT-017`, `FT-018`, `FT-019`, `FT-014`, `FT-040`
@@ -1212,7 +1212,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-040 - Expor contexto autenticado estavel do foodtruck na API
 
 - **Skill dona:** `nest-api-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Consolidar endpoints e contratos estaveis de contexto autenticado de foodtruck para consumo do admin e do mobile.
 - **Dependencias:** `FT-016`, `FT-039`, `FT-034`, `FT-035`
@@ -1221,6 +1221,31 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - contexto de foodtruck resolvido
   - contexto de plataforma resolvido
   - contratos documentados em OpenAPI
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/api/src/modules/auth/auth.controller.ts`
+  - `apps/api/src/modules/auth/auth.dto.ts`
+  - `apps/api/src/modules/auth/auth.module.ts`
+  - `apps/api/src/modules/auth/auth.service.ts`
+  - `apps/api/src/modules/auth/auth.types.ts`
+  - `apps/api/src/modules/auth/current-active-foodtruck.decorator.ts`
+  - `apps/api/src/modules/auth/foodtruck-membership.decorator.ts`
+  - `apps/api/src/modules/auth/foodtruck-membership.guard.ts`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - `/auth/me` estavel: ok
+  - contexto de foodtruck resolvido: ok
+  - contexto de plataforma resolvido: ok
+  - contratos OpenAPI anotados: ok
+  - lint API: ok
+  - typecheck API: ok
+  - build API: ok
+  - formatacao raiz: ok
+  - lint raiz: ok
+  - typecheck raiz: ok
+  - build raiz: ok
+  - validacao runtime local dos endpoints: pendente por ausencia de `.env` local da API
+  - commit: ok
 
 ## FT-041 - Integrar admin com contexto autenticado de foodtruck da API
 
@@ -1254,7 +1279,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 - **Status:** `BLOCKED`
 - **Fluxo critico:** `sim`
 - **Descricao:** Criar primeira leitura funcional de foodtrucks, evento e catalogo para destravar consumo real nos frontends.
-- **Dependencias:** `FT-011`, `FT-013`, `FT-023`, `FT-024`, `FT-025`, `FT-040`
+- **Dependencias:** `FT-011`, `FT-013`, `FT-023`, `FT-024`, `FT-025`, `FT-041`, `FT-042`
 - **Criterios de aceite:**
   - endpoint de listagem de foodtrucks criado
   - endpoint de detalhes do foodtruck criado
@@ -1290,16 +1315,16 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-040` - Expor contexto autenticado estavel do foodtruck na API
+- `FT-037` - Integrar auth no admin web
+- `FT-038` - Integrar auth no app mobile
 
 ---
 
 # Ordem sugerida para comecar
 
-1. `FT-040` - Expor contexto autenticado estavel do foodtruck na API
-2. `FT-037` - Integrar auth no admin web
-3. `FT-038` - Integrar auth no app mobile
-4. `FT-041` - Integrar admin com contexto autenticado de foodtruck da API
+1. `FT-037` - Integrar auth no admin web
+2. `FT-038` - Integrar auth no app mobile
+3. `FT-041` - Integrar admin com contexto autenticado de foodtruck da API
 6. `FT-042` - Integrar mobile com contexto autenticado de foodtruck da API
 7. `FT-043` - Implementar leitura inicial de foodtrucks e catalogo na API
 8. `FT-044` - Integrar admin ao catalogo real de foodtruck da API
