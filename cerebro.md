@@ -120,6 +120,36 @@ Exemplos:
 - GraphQL codegen
 - clients, SDKs, tipos ou artefatos equivalentes
 
+## Regra Obrigatoria para Prisma
+
+Se qualquer task alterar algo com impacto no Prisma Client, antes de `REVIEW`, `DONE`, commit ou push e obrigatorio validar a cadeia completa.
+
+Isso inclui alteracoes em:
+
+- `schema.prisma`
+- models
+- enums
+- relations
+- datasource
+- generator
+- migrations com impacto no client
+
+Checklist obrigatorio:
+
+1. rodar `prisma validate`
+2. rodar `prisma generate`
+3. validar se o Prisma Client foi atualizado corretamente
+4. rodar `typecheck` da API
+5. validar `build` da API
+6. revisar se a migration foi criada ou aplicada quando necessario
+
+Regra operacional:
+
+- se a task tocar Prisma ou schema do banco, `prisma generate` e obrigatorio antes de marcar como `REVIEW` ou `DONE`
+- nenhuma task da API que altere Prisma pode ser aprovada para commit ou push sem essa validacao
+- se o Prisma estiver em outro app ou package do monorepo, os comandos devem ser executados no lugar correto
+- sem gerar novamente o client, a task deve ser bloqueada
+
 ## Regra de Commit
 
 Commit so e permitido quando:
@@ -181,6 +211,13 @@ Se a task envolver dependencia, incluir tambem:
 8. versao escolhida
 9. compatibilidade validada
 10. impacto arquitetural registrado
+
+Se a task envolver Prisma ou schema do banco, incluir tambem:
+
+11. resultado do `prisma validate`
+12. confirmacao do `prisma generate`
+13. validacao de `typecheck` e `build` da API
+14. status da migration quando aplicavel
 
 ## Contexto do Projeto
 
@@ -251,6 +288,16 @@ Ao instalar ou atualizar dependencias, o subagente deve:
 - atualizar documentacao se a decisao impactar a arquitetura
 
 Se a matriz de versoes nao existir ou nao definir a versao oficial necessaria, o subagente deve parar e reportar bloqueio em vez de improvisar.
+
+Se a task tocar Prisma ou schema do banco, o subagente deve:
+
+- rodar `prisma validate`
+- rodar `prisma generate`
+- validar se o client refletiu a mudanca
+- rodar `typecheck` da API
+- rodar `build` da API
+- revisar migration quando aplicavel
+- reportar bloqueio antes de seguir se qualquer item falhar
 
 ## Regra de Documentacao da API
 

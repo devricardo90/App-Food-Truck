@@ -173,7 +173,59 @@ Nenhuma task da API pode virar `DONE` sem verificar:
 
 ---
 
-### 9. Criterio extra de revisao para fluxo critico
+### 9. Regra obrigatoria para Prisma
+
+Se qualquer task alterar:
+
+- `schema.prisma`
+- models
+- enums
+- relations
+- datasource
+- generator
+- migrations com impacto no client
+
+entao, antes de commit e push, e obrigatorio:
+
+1. rodar `prisma validate`
+2. rodar `prisma generate`
+3. validar se o Prisma Client foi atualizado corretamente
+4. rodar `typecheck` da API
+5. validar `build` da API
+6. revisar se a migration foi criada ou aplicada quando necessario
+
+Nenhuma task da API que altere Prisma pode virar `DONE` sem essa validacao.
+
+#### Checklist curto antes do push da API
+
+Se mexeu em Prisma:
+
+- `prisma validate`
+- `prisma generate`
+- `prisma migrate dev` ou revisao de migration
+- `typecheck`
+- `build`
+
+#### Risco de nao gerar novamente o client
+
+Sem `prisma generate`, a task pode quebrar:
+
+- tipos desatualizados
+- imports inconsistentes do Prisma Client
+- enums faltando
+- propriedades ou models novas nao reconhecidas
+- build no CI
+- runtime, mesmo quando o local parecia correto
+
+#### Regra para o orquestrador e subagente
+
+Se a task tocar Prisma ou schema do banco, e obrigatorio rodar `prisma generate` antes de marcar como `REVIEW` ou `DONE`.
+
+Sem isso, a task nao pode ser aprovada para commit ou push.
+
+---
+
+### 10. Criterio extra de revisao para fluxo critico
 
 Se a task mexer em:
 
@@ -189,7 +241,7 @@ a revisao deve ser mais rigida e explicita.
 
 ---
 
-### 10. Frase operacional
+### 11. Frase operacional
 
 Sem matriz de versao nao ha instalacao segura.  
 Sem Swagger/Scalar nao ha contrato confiavel.  
