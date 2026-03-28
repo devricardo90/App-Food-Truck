@@ -526,7 +526,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-017 - Inicializar app Expo
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Criar base do app mobile com Expo.
 - **Dependencias:** `FT-001`, `FT-002`
@@ -534,6 +534,30 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - app Expo criado
   - scripts de execucao funcionando
   - estrutura inicial estabelecida
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/mobile/package.json`
+  - `apps/mobile/tsconfig.json`
+  - `apps/mobile/app.json`
+  - `apps/mobile/App.tsx`
+  - `apps/mobile/index.ts`
+  - `apps/mobile/assets/*`
+  - `pnpm-lock.yaml`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - version-matrix: ok
+  - compatibilidade: ok
+  - ordem de instalacao: ok
+  - Expo SDK 52: ok
+  - expo config: ok
+  - lint mobile: ok
+  - typecheck mobile: ok
+  - format:check: ok
+  - lint raiz: ok
+  - typecheck raiz: ok
+  - build raiz: ok
+  - commit: ok
+- **Commit:** `feat(mobile): initialize expo sdk 52 app base`
 
 ## FT-018 - Configurar Expo Router + NativeWind + libs base
 
@@ -924,7 +948,6 @@ Quando houver multiplas tasks `READY`, priorizar por:
 # READY atuais
 
 - `FT-016` - Integrar auth no backend
-- `FT-017` - Inicializar app Expo
 - `FT-020` - Inicializar app admin Next.js
 - `FT-027` - Definir cobranca mensal da plataforma
 - `FT-029` - Configurar scripts de lint, typecheck e test
@@ -933,8 +956,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-017` - Inicializar app Expo
-2. `FT-020` - Inicializar app admin Next.js
-3. `FT-016` - Integrar auth no backend
-4. `FT-027` - Definir cobranca mensal da plataforma
-5. `FT-029` - Configurar scripts de lint, typecheck e test
+1. `FT-020` - Inicializar app admin Next.js
+2. `FT-016` - Integrar auth no backend
+3. `FT-027` - Definir cobranca mensal da plataforma
+4. `FT-029` - Configurar scripts de lint, typecheck e test
