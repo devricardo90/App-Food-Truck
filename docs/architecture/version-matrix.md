@@ -97,7 +97,8 @@ Next.js
 NestJS
 
 - NestJS: `11.x`
-- Prisma ORM: `7.x`
+- prisma: `7.4.1`
+- @prisma/client: `7.4.1`
 - PostgreSQL: `16.13`
 - `@nestjs/swagger`: `11.x`
 - Scalar NestJS API Reference: `linha atual do @scalar/nestjs-api-reference compativel com Nest 11`
@@ -108,7 +109,8 @@ NestJS
 ## Politica da API
 
 - Basear a API em Nest 11.
-- Manter Prisma na linha 7.
+- Manter `prisma` e `@prisma/client` na versao exata `7.4.1`.
+- `prisma` e `@prisma/client` devem sempre ficar na mesma versao.
 - Fixar PostgreSQL 16.13 para o baseline inicial.
 - Swagger entra no Sprint 1 da API.
 - Scalar entra logo apos Swagger.
@@ -170,7 +172,7 @@ NestJS
 
 1. Criar app Nest 11
 2. Estrutura de modulos e config
-3. Prisma 7
+3. Prisma 7.4.1
 4. PostgreSQL
 5. Swagger
 6. Scalar
@@ -201,3 +203,4 @@ NestJS
 - NativeWind v5 nao entra no MVP.
 - PostgreSQL 16.13 e a baseline proposta; upgrade de major so com task propria.
 - Swagger e Scalar sao parte do produto interno da API, nao detalhe opcional.
+- `prisma` e `@prisma/client` devem permanecer sincronizados na mesma versao.

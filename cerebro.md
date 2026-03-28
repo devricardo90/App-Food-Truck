@@ -82,6 +82,7 @@ Regra operacional:
 - toda alteracao de versao deve ter task propria, atualizacao da matriz e commit especifico
 - para ESLint e Prettier, usar as versoes oficiais da matriz e evitar ranges abertos
 - em projetos Next.js 16, usar ESLint via CLI e nao `next lint`
+- para Prisma, `prisma` e `@prisma/client` devem sempre usar exatamente a mesma versao da matriz
 
 ## Fonte de Verdade do Status
 
@@ -151,6 +152,7 @@ Regra operacional:
 - nenhuma task da API que altere Prisma pode ser aprovada para commit ou push sem essa validacao
 - se o Prisma estiver em outro app ou package do monorepo, os comandos devem ser executados no lugar correto
 - sem gerar novamente o client, a task deve ser bloqueada
+- `prisma` e `@prisma/client` nao podem ficar em versoes diferentes
 
 ## Regra de Commit
 

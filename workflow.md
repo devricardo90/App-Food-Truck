@@ -220,6 +220,12 @@ entao, antes de commit e push, e obrigatorio:
 
 Nenhuma task da API que altere Prisma pode virar `DONE` sem essa validacao.
 
+#### Regra de versao do Prisma
+
+- `prisma` e `@prisma/client` devem permanecer sempre na mesma versao
+- baseline oficial atual: `7.4.1`
+- nunca misturar versoes entre CLI e client
+
 #### Checklist curto antes do push da API
 
 Se mexeu em Prisma:
