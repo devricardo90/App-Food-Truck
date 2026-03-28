@@ -46,20 +46,25 @@ App Cliente
 - Expo SDK: `52`
 - React Native: `managed by Expo SDK 52`
 - React: `managed by Expo SDK 52`
-- expo-router: `managed by Expo SDK 52 via expo install`
-- react-native-reanimated: `managed by Expo SDK 52 via expo install`
+- expo-router: `~4.0.22 via expo install`
+- react-native-reanimated: `~3.16.7 via expo install`
+- react-native-safe-area-context: `4.12.0 via expo install`
+- react-native-screens: `~4.4.0 via expo install`
+- react-dom: `18.3.1 via expo install`
+- react-native-web: `~0.19.13 via expo install`
 - NativeWind: `4.1.23`
+- tailwindcss: `3.4.17`
 - Zustand: `5.0.12`
 - `@tanstack/react-query`: `5.95.2`
 - react-hook-form: `7.72.0`
 - zod: `4.3.6`
-- `@clerk/expo`: `3.1.3`
+- Clerk Expo SDK: `BLOCKED pending Expo SDK 52 compatible package and version`
 - Push: `expo-notifications` no app + FCM/OneSignal conforme task especifica
 
 ## Politica do mobile
 
 - Criar o app primeiro com Expo SDK 52.
-- Instalar `expo-router`, `react-native-reanimated`, `expo-notifications` e demais libs do ecossistema com `npx expo install`.
+- Instalar `expo-router`, `react-native-reanimated`, `react-dom`, `react-native-web`, `expo-notifications` e demais libs do ecossistema com `npx expo install`.
 - Nao pinar manualmente React Native, React, Expo Router ou Reanimated fora do que o Expo resolver.
 - Tratar o Expo SDK como ancora de compatibilidade do app mobile.
 - As versoes exatas resolvidas pelo Expo devem ser copiadas do `package.json` para esta matriz apos o scaffold inicial quando o pacote pertencer ao ecossistema Expo.
@@ -67,7 +72,8 @@ App Cliente
 - Se a documentacao do Expo ajustar a versao interna de React Native dentro da mesma linha de SDK, prevalece a compatibilidade oficial do SDK.
 - Nao usar NativeWind v5 no MVP; v5 esta em pre-release.
 - Preferir NativeWind v4.1.23 para estabilidade.
-- Clerk no Expo deve seguir a documentacao oficial do SDK Expo da Clerk.
+- `@clerk/expo@3.1.3` nao entra no app com Expo SDK 52 porque exige Expo `>=53`.
+- A decisao de Clerk no mobile fica bloqueada ate existir package e versao compativeis com Expo SDK 52.
 - Se houver duvida entre compatibilidade do Expo e de biblioteca third-party, prevalece a compatibilidade do Expo.
 
 ---

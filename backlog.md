@@ -562,7 +562,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-018 - Configurar Expo Router + NativeWind + libs base
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Configurar roteamento, styling e libs de estado, forms e server state.
 - **Dependencias:** `FT-017`
@@ -572,11 +572,48 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - Zustand configurado
   - TanStack Query configurado
   - RHF + Zod configurados
+- **Entrega em:** `2026-03-28`
+- **Artefatos:**
+  - `apps/mobile/package.json`
+  - `apps/mobile/app.json`
+  - `apps/mobile/tsconfig.json`
+  - `apps/mobile/babel.config.js`
+  - `apps/mobile/metro.config.js`
+  - `apps/mobile/tailwind.config.js`
+  - `apps/mobile/global.css`
+  - `apps/mobile/expo-env.d.ts`
+  - `apps/mobile/nativewind-env.d.ts`
+  - `apps/mobile/app/_layout.tsx`
+  - `apps/mobile/app/index.tsx`
+  - `apps/mobile/src/providers/app-providers.tsx`
+  - `apps/mobile/src/lib/query-client.ts`
+  - `apps/mobile/src/store/ui-store.ts`
+  - `docs/architecture/version-matrix.md`
+  - `pnpm-lock.yaml`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - version-matrix: ok
+  - compatibilidade: ok
+  - ordem de instalacao: ok
+  - expo config: ok
+  - Expo Router: ok
+  - NativeWind: ok
+  - Zustand: ok
+  - TanStack Query: ok
+  - RHF + Zod: ok
+  - Clerk mobile: bloqueado fora desta task por incompatibilidade com Expo SDK 52
+  - lint mobile: ok
+  - typecheck mobile: ok
+  - build mobile: ok no scaffold atual
+  - lint raiz: ok
+  - typecheck raiz: ok
+  - build raiz: ok
+  - commit: ok
 
 ## FT-019 - Criar estrutura de rotas do app cliente
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `nao`
 - **Descricao:** Criar rotas base para auth, trucks, menu, cart e orders.
 - **Dependencias:** `FT-018`, `FT-007`
@@ -948,7 +985,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 # READY atuais
 
 - `FT-016` - Integrar auth no backend
-- `FT-018` - Configurar Expo Router + NativeWind + libs base
+- `FT-019` - Criar estrutura de rotas do app cliente
 - `FT-020` - Inicializar app admin Next.js
 - `FT-027` - Definir cobranca mensal da plataforma
 - `FT-029` - Configurar scripts de lint, typecheck e test
@@ -957,7 +994,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-018` - Configurar Expo Router + NativeWind + libs base
+1. `FT-019` - Criar estrutura de rotas do app cliente
 2. `FT-020` - Inicializar app admin Next.js
 3. `FT-016` - Integrar auth no backend
 4. `FT-027` - Definir cobranca mensal da plataforma
