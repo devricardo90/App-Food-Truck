@@ -1141,8 +1141,143 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 ---
 
+# EPIC 10 - Primeira camada funcional autenticada
+
+## FT-037 - Integrar auth no admin web
+
+- **Skill dona:** `next-admin-architecture`
+- **Status:** `READY`
+- **Fluxo critico:** `sim`
+- **Descricao:** Conectar o admin ao provider de auth, proteger rotas e resolver sessao base no painel.
+- **Dependencias:** `FT-020`, `FT-021`, `FT-022`, `FT-014`, `FT-015`
+- **Criterios de aceite:**
+  - auth no admin configurada
+  - rotas autenticadas protegidas
+  - sessao base resolvida no painel
+  - regra de acesso por area preparada
+
+## FT-038 - Integrar auth no app mobile
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `READY`
+- **Fluxo critico:** `sim`
+- **Descricao:** Conectar o app cliente ao provider de auth, proteger entrada do app e resolver sessao base no mobile.
+- **Dependencias:** `FT-017`, `FT-018`, `FT-019`, `FT-014`
+- **Criterios de aceite:**
+  - auth no mobile configurada
+  - fluxo de entrada autenticada preparado
+  - sessao base resolvida no app
+  - rotas publicas e autenticadas separadas
+
+## FT-039 - Implementar modulo de users e memberships no backend
+
+- **Skill dona:** `auth-rbac`
+- **Status:** `READY`
+- **Fluxo critico:** `sim`
+- **Descricao:** Implementar modulos de usuarios e vinculos com barracas para sustentar contexto operacional real.
+- **Dependencias:** `FT-011`, `FT-013`, `FT-015`, `FT-016`
+- **Criterios de aceite:**
+  - modulo de users criado
+  - modulo de memberships criado
+  - servicos base de leitura implementados
+  - fronteira com auth e barracas prevista
+
+## FT-040 - Expor contexto autenticado estavel da API
+
+- **Skill dona:** `nest-api-architecture`
+- **Status:** `BLOCKED`
+- **Fluxo critico:** `sim`
+- **Descricao:** Consolidar endpoints e contratos estaveis de contexto autenticado para consumo do admin e do mobile.
+- **Dependencias:** `FT-016`, `FT-039`, `FT-034`, `FT-035`
+- **Criterios de aceite:**
+  - `/auth/me` estavel
+  - contexto de barraca resolvido
+  - contexto de plataforma resolvido
+  - contratos documentados em OpenAPI
+
+## FT-041 - Integrar admin com contexto autenticado da API
+
+- **Skill dona:** `next-admin-architecture`
+- **Status:** `BLOCKED`
+- **Fluxo critico:** `sim`
+- **Descricao:** Conectar o admin autenticado ao contexto real do backend e preparar guardas por area.
+- **Dependencias:** `FT-037`, `FT-040`
+- **Criterios de aceite:**
+  - admin consome `/auth/me`
+  - area da barraca usa contexto real
+  - area central usa contexto real
+  - fallback de sessao invalida previsto
+
+## FT-042 - Integrar mobile com contexto autenticado da API
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `BLOCKED`
+- **Fluxo critico:** `sim`
+- **Descricao:** Conectar o app autenticado ao contexto real do backend e preparar bootstrap de sessao do cliente.
+- **Dependencias:** `FT-038`, `FT-040`
+- **Criterios de aceite:**
+  - mobile consome `/auth/me`
+  - bootstrap de sessao implementado
+  - rotas autenticadas usam contexto real
+  - fallback de token invalido previsto
+
+## FT-043 - Implementar leitura inicial de barracas e catalogo na API
+
+- **Skill dona:** `nest-api-architecture`
+- **Status:** `READY`
+- **Fluxo critico:** `sim`
+- **Descricao:** Criar primeira leitura funcional de barracas, evento e cardapio para destravar consumo real nos frontends.
+- **Dependencias:** `FT-011`, `FT-013`, `FT-023`, `FT-024`, `FT-025`
+- **Criterios de aceite:**
+  - endpoint de listagem de barracas criado
+  - endpoint de detalhes da barraca criado
+  - endpoint de cardapio inicial criado
+  - contratos documentados em OpenAPI
+
+## FT-044 - Integrar admin ao catalogo real da API
+
+- **Skill dona:** `next-admin-architecture`
+- **Status:** `BLOCKED`
+- **Fluxo critico:** `nao`
+- **Descricao:** Substituir placeholders do admin por leitura real de barraca e catalogo onde fizer sentido.
+- **Dependencias:** `FT-041`, `FT-043`
+- **Criterios de aceite:**
+  - dados reais exibidos no admin
+  - carregamento e estado vazio previstos
+  - erro de API tratado
+
+## FT-045 - Integrar mobile a barracas e catalogo reais
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `BLOCKED`
+- **Fluxo critico:** `sim`
+- **Descricao:** Substituir mocks do app cliente por leitura real de barracas e catalogo.
+- **Dependencias:** `FT-042`, `FT-043`
+- **Criterios de aceite:**
+  - lista de barracas vem da API
+  - detalhe da barraca vem da API
+  - cardapio vem da API
+  - estados de loading e erro previstos
+
+---
+
 # READY atuais
+
+- `FT-039` - Implementar modulo de users e memberships no backend
+- `FT-037` - Integrar auth no admin web
+- `FT-038` - Integrar auth no app mobile
+- `FT-043` - Implementar leitura inicial de barracas e catalogo na API
 
 ---
 
 # Ordem sugerida para comecar
+
+1. `FT-039` - Implementar modulo de users e memberships no backend
+2. `FT-037` - Integrar auth no admin web
+3. `FT-038` - Integrar auth no app mobile
+4. `FT-040` - Expor contexto autenticado estavel da API
+5. `FT-041` - Integrar admin com contexto autenticado da API
+6. `FT-042` - Integrar mobile com contexto autenticado da API
+7. `FT-043` - Implementar leitura inicial de barracas e catalogo na API
+8. `FT-044` - Integrar admin ao catalogo real da API
+9. `FT-045` - Integrar mobile a barracas e catalogo reais
