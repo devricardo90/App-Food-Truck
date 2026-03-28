@@ -455,7 +455,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-028 - Definir estrategia de push e SMS
 
 - **Skill dona:** `realtime-notifications`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Decidir canais e responsabilidades para confirmacao e aviso de pedido pronto.
 - **Dependencias:** nenhuma
@@ -464,6 +464,15 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - SMS definido ou descartado para MVP
   - fallback previsto
   - eventos que disparam notificacao listados
+- **Entrega em:** `2026-03-28`
+- **Artefato:** `docs/flows/notifications-strategy.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - criterios de aceite: ok
+  - build: nao aplicavel
+  - testes: nao aplicavel
+  - commit: pendente
 
 ---
 
@@ -527,7 +536,6 @@ Quando houver multiplas tasks `READY`, priorizar por:
 - `FT-024` - Definir regra de capacidade por janela de tempo
 - `FT-025` - Definir regra de estoque diario
 - `FT-027` - Definir cobranca mensal da plataforma
-- `FT-028` - Definir estrategia de push e SMS
 - `FT-030` - Definir estrategia minima de testes do MVP
 - `FT-031` - Definir estrategia minima de logs e rastreabilidade
 
@@ -535,11 +543,11 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-028` - Definir estrategia de push e SMS
-2. `FT-001` - Inicializar monorepo base
-3. `FT-006` - Definir jornadas oficiais das 3 personas
-4. `FT-015` - Definir roles e permissoes do sistema
-5. `FT-024` - Definir regra de capacidade por janela de tempo
-6. `FT-025` - Definir regra de estoque diario
-7. `FT-030` - Definir estrategia minima de testes do MVP
-8. `FT-031` - Definir estrategia minima de logs e rastreabilidade
+1. `FT-001` - Inicializar monorepo base
+2. `FT-006` - Definir jornadas oficiais das 3 personas
+3. `FT-015` - Definir roles e permissoes do sistema
+4. `FT-024` - Definir regra de capacidade por janela de tempo
+5. `FT-025` - Definir regra de estoque diario
+6. `FT-030` - Definir estrategia minima de testes do MVP
+7. `FT-031` - Definir estrategia minima de logs e rastreabilidade
+8. `FT-027` - Definir cobranca mensal da plataforma
