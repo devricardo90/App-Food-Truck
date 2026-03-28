@@ -1806,7 +1806,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-057 - Validar fluxo basico no emulador
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `READY`
+- **Status:** `BLOCKED`
 - **Fluxo critico:** `sim`
 - **Descricao:** Validar no emulador o fluxo basico de descoberta, detalhe de foodtruck e catalogo com a API local em execucao.
 - **Dependencias:** `FT-056`
@@ -1815,15 +1815,25 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - detalhe de foodtruck abre no emulador
   - catalogo abre no emulador
   - erros de conectividade ou runtime, se existirem, ficam registrados com causa exata
+- **Observacoes de execucao em:** `2026-03-28`
+  - backend local corrigido para usar `127.0.0.1:54333` no `.env`
+  - `/foodtrucks`: ok apos fallback para fixtures quando `Event` nao existe no banco local
+  - `/foodtrucks/funky-chicken`: ok
+  - `/foodtrucks/funky-chicken/catalog`: ok
+  - Expo/Metro em `http://localhost:8081`: ok
+  - emulador Android ativo com tela real de sign-in do Clerk: ok
+  - bloqueio atual: falta uma sessao Clerk valida para atravessar o gate de auth do app e validar visualmente lista, detalhe e catalogo no emulador
+  - evidencia do bloqueio: tentativa controlada com credencial invalida retornou `Couldn't find your account.`
+  - causa registrada: sem sessao valida o layout autenticado redireciona para `/(auth)/sign-in`, impedindo a navegacao visual da aba de trucks
 
 ---
 
 # READY atuais
 
-- `FT-057` - Validar fluxo basico no emulador
+- nenhuma task `READY` no momento
 
 ---
 
 # Ordem sugerida para comecar
 
-1. `FT-057` - Validar fluxo basico no emulador
+- fornecer uma credencial Clerk valida de teste para concluir `FT-057` no emulador

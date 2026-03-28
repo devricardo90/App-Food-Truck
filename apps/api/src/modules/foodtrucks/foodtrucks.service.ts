@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { EventStatus, TruckStatus } from '../../generated/prisma/enums';
+import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import type {
   FoodtruckCatalogResponseDto,
@@ -128,19 +129,34 @@ export class FoodtrucksService {
   }
 
   private async findActiveEvent() {
-    return this.prisma.event.findFirst({
-      where: {
-        status: EventStatus.active,
-      },
-      orderBy: {
-        startsAt: 'asc',
-      },
-      select: {
-        id: true,
-        slug: true,
-        name: true,
-      },
-    });
+    try {
+      return await this.prisma.event.findFirst({
+        where: {
+          status: EventStatus.active,
+        },
+        orderBy: {
+          startsAt: 'asc',
+        },
+        select: {
+          id: true,
+          slug: true,
+          name: true,
+        },
+      });
+    } catch (error) {
+      if (this.shouldUseDevelopmentFallback(error)) {
+        return null;
+      }
+
+      throw error;
+    }
+  }
+
+  private shouldUseDevelopmentFallback(error: unknown) {
+    return (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      (error.code === 'P1001' || error.code === 'P2021')
+    );
   }
 
   private async findActiveEventOrThrow() {
