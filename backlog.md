@@ -160,7 +160,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-006 - Definir jornadas oficiais das 3 personas
 
 - **Skill dona:** `ui-ux-pro-max`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Mapear jornada do cliente, da barraca e da gestao central.
 - **Dependencias:** `FT-005`
@@ -169,11 +169,21 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - jornada da barraca documentada
   - jornada da gestao central documentada
   - pontos de friccao mapeados
+- **Entrega em:** `2026-03-28`
+- **Artefato:** `docs/product/persona-journeys.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - escopo: ok
+  - criterios de aceite: ok
+  - build: nao aplicavel
+  - testes: nao aplicavel
+  - commit: ok
+- **Commit:** `docs(product): define persona journeys for mvp`
 
 ## FT-007 - Definir mapa inicial de telas do mobile
 
 - **Skill dona:** `ui-ux-pro-max`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `nao`
 - **Descricao:** Definir telas do app do cliente no MVP.
 - **Dependencias:** `FT-006`
@@ -185,7 +195,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-008 - Definir mapa inicial de telas do admin
 
 - **Skill dona:** `ui-ux-pro-max`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `nao`
 - **Descricao:** Definir telas do painel da barraca e do painel central.
 - **Dependencias:** `FT-006`
@@ -622,8 +632,9 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-006` - Definir jornadas oficiais das 3 personas
 - `FT-015` - Definir roles e permissoes do sistema
+- `FT-007` - Definir mapa inicial de telas do mobile
+- `FT-008` - Definir mapa inicial de telas do admin
 - `FT-024` - Definir regra de capacidade por janela de tempo
 - `FT-025` - Definir regra de estoque diario
 - `FT-030` - Definir estrategia minima de testes do MVP
@@ -638,14 +649,15 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-1. `FT-006` - Definir jornadas oficiais das 3 personas
-2. `FT-015` - Definir roles e permissoes do sistema
-3. `FT-024` - Definir regra de capacidade por janela de tempo
-4. `FT-025` - Definir regra de estoque diario
-5. `FT-030` - Definir estrategia minima de testes do MVP
-6. `FT-031` - Definir estrategia minima de logs e rastreabilidade
-7. `FT-036` - Definir politica de versoes e upgrades
-8. `FT-002` - Configurar TypeScript compartilhado
-9. `FT-003` - Configurar ESLint e Prettier do monorepo
-10. `FT-004` - Criar README raiz e documentacao minima
-11. `FT-027` - Definir cobranca mensal da plataforma
+1. `FT-015` - Definir roles e permissoes do sistema
+2. `FT-007` - Definir mapa inicial de telas do mobile
+3. `FT-008` - Definir mapa inicial de telas do admin
+4. `FT-024` - Definir regra de capacidade por janela de tempo
+5. `FT-025` - Definir regra de estoque diario
+6. `FT-030` - Definir estrategia minima de testes do MVP
+7. `FT-031` - Definir estrategia minima de logs e rastreabilidade
+8. `FT-036` - Definir politica de versoes e upgrades
+9. `FT-002` - Configurar TypeScript compartilhado
+10. `FT-003` - Configurar ESLint e Prettier do monorepo
+11. `FT-004` - Criar README raiz e documentacao minima
+12. `FT-027` - Definir cobranca mensal da plataforma
