@@ -892,7 +892,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-027 - Definir cobranca mensal da plataforma
 
 - **Skill dona:** `payments-integration`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Modelar o fluxo da mensalidade paga pela barraca a plataforma.
 - **Dependencias:** `FT-005`
@@ -900,6 +900,15 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - regra de cobranca definida
   - status de assinatura definidos
   - impacto em acesso da barraca previsto
+- **Entrega em:** `2026-03-28`
+- **Artefato:** `docs/flows/platform-billing.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - regra de cobranca: ok
+  - status de assinatura: ok
+  - impacto em acesso da barraca: ok
+  - separacao entre cobranca recorrente e pagamento do pedido: ok
+  - commit: ok
 
 ## FT-028 - Definir estrategia de push e SMS
 
@@ -1114,12 +1123,10 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-027` - Definir cobranca mensal da plataforma
 - `FT-029` - Configurar scripts de lint, typecheck e test
 
 ---
 
 # Ordem sugerida para comecar
 
-1. `FT-027` - Definir cobranca mensal da plataforma
-2. `FT-029` - Configurar scripts de lint, typecheck e test
+1. `FT-029` - Configurar scripts de lint, typecheck e test
