@@ -230,24 +230,34 @@ Nenhuma task da API que altere Prisma pode virar `DONE` sem essa validacao.
 
 Se a API utilizar Prisma 7 com PostgreSQL:
 
-- e obrigatorio garantir a presenca do driver `pg`
+- e obrigatorio usar `prisma.config.ts`
+- e obrigatorio usar `generator client { provider = "prisma-client" output = "..." }`
+- e obrigatorio instalar `@prisma/client`, `@prisma/adapter-pg` e `pg`
 - o pacote `pg` deve estar instalado e compativel com o Node do projeto
 - nao assumir que Prisma instala o driver automaticamente
+- nunca instanciar `new PrismaClient()` sem `adapter`
+- manter uma unica instancia do Prisma Client na aplicacao
 
 #### Dependencia obrigatoria
 
+- `@prisma/adapter-pg`
 - `pg`
 
 #### Regra
 
 Antes de aprovar qualquer task relacionada a banco de dados:
 
-1. verificar se `pg` esta instalado
-2. validar se a conexao com PostgreSQL funciona
-3. validar se o Prisma Client conecta corretamente
-4. validar se nao ha erro de driver no runtime
+1. verificar se `@prisma/adapter-pg` esta instalado
+2. verificar se `pg` esta instalado
+3. validar se o generator usa `provider = "prisma-client"` com `output` explicito
+4. validar se o import nao continua vindo de `@prisma/client` quando o projeto ja migrou para output customizado
+5. validar se a conexao com PostgreSQL funciona
+6. validar se o Prisma Client conecta corretamente com `adapter`
+7. validar se nao ha erro de driver no runtime
+8. revisar pool e timeout do adapter `pg`
+9. validar SSL quando o ambiente for remoto
 
-Se `pg` nao estiver presente:
+Se `@prisma/adapter-pg` ou `pg` nao estiverem presentes:
 
 - bloquear a task
 - solicitar instalacao antes de prosseguir
@@ -259,6 +269,8 @@ Nenhuma task envolvendo Prisma pode ser marcada como `DONE` sem:
 - `prisma generate` executado
 - conexao com banco validada
 - driver `pg` presente e funcional
+- `@prisma/adapter-pg` presente e funcional
+- Prisma Client instanciado com `adapter`
 
 #### Checklist curto antes do push da API
 
@@ -269,6 +281,9 @@ Se mexeu em Prisma:
 - `prisma migrate dev` ou revisao de migration
 - `typecheck`
 - `build`
+- validar generator com `provider = "prisma-client"` e `output`
+- validar import vindo do output customizado
+- validar `@prisma/adapter-pg`
 - validar driver `pg`
 
 #### Risco de nao gerar novamente o client
@@ -290,9 +305,10 @@ Sem isso, a task nao pode ser aprovada para commit ou push.
 
 Se a task envolver Prisma com PostgreSQL:
 
+- garantir que `@prisma/adapter-pg` esta instalado
 - garantir que o pacote `pg` esta instalado
 - validar compatibilidade com Node.js do projeto
-- bloquear execucao se o driver nao estiver presente
+- bloquear execucao se o adapter ou o driver nao estiverem presentes
 
 ---
 

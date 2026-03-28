@@ -83,8 +83,11 @@ Regra operacional:
 - para ESLint e Prettier, usar as versoes oficiais da matriz e evitar ranges abertos
 - em projetos Next.js 16, usar ESLint via CLI e nao `next lint`
 - para Prisma, `prisma` e `@prisma/client` devem sempre usar exatamente a mesma versao da matriz
-- se a task envolver Prisma 7 com PostgreSQL, o driver `pg` e obrigatorio e deve estar explicitamente instalado
-- nao assumir que Prisma instala o driver PostgreSQL automaticamente
+- se a task envolver Prisma 7 com PostgreSQL, `@prisma/adapter-pg` e `pg` sao obrigatorios
+- nao assumir que Prisma instala adapter ou driver automaticamente
+- em Prisma 7 com PostgreSQL, usar `prisma.config.ts`, `provider = "prisma-client"` e `output` explicito
+- quando o projeto migrar para output customizado, o import do client nao pode continuar vindo de `@prisma/client`
+- nunca aprovar `new PrismaClient()` sem `adapter` nesse setup
 
 ## Fonte de Verdade do Status
 
@@ -155,8 +158,10 @@ Regra operacional:
 - se o Prisma estiver em outro app ou package do monorepo, os comandos devem ser executados no lugar correto
 - sem gerar novamente o client, a task deve ser bloqueada
 - `prisma` e `@prisma/client` nao podem ficar em versoes diferentes
-- se a API usar Prisma 7 com PostgreSQL, `pg` deve estar instalado e funcional antes de aprovar a task
-- se faltar `pg`, a task deve ser bloqueada antes de `REVIEW`
+- se a API usar Prisma 7 com PostgreSQL, `@prisma/adapter-pg` e `pg` devem estar instalados e funcionais antes de aprovar a task
+- se faltar adapter ou driver, a task deve ser bloqueada antes de `REVIEW`
+- se o generator nao estiver em `provider = "prisma-client"` com `output` explicito, a task deve ser bloqueada
+- se o client continuar sendo importado de `@prisma/client` depois da migracao para output customizado, a task deve ser bloqueada
 
 ## Regra de Commit
 
@@ -322,9 +327,17 @@ Se a task tocar Prisma ou schema do banco, o subagente deve:
 
 Ao trabalhar com Prisma 7 + PostgreSQL, o subagente deve:
 
+- verificar se `@prisma/adapter-pg` esta instalado
 - verificar se `pg` esta instalado
-- instalar `pg` se nao estiver presente e a task incluir install aprovado
+- instalar `@prisma/adapter-pg` e `pg` se nao estiverem presentes e a task incluir install aprovado
+- garantir `prisma.config.ts`
+- garantir `provider = "prisma-client"` com `output` explicito no generator
+- garantir import pelo output customizado quando o projeto ja tiver migrado
+- instanciar o Prisma Client com `adapter`
+- manter uma unica instancia do Prisma Client na aplicacao
 - validar conexao com o banco
+- revisar pool e timeout do adapter `pg`
+- validar SSL quando o ambiente for remoto
 - executar `prisma generate` apos alteracoes no schema
 - reportar qualquer erro de driver ou conexao
 

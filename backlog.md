@@ -839,7 +839,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - Swagger configurado
   - OpenAPI base gerado
   - rota de documentacao disponivel
-- **Bloqueio:** o bootstrap atual da API nao sobe com Prisma 7 porque o client exige `adapter` ou `accelerateUrl`, e a baseline oficial ainda nao define a estrategia nem as versoes exatas para esse runtime. Sem a API subir de forma valida, `/docs` nao pode ser aprovado.
+- **Bloqueio:** o bootstrap atual da API nao sobe com Prisma 7 porque o runtime correto com PostgreSQL ainda nao foi formalizado nem implementado. O projeto precisa de `@prisma/adapter-pg`, `pg`, `generator client { provider = "prisma-client" output = "..." }`, import pelo output customizado e instancia unica do client com `adapter`. Sem isso, `/docs` nao pode ser aprovado.
 
 ## FT-035 - Configurar Scalar no backend
 

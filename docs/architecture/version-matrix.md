@@ -99,6 +99,7 @@ NestJS
 - NestJS: `11.x`
 - prisma: `7.4.1`
 - @prisma/client: `7.4.1`
+- `@prisma/adapter-pg`: `7.4.1`
 - PostgreSQL: `16.13`
 - `pg`: `8.x`
 - `@nestjs/swagger`: `11.2.6`
@@ -111,10 +112,16 @@ NestJS
 
 - Basear a API em Nest 11.
 - Manter `prisma` e `@prisma/client` na versao exata `7.4.1`.
+- Manter `@prisma/adapter-pg` na versao exata `7.4.1`.
 - `prisma` e `@prisma/client` devem sempre ficar na mesma versao.
+- `@prisma/adapter-pg` deve acompanhar a linha oficial do Prisma do projeto.
 - Fixar PostgreSQL 16.13 para o baseline inicial.
+- Para Prisma 7 + PostgreSQL, usar `generator client { provider = "prisma-client" output = "..." }`.
+- `prisma.config.ts` e obrigatorio desde o inicio.
 - `pg` e obrigatorio para Prisma 7 com PostgreSQL.
+- `@prisma/adapter-pg` e obrigatorio para Prisma 7 com PostgreSQL.
 - Prisma nao garante instalacao automatica do driver PostgreSQL.
+- Prisma nao deve ser instanciado sem `adapter` nesse setup.
 - `pg` deve ser instalado explicitamente e ser compativel com Node 22 LTS.
 - Swagger entra no Sprint 1 da API.
 - Scalar entra logo apos Swagger.
@@ -209,4 +216,5 @@ NestJS
 - PostgreSQL 16.13 e a baseline proposta; upgrade de major so com task propria.
 - Swagger e Scalar sao parte do produto interno da API, nao detalhe opcional.
 - `prisma` e `@prisma/client` devem permanecer sincronizados na mesma versao.
+- `@prisma/adapter-pg` faz parte obrigatoria do runtime Prisma 7 com PostgreSQL.
 - `pg` e parte obrigatoria do runtime quando Prisma 7 falar com PostgreSQL.
