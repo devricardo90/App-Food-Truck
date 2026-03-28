@@ -566,7 +566,8 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - criterios de aceite: ok
   - build: nao aplicavel
   - testes: nao aplicavel
-  - commit: pendente
+  - commit: ok
+- **Commit:** `docs(infra): define version matrix and protocol rules`
 
 ## FT-034 - Configurar Swagger no backend
 
