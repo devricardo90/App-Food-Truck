@@ -831,7 +831,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-034 - Configurar Swagger no backend
 
 - **Skill dona:** `nest-api-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Configurar Swagger no backend para expor a documentacao tecnica da API.
 - **Dependencias:** `FT-009`
@@ -839,7 +839,6 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - Swagger configurado
   - OpenAPI base gerado
   - rota de documentacao disponivel
-- **Bloqueio:** `version-matrix.md` ainda nao define versao exata para `@nestjs/swagger` nem para a dependencia de UI HTTP correspondente. Sem baseline oficial, a task nao pode instalar dependencia critica.
 
 ## FT-035 - Configurar Scalar no backend
 
@@ -885,13 +884,15 @@ Quando houver multiplas tasks `READY`, priorizar por:
 - `FT-020` - Inicializar app admin Next.js
 - `FT-027` - Definir cobranca mensal da plataforma
 - `FT-029` - Configurar scripts de lint, typecheck e test
+- `FT-034` - Configurar Swagger no backend
 
 ---
 
 # Ordem sugerida para comecar
 
-1. `FT-017` - Inicializar app Expo
-2. `FT-020` - Inicializar app admin Next.js
-3. `FT-016` - Integrar auth no backend
-4. `FT-027` - Definir cobranca mensal da plataforma
-5. `FT-029` - Configurar scripts de lint, typecheck e test
+1. `FT-034` - Configurar Swagger no backend
+2. `FT-017` - Inicializar app Expo
+3. `FT-020` - Inicializar app admin Next.js
+4. `FT-016` - Integrar auth no backend
+5. `FT-027` - Definir cobranca mensal da plataforma
+6. `FT-029` - Configurar scripts de lint, typecheck e test

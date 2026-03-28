@@ -100,8 +100,8 @@ NestJS
 - prisma: `7.4.1`
 - @prisma/client: `7.4.1`
 - PostgreSQL: `16.13`
-- `@nestjs/swagger`: `11.x`
-- Scalar NestJS API Reference: `linha atual do @scalar/nestjs-api-reference compativel com Nest 11`
+- `@nestjs/swagger`: `11.2.6`
+- `@scalar/nestjs-api-reference`: `1.1.4`
 - Stripe SDK: `linha atual estavel compativel com Node 22`
 - Firebase Admin SDK: `linha atual estavel compativel com Node 22`
 - Twilio SDK: `linha atual estavel compativel com Node 22`
@@ -114,6 +114,7 @@ NestJS
 - Fixar PostgreSQL 16.13 para o baseline inicial.
 - Swagger entra no Sprint 1 da API.
 - Scalar entra logo apos Swagger.
+- Servir Swagger UI via `SwaggerModule.setup(...)` sem adicionar dependencia HTTP extra separada.
 - SDKs externos devem ser aprovados por compatibilidade com Node 22 e Nest 11 antes do install.
 
 ---
