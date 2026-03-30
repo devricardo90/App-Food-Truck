@@ -1806,7 +1806,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-057 - Validar fluxo basico no emulador
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Validar no emulador o fluxo basico de descoberta, detalhe de foodtruck e catalogo com a API local em execucao.
 - **Dependencias:** `FT-056`, `FT-059`
@@ -1837,6 +1837,9 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - revalidacao oficial em `2026-03-30`: `signIn.create()`, `setActive()` e `GET /auth/me` passaram com o template `foodtrucks-api`; o `AppLayout` entrou em `phase: ready` e a aba `BARRACAS` exibiu a lista real de foodtrucks no emulador
   - estado oficial apos estabilizacao minima de auth em `2026-03-30`: o bloqueio por JWT/Clerk foi removido; o restante desta task fica restrito a evidenciar detalhe e catalogo no emulador, sem abrir nova frente de auth
   - tentativa final de conclusao em `2026-03-30`: a lista permaneceu validada visualmente no emulador, mas o toque automatizado no card nao abriu o detalhe e a abertura por rota direta deixou o Expo Go preso na tela de transicao; detalhe e catalogo seguem sem evidencia visual concluida nesta rodada
+  - conclusao oficial em `2026-03-30`: a lista passou a usar `ScrollView` real no Expo Go, os cards ficaram clicaveis via `Pressable`, o toque no card `Funky Chicken` abriu a tela de detalhe, o CTA `Abrir cardapio` abriu o catalogo e o catalogo respondeu a scroll real no emulador; a evidencia visual de lista -> detalhe -> catalogo ficou concluida
+  - logs de navegacao adicionados no mobile para registrar estado da lista, card pressionado, rota e carregamento de detalhe/catalogo durante a validacao visual
+  - commit: pendente
 
 ---
 
@@ -1988,7 +1991,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - o backend passou a diferenciar melhor bearer ausente/malformado, falha em `verifyToken`, claims inesperadas e falhas posteriores de dominio para diagnostico
   - o endurecimento ficou propositalmente minimo para nao travar o fluxo do MVP
   - hardening mais amplo, testes automatizados e observabilidade de auth ficam explicitamente adiados para task futura
-- **Commit:** `pendente`
+- **Commit:** `chore(auth): close minimal mobile auth baseline`
 
 ## FT-061 - Hardening e testes de auth
 
@@ -2009,12 +2012,11 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-057` - Validar fluxo basico no emulador
+- nenhuma task `READY` no momento
 
 ---
 
 # Ordem sugerida para comecar
 
-- concluir a evidencia visual restante de `FT-057` para detalhe e catalogo
 - retomar imediatamente as tasks de produto/MVP desbloqueadas apos a auth minima funcional
 - deixar `FT-061` para a proxima frente tecnica de hardening e testes

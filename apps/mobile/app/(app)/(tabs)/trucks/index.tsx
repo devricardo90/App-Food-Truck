@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'expo-router';
-import { Image, Text, View } from 'react-native';
+import { useEffect } from 'react';
+import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { resolveDevFoodtruckImage } from '../../../../src/lib/dev-foodtruck-media';
 import { listFoodtrucks } from '../../../../src/lib/foodtrucks-api';
@@ -11,8 +12,24 @@ export default function TrucksHomeScreen() {
     queryFn: listFoodtrucks,
   });
 
+  useEffect(() => {
+    console.log('Mobile trucks list state:', {
+      isPending: foodtrucksQuery.isPending,
+      isError: foodtrucksQuery.isError,
+      count: foodtrucksQuery.data?.length ?? 0,
+    });
+  }, [
+    foodtrucksQuery.data?.length,
+    foodtrucksQuery.isError,
+    foodtrucksQuery.isPending,
+  ]);
+
   return (
-    <View className="flex-1 bg-sand px-6 pt-16">
+    <ScrollView
+      className="flex-1 bg-sand"
+      contentContainerClassName="px-6 pb-10 pt-16"
+      showsVerticalScrollIndicator={false}
+    >
       <Text className="text-xs font-semibold uppercase tracking-[2px] text-ember">
         Descoberta
       </Text>
@@ -36,7 +53,15 @@ export default function TrucksHomeScreen() {
         ) : (
           foodtrucksQuery.data.map((truck) => (
             <Link asChild href={`/(app)/trucks/${truck.slug}`} key={truck.slug}>
-              <View className="overflow-hidden rounded-[24px] border border-amber-950/10 bg-white shadow-sm">
+              <Pressable
+                className="overflow-hidden rounded-[24px] border border-amber-950/10 bg-white shadow-sm"
+                onPress={() => {
+                  console.log('Mobile truck card pressed:', {
+                    truckSlug: truck.slug,
+                    route: `/(app)/trucks/${truck.slug}`,
+                  });
+                }}
+              >
                 {resolveDevFoodtruckImage(truck.heroImageKey) ? (
                   <Image
                     source={resolveDevFoodtruckImage(truck.heroImageKey)}
@@ -67,11 +92,11 @@ export default function TrucksHomeScreen() {
                     janela {truck.capacityWindowMinutes} min
                   </Text>
                 </View>
-              </View>
+              </Pressable>
             </Link>
           ))
         )}
       </View>
-    </View>
+    </ScrollView>
   );
 }

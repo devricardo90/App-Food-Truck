@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
-import { Image, Text, View } from 'react-native';
+import { useEffect } from 'react';
+import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { resolveDevFoodtruckImage } from '../../../../src/lib/dev-foodtruck-media';
 import { getFoodtruckDetail } from '../../../../src/lib/foodtrucks-api';
@@ -12,6 +13,42 @@ export default function TruckDetailScreen() {
     queryFn: async () => getFoodtruckDetail(truckId),
     enabled: Boolean(truckId),
   });
+
+  useEffect(() => {
+    console.log('Mobile truck detail route:', {
+      truckId: truckId ?? null,
+    });
+  }, [truckId]);
+
+  useEffect(() => {
+    if (truckQuery.isPending) {
+      console.log('Mobile truck detail loading:', {
+        truckId: truckId ?? null,
+      });
+      return;
+    }
+
+    if (truckQuery.isError) {
+      console.log('Mobile truck detail error:', {
+        truckId: truckId ?? null,
+        message: truckQuery.error.message,
+      });
+      return;
+    }
+
+    if (truckQuery.data) {
+      console.log('Mobile truck detail success:', {
+        truckId: truckId ?? null,
+        truckSlug: truckQuery.data.slug,
+      });
+    }
+  }, [
+    truckId,
+    truckQuery.data,
+    truckQuery.error,
+    truckQuery.isError,
+    truckQuery.isPending,
+  ]);
 
   if (truckQuery.isPending) {
     return (
@@ -43,7 +80,11 @@ export default function TruckDetailScreen() {
   const logoImage = resolveDevFoodtruckImage(truck.logoImageKey);
 
   return (
-    <View className="flex-1 bg-sand px-6 pt-16">
+    <ScrollView
+      className="flex-1 bg-sand"
+      contentContainerClassName="px-6 pb-10 pt-16"
+      showsVerticalScrollIndicator={false}
+    >
       <Text className="text-xs font-semibold uppercase tracking-[2px] text-ember">
         Barraca
       </Text>
@@ -109,16 +150,28 @@ export default function TruckDetailScreen() {
 
       <View className="mt-8 gap-3">
         <Link asChild href={`/(app)/trucks/${truck.slug}/menu`}>
-          <Text className="rounded-full bg-pine px-4 py-4 text-center text-sm font-semibold text-white">
-            Abrir cardapio
-          </Text>
+          <Pressable
+            className="rounded-full bg-pine px-4 py-4"
+            onPress={() => {
+              console.log('Mobile truck detail open catalog:', {
+                truckSlug: truck.slug,
+                route: `/(app)/trucks/${truck.slug}/menu`,
+              });
+            }}
+          >
+            <Text className="text-center text-sm font-semibold text-white">
+              Abrir cardapio
+            </Text>
+          </Pressable>
         </Link>
         <Link asChild href="/(app)/(tabs)/trucks">
-          <Text className="rounded-full border border-neutral-300 px-4 py-4 text-center text-sm font-semibold text-neutral-700">
-            Voltar para barracas
-          </Text>
+          <Pressable className="rounded-full border border-neutral-300 px-4 py-4">
+            <Text className="text-center text-sm font-semibold text-neutral-700">
+              Voltar para barracas
+            </Text>
+          </Pressable>
         </Link>
       </View>
-    </View>
+    </ScrollView>
   );
 }

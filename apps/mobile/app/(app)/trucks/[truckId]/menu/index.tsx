@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
-import { Image, Text, View } from 'react-native';
+import { useEffect } from 'react';
+import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { resolveDevFoodtruckImage } from '../../../../../src/lib/dev-foodtruck-media';
 import {
@@ -15,6 +16,43 @@ export default function MenuScreen() {
     queryFn: async () => getFoodtruckCatalog(truckId),
     enabled: Boolean(truckId),
   });
+
+  useEffect(() => {
+    console.log('Mobile catalog route:', {
+      truckId: truckId ?? null,
+    });
+  }, [truckId]);
+
+  useEffect(() => {
+    if (catalogQuery.isPending) {
+      console.log('Mobile catalog loading:', {
+        truckId: truckId ?? null,
+      });
+      return;
+    }
+
+    if (catalogQuery.isError) {
+      console.log('Mobile catalog error:', {
+        truckId: truckId ?? null,
+        message: catalogQuery.error.message,
+      });
+      return;
+    }
+
+    if (catalogQuery.data) {
+      console.log('Mobile catalog success:', {
+        truckId: truckId ?? null,
+        foodtruckSlug: catalogQuery.data.foodtruckSlug,
+        categories: catalogQuery.data.categories.length,
+      });
+    }
+  }, [
+    truckId,
+    catalogQuery.data,
+    catalogQuery.error,
+    catalogQuery.isError,
+    catalogQuery.isPending,
+  ]);
 
   if (catalogQuery.isPending) {
     return (
@@ -44,7 +82,11 @@ export default function MenuScreen() {
   const catalog = catalogQuery.data;
 
   return (
-    <View className="flex-1 bg-sand px-6 pt-16">
+    <ScrollView
+      className="flex-1 bg-sand"
+      contentContainerClassName="px-6 pb-10 pt-16"
+      showsVerticalScrollIndicator={false}
+    >
       <Text className="text-xs font-semibold uppercase tracking-[2px] text-ember">
         Cardapio
       </Text>
@@ -74,7 +116,16 @@ export default function MenuScreen() {
                     href={`/(app)/trucks/${catalog.foodtruckSlug}/menu/${item.id}`}
                     key={item.id}
                   >
-                    <View className="rounded-[20px] bg-stone-50 p-4">
+                    <Pressable
+                      className="rounded-[20px] bg-stone-50 p-4"
+                      onPress={() => {
+                        console.log('Mobile catalog item pressed:', {
+                          truckSlug: catalog.foodtruckSlug,
+                          itemId: item.id,
+                          route: `/(app)/trucks/${catalog.foodtruckSlug}/menu/${item.id}`,
+                        });
+                      }}
+                    >
                       <Text className="text-base font-medium text-ink">
                         {item.name}
                       </Text>
@@ -92,7 +143,7 @@ export default function MenuScreen() {
                           source={itemImage}
                         />
                       ) : null}
-                    </View>
+                    </Pressable>
                   </Link>
                 );
               })}
@@ -103,11 +154,13 @@ export default function MenuScreen() {
 
       <View className="mt-8">
         <Link asChild href="/(app)/cart">
-          <Text className="rounded-full bg-neutral-950 px-4 py-4 text-center text-sm font-semibold text-white">
-            Ir para carrinho
-          </Text>
+          <Pressable className="rounded-full bg-neutral-950 px-4 py-4">
+            <Text className="text-center text-sm font-semibold text-white">
+              Ir para carrinho
+            </Text>
+          </Pressable>
         </Link>
       </View>
-    </View>
+    </ScrollView>
   );
 }
