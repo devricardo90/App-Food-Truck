@@ -29,6 +29,23 @@ export class CreateOrderRequestDto {
   items!: CreateOrderItemDto[];
 }
 
+export class UpdateOrderStatusRequestDto {
+  @ApiProperty({
+    example: 'in_progress',
+    description:
+      'Target operational status for the order within the foodtruck workflow.',
+  })
+  targetStatus!: string;
+
+  @ApiPropertyOptional({
+    example: 'Falha operacional na cozinha',
+    maxLength: 500,
+    description:
+      'Required when cancelling an order from an operational state.',
+  })
+  reason?: string;
+}
+
 export class OrderEventTruckSnapshotDto {
   @ApiProperty({ example: 'ceventtruck_123' })
   id!: string;

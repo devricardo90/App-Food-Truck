@@ -18,7 +18,20 @@ import type {
   OrderResponseDto,
   OrderSummaryDto,
   TruckOrderQueueResponseDto,
+  UpdateOrderStatusRequestDto,
 } from './orders.dto';
+
+const TRUCK_OPERATIONAL_TRANSITIONS: Record<
+  OrderStatus,
+  ReadonlyArray<OrderStatus>
+> = {
+  [OrderStatus.pending_payment]: [],
+  [OrderStatus.new]: [OrderStatus.in_progress, OrderStatus.cancelled],
+  [OrderStatus.in_progress]: [OrderStatus.ready, OrderStatus.cancelled],
+  [OrderStatus.ready]: [OrderStatus.completed, OrderStatus.cancelled],
+  [OrderStatus.completed]: [],
+  [OrderStatus.cancelled]: [],
+};
 
 @Injectable()
 export class OrdersService {
@@ -320,6 +333,74 @@ export class OrdersService {
     };
   }
 
+  async updateOrderStatus(
+    activeFoodtruck: AuthMembershipContext,
+    orderId: string,
+    payload: UpdateOrderStatusRequestDto,
+  ): Promise<OrderResponseDto> {
+    const targetStatus = this.normalizeTargetStatus(payload.targetStatus);
+    const reason = payload.reason?.trim() || null;
+
+    if (targetStatus === OrderStatus.cancelled && !reason) {
+      throw new BadRequestException(
+        'A cancellation reason is required for operational order cancellation.',
+      );
+    }
+
+    const order = await this.prisma.order.findFirst({
+      where: {
+        id: orderId,
+        eventTruck: {
+          truckId: activeFoodtruck.foodtruckId,
+        },
+      },
+      include: this.getOrderInclude(),
+    });
+
+    if (!order) {
+      throw new NotFoundException(
+        `Order '${orderId}' was not found for the active foodtruck context.`,
+      );
+    }
+
+    const allowedTransitions = TRUCK_OPERATIONAL_TRANSITIONS[order.status];
+
+    if (!allowedTransitions.includes(targetStatus)) {
+      throw new ConflictException(
+        `Transition '${order.status}' -> '${targetStatus}' is not allowed for truck operations.`,
+      );
+    }
+
+    const updatedOrder = await this.prisma.$transaction(async (tx) => {
+      await tx.orderStatusHistory.create({
+        data: {
+          orderId: order.id,
+          fromStatus: order.status,
+          toStatus: targetStatus,
+          actorType:
+            activeFoodtruck.role === 'truck_manager'
+              ? OrderActorType.truck_manager
+              : OrderActorType.truck_operator,
+          reason,
+        },
+      });
+
+      return tx.order.update({
+        where: {
+          id: order.id,
+        },
+        data: {
+          status: targetStatus,
+          cancelledReason:
+            targetStatus === OrderStatus.cancelled ? reason : null,
+        },
+        include: this.getOrderInclude(),
+      });
+    });
+
+    return this.mapOrder(updatedOrder);
+  }
+
   private getOrderInclude() {
     return {
       eventTruck: {
@@ -446,5 +527,24 @@ export class OrdersService {
       },
       createdAt: order.createdAt.toISOString(),
     };
+  }
+
+  private normalizeTargetStatus(rawStatus: string): OrderStatus {
+    const normalized = rawStatus.trim().toLowerCase();
+
+    switch (normalized) {
+      case OrderStatus.in_progress:
+        return OrderStatus.in_progress;
+      case OrderStatus.ready:
+        return OrderStatus.ready;
+      case OrderStatus.completed:
+        return OrderStatus.completed;
+      case OrderStatus.cancelled:
+        return OrderStatus.cancelled;
+      default:
+        throw new BadRequestException(
+          `Unsupported target status '${rawStatus}' for truck operations.`,
+        );
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiConflictResponse,
@@ -25,6 +25,7 @@ import {
   OrderResponseDto,
   OrderSummaryDto,
   TruckOrderQueueResponseDto,
+  UpdateOrderStatusRequestDto,
 } from './orders.dto';
 import { OrdersService } from './orders.service';
 
@@ -100,6 +101,43 @@ export class OrdersController {
     @Body() payload: CreateOrderRequestDto,
   ): Promise<CreatedOrderResponseDto> {
     return this.ordersService.createPendingOrder(authUser, payload);
+  }
+
+  @Patch(':orderId/status')
+  @FoodtruckMembership(
+    MembershipRole.truck_operator,
+    MembershipRole.truck_manager,
+  )
+  @ApiHeader({
+    name: 'x-foodtruck-id',
+    required: false,
+    description:
+      'Optional active foodtruck id. Required when the authenticated user has multiple foodtruck memberships.',
+  })
+  @ApiOperation({
+    summary: 'Advance or cancel an order within the active foodtruck workflow.',
+  })
+  @ApiOkResponse({
+    description: 'Order status updated with operational audit trail.',
+    type: OrderResponseDto,
+  })
+  @ApiConflictResponse({
+    description: 'The requested status transition is not allowed.',
+  })
+  @ApiNotFoundResponse({
+    description:
+      'Order was not found for the active foodtruck operational context.',
+  })
+  updateOrderStatus(
+    @CurrentActiveFoodtruck() activeFoodtruck: AuthMembershipContext,
+    @Param('orderId') orderId: string,
+    @Body() payload: UpdateOrderStatusRequestDto,
+  ): Promise<OrderResponseDto> {
+    return this.ordersService.updateOrderStatus(
+      activeFoodtruck,
+      orderId,
+      payload,
+    );
   }
 
   @Get(':orderId')

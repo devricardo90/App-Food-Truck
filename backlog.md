@@ -2183,7 +2183,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-067 - Implementar transicoes operacionais do pedido na API
 
 - **Skill dona:** `nest-api-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Implementar as transicoes operacionais reais do pedido no backend, permitindo que a barraca avance o pedido entre estados validos com regras consistentes e historico auditavel.
 - **Dependencias:** `FT-023`, `FT-026`, `FT-066`
@@ -2193,11 +2193,29 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - historico de status do pedido e atualizado em toda transicao valida
   - a fila da barraca passa a refletir os estados apos mutacao real
   - Swagger e Scalar refletem o contrato das transicoes
+- **Entrega em:** `2026-03-30`
+- **Artefatos:**
+  - `apps/api/src/modules/orders/orders.dto.ts`
+  - `apps/api/src/modules/orders/orders.controller.ts`
+  - `apps/api/src/modules/orders/orders.service.ts`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - endpoint de transicao operacional exposto na API: ok
+  - transicoes invalidas bloqueadas com `409`: ok
+  - cancelamento operacional exige motivo: ok
+  - `OrderStatusHistory` atualizado em transicoes validas: ok
+  - api build: ok
+- **Observacoes de execucao em:** `2026-03-30`
+  - o contrato operacional ficou focado no contexto autenticado da barraca via `x-foodtruck-id`
+  - a matriz inicial de transicoes cobre `new -> in_progress`, `in_progress -> ready`, `ready -> completed` e cancelamentos excepcionais com motivo
+  - transicoes de pagamento, como `pending_payment -> new`, permanecem fora desta task e continuam sob responsabilidade do backend financeiro
+- **Commit:** `feat(api): add operational order status transitions`
 
 ## FT-068 - Integrar acoes operacionais de status na fila da barraca
 
 - **Skill dona:** `admin-web-architecture`
-- **Status:** `TODO`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Conectar a fila real do admin as mutacoes de status do backend para que a barraca consiga iniciar preparo, marcar pronto e concluir pedidos pelo painel.
 - **Dependencias:** `FT-067`
@@ -2250,13 +2268,13 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-067` - Implementar transicoes operacionais do pedido na API
+- `FT-068` - Integrar acoes operacionais de status na fila da barraca
 
 ---
 
 # Ordem sugerida para comecar
 
-- fechar o ciclo operacional do pedido na ordem `FT-067 -> FT-068 -> FT-069 -> FT-070 -> FT-071`
+- fechar o ciclo operacional do pedido na ordem `FT-068 -> FT-069 -> FT-070 -> FT-071`
 - consolidar o admin operacional e as acoes da barraca antes de abrir produtos/estoque/cupons
 - usar `FT-032` como proxima frente tecnica separada, sem competir com o fluxo principal de produto
 - deixar `FT-061` para a proxima frente tecnica de hardening e testes
