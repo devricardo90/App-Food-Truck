@@ -1884,13 +1884,14 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - admin typecheck: ok
   - api lint: ok
   - api typecheck: ok
-  - commit: pendente
+  - commit: ok
 - **Observacoes de consolidacao em:** `2026-03-30`
   - existe commit fora do backlog: `f9553aa Fix mobile auth bootstrap navigation loop`
   - partes absorvidas do desvio: guardas de carregamento do Clerk, instrumentacao util de sign-in, suporte a template JWT, protecao contra `CLERK_SECRET_KEY` placeholder e correcao de tabs do Expo Router
   - partes descartadas do desvio: bypass por `EXPO_PUBLIC_DISABLE_AUTH_BOOTSTRAP`, helper e callbacks experimentais do Clerk sem task oficial e drift acidental em arquivos `Claude/*` e `expo-env`
   - `FT-059` passa a ser a proxima task oficial para estabilizar auth real antes da retomada funcional
   - `FT-057` permanece bloqueada ate a conclusao de `FT-059`
+- **Commit:** `chore(auth): consolidate real clerk auth state before emulator validation`
 
 ## FT-059 - Estabilizar auth real para validacao em emulador
 
