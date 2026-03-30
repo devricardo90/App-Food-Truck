@@ -2180,16 +2180,83 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - edicao de status do pedido continua fora do escopo desta task e segue para frente posterior
 - **Commit:** `feat(admin): expose real truck order queue`
 
+## FT-067 - Implementar transicoes operacionais do pedido na API
+
+- **Skill dona:** `nest-api-architecture`
+- **Status:** `READY`
+- **Fluxo critico:** `sim`
+- **Descricao:** Implementar as transicoes operacionais reais do pedido no backend, permitindo que a barraca avance o pedido entre estados validos com regras consistentes e historico auditavel.
+- **Dependencias:** `FT-023`, `FT-026`, `FT-066`
+- **Criterios de aceite:**
+  - API expone mutacoes para avancar status operacional do pedido
+  - transicoes invalidas sao bloqueadas com erro explicito
+  - historico de status do pedido e atualizado em toda transicao valida
+  - a fila da barraca passa a refletir os estados apos mutacao real
+  - Swagger e Scalar refletem o contrato das transicoes
+
+## FT-068 - Integrar acoes operacionais de status na fila da barraca
+
+- **Skill dona:** `admin-web-architecture`
+- **Status:** `TODO`
+- **Fluxo critico:** `sim`
+- **Descricao:** Conectar a fila real do admin as mutacoes de status do backend para que a barraca consiga iniciar preparo, marcar pronto e concluir pedidos pelo painel.
+- **Dependencias:** `FT-067`
+- **Criterios de aceite:**
+  - acoes operacionais aparecem apenas para transicoes validas
+  - a fila atualiza apos mutacao concluida
+  - estados de loading e erro ficam claros no painel
+  - o operador consegue avancar ao menos `new -> in_progress -> ready -> completed`
+
+## FT-069 - Refletir status operacional real do pedido no mobile
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `TODO`
+- **Fluxo critico:** `sim`
+- **Descricao:** Garantir que historico, detalhe e reconsulta de pedido no mobile reflitam as transicoes operacionais reais aplicadas pela barraca.
+- **Dependencias:** `FT-067`, `FT-068`
+- **Criterios de aceite:**
+  - historico do cliente reflete status real atualizado
+  - detalhe do pedido reflete timeline e estado operacional atual
+  - o cliente percebe corretamente a passagem por `in_progress`, `ready` e `completed`
+
+## FT-070 - Consolidar estados operacionais do painel da barraca
+
+- **Skill dona:** `admin-web-architecture`
+- **Status:** `TODO`
+- **Fluxo critico:** `nao`
+- **Descricao:** Consolidar loading, erro, empty state e feedback visual das acoes operacionais no painel da barraca para tornar a operacao local utilizavel.
+- **Dependencias:** `FT-068`
+- **Criterios de aceite:**
+  - empty state da fila fica claro
+  - erros de mutacao e refresh ficam claros
+  - loading por acao evita duplo clique e ambiguidades
+  - feedback visual do estado resultante fica consistente
+
+## FT-071 - Validar fluxo ponta a ponta pedido -> barraca -> cliente
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `TODO`
+- **Fluxo critico:** `sim`
+- **Descricao:** Validar manualmente o ciclo operacional completo do MVP, do checkout do cliente ate a atualizacao final do pedido apos a operacao da barraca.
+- **Dependencias:** `FT-067`, `FT-068`, `FT-069`
+- **Criterios de aceite:**
+  - cliente cria pedido com sucesso
+  - barraca recebe o pedido na fila
+  - barraca avanca o pedido ate `ready` ou `completed`
+  - cliente observa a mudanca real no app
+  - evidencias e bloqueios ficam registrados com causa exata
+
 ---
 
 # READY atuais
 
-- nenhuma task `READY` no momento
+- `FT-067` - Implementar transicoes operacionais do pedido na API
 
 ---
 
 # Ordem sugerida para comecar
 
-- retomar imediatamente as tasks de produto/MVP desbloqueadas apos a auth minima funcional
+- fechar o ciclo operacional do pedido na ordem `FT-067 -> FT-068 -> FT-069 -> FT-070 -> FT-071`
+- consolidar o admin operacional e as acoes da barraca antes de abrir produtos/estoque/cupons
 - usar `FT-032` como proxima frente tecnica separada, sem competir com o fluxo principal de produto
 - deixar `FT-061` para a proxima frente tecnica de hardening e testes
