@@ -2309,7 +2309,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-071 - Validar fluxo ponta a ponta pedido -> barraca -> cliente
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `READY`
+- **Status:** `BLOCKED`
 - **Fluxo critico:** `sim`
 - **Descricao:** Validar manualmente o ciclo operacional completo do MVP, do checkout do cliente ate a atualizacao final do pedido apos a operacao da barraca.
 - **Dependencias:** `FT-067`, `FT-068`, `FT-069`
@@ -2327,21 +2327,23 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - `backlog.md`
 - **Revisao:** `aprovada`
 - **Validacoes:**
-  - checkout do cliente cria pedido real em `pending_payment`: ok
-  - fila da barraca exibe contagem de `pending_payment`: ok
-  - acoes operacionais da barraca aparecem apenas a partir de `new`: ok
+  - login mobile e `/auth/me` continuam funcionais no fluxo real: ok
+  - checkout do cliente envia `POST /orders` para a API atual: ok
+  - handoff estrutural de `pending_payment -> new` existe no backend: ok
   - validacao ponta a ponta ate `ready/completed`: bloqueada
 - **Observacoes de execucao em:** `2026-03-30`
-  - o fluxo real para em `pending_payment` porque nao existe confirmacao de pagamento que promova o pedido para `new`
-  - a API bloqueia explicitamente `pending_payment -> new` nas transicoes operacionais da barraca
-  - o checkout mobile tambem declara que o pedido fica em `pending_payment` ate confirmacao oficial do backend
-  - sem esse handoff, a barraca nao recebe um pedido acionavel e o cliente nao consegue observar a progressao operacional completa
+  - o bloqueio anterior de handoff foi removido em `FT-072`, mas a validacao manual voltou a travar antes da criacao do pedido operacional
+  - o app mobile em execucao no Expo Go continua com bundle antigo de checkout, mas ja fala com a API atual e recebeu erro de dominio mais especifico
+  - o `POST /orders` respondeu `404` com detalhe `Foodtruck 'funky-chicken' is not available in the active event.`
+  - a descoberta/lista/catalogo continuam acessiveis porque `FoodtrucksService` usa fallback de fixtures quando nao encontra `Event`/tabelas operacionais
+  - o checkout real nao usa esse fallback e exige `EventTruck` + `MenuItem` persistidos no banco ativo
+  - sem um `Event` ativo com `EventTruck`/itens compativeis, o pedido nao chega a `pending_payment`, nao entra em `new` e o fluxo nao alcanca painel/operacao/cliente final
 - **Bloqueado por:**
-  - ausencia de fluxo de confirmacao de pagamento ou promocao controlada de `pending_payment -> new`
+  - divergencia entre descoberta publica por fallback e checkout real dependente de `EventTruck`/`MenuItem` persistidos no banco local
 - **Observacoes adicionais em:** `2026-03-30`
-  - o bloqueio estrutural anterior foi tratado em `FT-072`
-  - a task volta para `READY` e deve ser repetida com evidencia manual do ciclo completo
-- **Commit:** `docs(backlog): record ft-071 blocker on payment handoff`
+  - o handoff estrutural anterior foi tratado em `FT-072`
+  - a proxima reexecucao da task depende de ambiente de dados coerente entre descoberta, catalogo e checkout
+- **Commit:** `docs(backlog): record ft-071 blocker on active event checkout data`
 
 ## FT-072 - Alinhar handoff de pagamento para operacao da barraca
 
@@ -2404,13 +2406,13 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-071` - Validar fluxo ponta a ponta pedido -> barraca -> cliente
+- nenhuma task `READY` no momento
 
 ---
 
 # Ordem sugerida para comecar
 
-- repetir `FT-071` com evidencia manual do fluxo completo apos o handoff de pagamento
+- destravar a coerencia entre descoberta publica e checkout real antes de repetir `FT-071`
 - consolidar o admin operacional e as acoes da barraca antes de abrir produtos/estoque/cupons
 - usar `FT-032` como proxima frente tecnica separada, sem competir com o fluxo principal de produto
 - deixar `FT-061` para a proxima frente tecnica de hardening e testes
