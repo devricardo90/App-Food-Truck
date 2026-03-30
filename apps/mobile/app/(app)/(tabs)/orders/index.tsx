@@ -5,25 +5,10 @@ import { ScrollView, Text, View } from 'react-native';
 
 import { formatPrice } from '../../../../src/lib/foodtrucks-api';
 import { fetchOrders } from '../../../../src/lib/orders-api';
-
-function mapOrderStatusLabel(status: string) {
-  switch (status) {
-    case 'pending_payment':
-      return 'Aguardando pagamento';
-    case 'new':
-      return 'Pedido confirmado';
-    case 'in_progress':
-      return 'Em preparo';
-    case 'ready':
-      return 'Pronto para retirada';
-    case 'completed':
-      return 'Concluido';
-    case 'cancelled':
-      return 'Cancelado';
-    default:
-      return status;
-  }
-}
+import {
+  getOrderStatusTone,
+  mapOrderStatusLabel,
+} from '../../../../src/lib/order-status';
 
 export default function OrdersHistoryScreen() {
   const { getToken } = useAuth();
@@ -42,6 +27,7 @@ export default function OrdersHistoryScreen() {
 
       return fetchOrders(token);
     },
+    refetchInterval: 15000,
     retry: false,
   });
 
@@ -58,6 +44,10 @@ export default function OrdersHistoryScreen() {
       <Text className="mt-3 text-base leading-6 text-neutral-600">
         Fallback principal para o cliente acompanhar pedidos quando a
         notificacao nao resolver a jornada.
+      </Text>
+      <Text className="mt-2 text-sm text-neutral-500">
+        A tela reconsulta o status real periodicamente enquanto houver pedidos
+        ativos.
       </Text>
 
       <View className="mt-8 gap-4">
@@ -78,18 +68,26 @@ export default function OrdersHistoryScreen() {
         ) : (
           ordersQuery.data.map((order) => (
             <Link asChild href={`/(app)/orders/${order.id}`} key={order.id}>
-              <Text className="rounded-[24px] border border-amber-950/10 bg-white px-5 py-5 text-base font-medium text-ink shadow-sm">
-                Pedido {order.publicCode}
-                {'\n'}
-                <Text className="text-sm font-normal text-neutral-500">
-                  {order.eventTruck.foodtruckName} -{' '}
-                  {mapOrderStatusLabel(order.status)}
-                </Text>
-                {'\n'}
-                <Text className="text-sm font-normal text-neutral-500">
-                  {formatPrice(order.totalAmount, order.currency)}
-                </Text>
-              </Text>
+              <View className="rounded-[24px] border border-amber-950/10 bg-white px-5 py-5 shadow-sm">
+                <View className="flex-row items-start justify-between gap-3">
+                  <View className="flex-1">
+                    <Text className="text-base font-medium text-ink">
+                      Pedido {order.publicCode}
+                    </Text>
+                    <Text className="mt-2 text-sm font-normal text-neutral-500">
+                      {order.eventTruck.foodtruckName}
+                    </Text>
+                    <Text className="mt-2 text-sm font-normal text-neutral-500">
+                      {formatPrice(order.totalAmount, order.currency)}
+                    </Text>
+                  </View>
+                  <Text
+                    className={`rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-[1px] ${getOrderStatusTone(order.status).badge}`}
+                  >
+                    {mapOrderStatusLabel(order.status)}
+                  </Text>
+                </View>
+              </View>
             </Link>
           ))
         )}

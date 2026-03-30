@@ -2247,7 +2247,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-069 - Refletir status operacional real do pedido no mobile
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Garantir que historico, detalhe e reconsulta de pedido no mobile reflitam as transicoes operacionais reais aplicadas pela barraca.
 - **Dependencias:** `FT-067`, `FT-068`
@@ -2255,11 +2255,29 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - historico do cliente reflete status real atualizado
   - detalhe do pedido reflete timeline e estado operacional atual
   - o cliente percebe corretamente a passagem por `in_progress`, `ready` e `completed`
+- **Entrega em:** `2026-03-30`
+- **Artefatos:**
+  - `apps/mobile/src/lib/order-status.ts`
+  - `apps/mobile/app/(app)/(tabs)/orders/index.tsx`
+  - `apps/mobile/app/(app)/orders/[orderId].tsx`
+  - `apps/mobile/app/(app)/payment/pending.tsx`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - historico passou a refletir rotulos e estados reais da API: ok
+  - detalhe do pedido ganhou timeline operacional e refresh automatico: ok
+  - tela de pagamento pendente reconsulta status operacional real: ok
+  - mobile typecheck: ok
+- **Observacoes de execucao em:** `2026-03-30`
+  - o mobile reconsulta automaticamente pedidos ativos para capturar transicoes aplicadas pela barraca sem depender de refresh manual
+  - o contrato da API nao mudou nesta task; o ajuste ficou restrito a leitura e apresentacao dos estados reais
+  - estados terminais param de reconsultar automaticamente para evitar polling inutil
+- **Commit:** `feat(mobile): reflect operational order status updates`
 
 ## FT-070 - Consolidar estados operacionais do painel da barraca
 
 - **Skill dona:** `admin-web-architecture`
-- **Status:** `TODO`
+- **Status:** `READY`
 - **Fluxo critico:** `nao`
 - **Descricao:** Consolidar loading, erro, empty state e feedback visual das acoes operacionais no painel da barraca para tornar a operacao local utilizavel.
 - **Dependencias:** `FT-068`
@@ -2287,13 +2305,13 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-069` - Refletir status operacional real do pedido no mobile
+- `FT-070` - Consolidar estados operacionais do painel da barraca
 
 ---
 
 # Ordem sugerida para comecar
 
-- fechar o ciclo operacional do pedido na ordem `FT-069 -> FT-070 -> FT-071`
+- fechar o ciclo operacional do pedido na ordem `FT-070 -> FT-071`
 - consolidar o admin operacional e as acoes da barraca antes de abrir produtos/estoque/cupons
 - usar `FT-032` como proxima frente tecnica separada, sem competir com o fluxo principal de produto
 - deixar `FT-061` para a proxima frente tecnica de hardening e testes

@@ -5,6 +5,10 @@ import { ScrollView, Text, View } from 'react-native';
 
 import { formatPrice } from '../../../src/lib/foodtrucks-api';
 import { fetchOrderById } from '../../../src/lib/orders-api';
+import {
+  getOperationalOrderRefreshInterval,
+  mapOrderStatusLabel,
+} from '../../../src/lib/order-status';
 
 export default function PaymentPendingScreen() {
   const { getToken } = useAuth();
@@ -26,6 +30,10 @@ export default function PaymentPendingScreen() {
 
       return fetchOrderById(token, orderId);
     },
+    refetchInterval: (query) =>
+      query.state.data
+        ? getOperationalOrderRefreshInterval(query.state.data.status)
+        : 15000,
     retry: false,
   });
 
@@ -67,10 +75,13 @@ export default function PaymentPendingScreen() {
               Pedido {orderQuery.data.publicCode}
             </Text>
             <Text className="mt-2 text-sm text-neutral-500">
-              Status atual: {orderQuery.data.status}
+              Status atual: {mapOrderStatusLabel(orderQuery.data.status)}
             </Text>
             <Text className="mt-2 text-sm text-neutral-500">
               Barraca: {orderQuery.data.eventTruck.foodtruckName}
+            </Text>
+            <Text className="mt-2 text-sm text-neutral-500">
+              A tela reconsulta automaticamente enquanto o pedido segue ativo.
             </Text>
             <Text className="mt-6 text-xl font-bold text-ink">
               Total{' '}

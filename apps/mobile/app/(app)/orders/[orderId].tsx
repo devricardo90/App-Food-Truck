@@ -5,51 +5,12 @@ import { ScrollView, Text, View } from 'react-native';
 
 import { formatPrice } from '../../../src/lib/foodtrucks-api';
 import { fetchOrderById } from '../../../src/lib/orders-api';
-
-function mapOrderStatusLabel(status: string) {
-  switch (status) {
-    case 'pending_payment':
-      return 'Aguardando confirmacao de pagamento';
-    case 'new':
-      return 'Pedido confirmado';
-    case 'in_progress':
-      return 'Em preparo';
-    case 'ready':
-      return 'Pronto para retirada';
-    case 'completed':
-      return 'Concluido';
-    case 'cancelled':
-      return 'Cancelado';
-    default:
-      return status;
-  }
-}
-
-function buildOrderTimeline(status: string) {
-  const steps = ['Checkout criado'];
-
-  if (status !== 'pending_payment') {
-    steps.push('Pagamento confirmado');
-  }
-
-  if (status === 'in_progress' || status === 'ready' || status === 'completed') {
-    steps.push('Pedido em preparo');
-  }
-
-  if (status === 'ready' || status === 'completed') {
-    steps.push('Pedido pronto');
-  }
-
-  if (status === 'completed') {
-    steps.push('Pedido concluido');
-  }
-
-  if (status === 'cancelled') {
-    steps.push('Pedido cancelado');
-  }
-
-  return steps;
-}
+import {
+  buildOrderTimeline,
+  getOperationalOrderRefreshInterval,
+  getOrderStatusTone,
+  mapOrderStatusLabel,
+} from '../../../src/lib/order-status';
 
 export default function OrderDetailScreen() {
   const { getToken } = useAuth();
@@ -70,6 +31,10 @@ export default function OrderDetailScreen() {
 
       return fetchOrderById(token, orderId);
     },
+    refetchInterval: (query) =>
+      query.state.data
+        ? getOperationalOrderRefreshInterval(query.state.data.status)
+        : 15000,
     retry: false,
   });
 
@@ -100,6 +65,7 @@ export default function OrderDetailScreen() {
 
   const order = orderQuery.data;
   const timeline = buildOrderTimeline(order.status);
+  const statusTone = getOrderStatusTone(order.status);
 
   return (
     <ScrollView
@@ -113,12 +79,23 @@ export default function OrderDetailScreen() {
       <Text className="mt-3 text-3xl font-bold text-ink">
         {order.publicCode}
       </Text>
-      <Text className="mt-3 text-base leading-6 text-neutral-600">
-        Status atual: {mapOrderStatusLabel(order.status)}
-      </Text>
-      <Text className="mt-2 text-sm text-neutral-500">
-        Barraca: {order.eventTruck.foodtruckName}
-      </Text>
+      <View
+        className={`mt-6 rounded-[28px] border px-5 py-5 shadow-sm ${statusTone.panel}`}
+      >
+        <Text className="text-sm uppercase tracking-[1.5px] text-neutral-500">
+          Status atual
+        </Text>
+        <Text className="mt-3 text-xl font-semibold text-ink">
+          {mapOrderStatusLabel(order.status)}
+        </Text>
+        <Text className="mt-2 text-sm leading-6 text-neutral-600">
+          Barraca: {order.eventTruck.foodtruckName}
+        </Text>
+        <Text className="mt-2 text-sm leading-6 text-neutral-600">
+          A tela reconsulta automaticamente enquanto o pedido nao estiver em
+          estado final.
+        </Text>
+      </View>
 
       <View className="mt-8 rounded-[28px] border border-amber-950/10 bg-white p-6 shadow-sm">
         <Text className="text-sm uppercase tracking-[1.5px] text-neutral-500">
@@ -126,9 +103,24 @@ export default function OrderDetailScreen() {
         </Text>
         <View className="mt-4 gap-3">
           {timeline.map((step) => (
-            <Text className="text-base text-neutral-700" key={step}>
-              - {step}
-            </Text>
+            <View className="flex-row items-center gap-3" key={step.label}>
+              <View
+                className={
+                  step.done
+                    ? 'h-2.5 w-2.5 rounded-full bg-pine'
+                    : 'h-2.5 w-2.5 rounded-full bg-neutral-300'
+                }
+              />
+              <Text
+                className={
+                  step.done
+                    ? 'text-base text-neutral-800'
+                    : 'text-base text-neutral-500'
+                }
+              >
+                {step.label}
+              </Text>
+            </View>
           ))}
         </View>
       </View>
@@ -153,7 +145,7 @@ export default function OrderDetailScreen() {
           Total {formatPrice(order.totalAmount, order.currency)}
         </Text>
         <Text className="mt-2 text-sm text-neutral-500">
-          Payment status: {order.payment.status}
+          Pagamento: {order.payment.status}
         </Text>
       </View>
 
