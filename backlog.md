@@ -2309,7 +2309,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-071 - Validar fluxo ponta a ponta pedido -> barraca -> cliente
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `READY`
+- **Status:** `BLOCKED`
 - **Fluxo critico:** `sim`
 - **Descricao:** Validar manualmente o ciclo operacional completo do MVP, do checkout do cliente ate a atualizacao final do pedido apos a operacao da barraca.
 - **Dependencias:** `FT-067`, `FT-068`, `FT-069`
@@ -2319,18 +2319,38 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - barraca avanca o pedido ate `ready` ou `completed`
   - cliente observa a mudanca real no app
   - evidencias e bloqueios ficam registrados com causa exata
+- **Entrega em:** `2026-03-30`
+- **Artefatos:**
+  - `apps/api/src/modules/orders/orders.service.ts`
+  - `apps/mobile/app/(app)/checkout.tsx`
+  - `apps/admin/app/(console)/truck/orders/page.tsx`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - checkout do cliente cria pedido real em `pending_payment`: ok
+  - fila da barraca exibe contagem de `pending_payment`: ok
+  - acoes operacionais da barraca aparecem apenas a partir de `new`: ok
+  - validacao ponta a ponta ate `ready/completed`: bloqueada
+- **Observacoes de execucao em:** `2026-03-30`
+  - o fluxo real para em `pending_payment` porque nao existe confirmacao de pagamento que promova o pedido para `new`
+  - a API bloqueia explicitamente `pending_payment -> new` nas transicoes operacionais da barraca
+  - o checkout mobile tambem declara que o pedido fica em `pending_payment` ate confirmacao oficial do backend
+  - sem esse handoff, a barraca nao recebe um pedido acionavel e o cliente nao consegue observar a progressao operacional completa
+- **Bloqueado por:**
+  - ausencia de fluxo de confirmacao de pagamento ou promocao controlada de `pending_payment -> new`
+- **Commit:** `docs(backlog): record ft-071 blocker on payment handoff`
 
 ---
 
 # READY atuais
 
-- `FT-071` - Validar fluxo ponta a ponta pedido -> barraca -> cliente
+- nenhuma task `READY` no momento
 
 ---
 
 # Ordem sugerida para comecar
 
-- fechar o ciclo operacional do pedido na ordem `FT-071`
+- desbloquear primeiro o handoff `pending_payment -> new` antes de repetir `FT-071`
 - consolidar o admin operacional e as acoes da barraca antes de abrir produtos/estoque/cupons
 - usar `FT-032` como proxima frente tecnica separada, sem competir com o fluxo principal de produto
 - deixar `FT-061` para a proxima frente tecnica de hardening e testes
