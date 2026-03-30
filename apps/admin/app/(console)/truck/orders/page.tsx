@@ -2,9 +2,11 @@ import { resolveAdminAuthContext } from '../../../../src/lib/auth-context';
 import {
   fetchTruckOrderQueue,
   formatOrderStatusLabel,
+  getOperationalOrderActions,
 } from '../../../../src/lib/orders-api';
 import { formatAdminPrice } from '../../../../src/lib/foodtrucks-api';
 import { ConsoleShell } from '../../../../src/components/console-shell';
+import { TruckOrderStatusActions } from '../../../../src/components/truck-order-status-actions';
 
 export default async function TruckOrdersPage() {
   const authContext = await resolveAdminAuthContext();
@@ -92,6 +94,13 @@ export default async function TruckOrdersPage() {
                       {new Date(order.createdAt).toLocaleString('sv-SE')}
                     </p>
                   </div>
+                </div>
+
+                <div className="mt-5 border-t border-stone-200 pt-5">
+                  <TruckOrderStatusActions
+                    orderId={order.id}
+                    actions={getOperationalOrderActions(order.status)}
+                  />
                 </div>
               </article>
             ))

@@ -2215,7 +2215,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-068 - Integrar acoes operacionais de status na fila da barraca
 
 - **Skill dona:** `admin-web-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Conectar a fila real do admin as mutacoes de status do backend para que a barraca consiga iniciar preparo, marcar pronto e concluir pedidos pelo painel.
 - **Dependencias:** `FT-067`
@@ -2224,11 +2224,30 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - a fila atualiza apos mutacao concluida
   - estados de loading e erro ficam claros no painel
   - o operador consegue avancar ao menos `new -> in_progress -> ready -> completed`
+- **Entrega em:** `2026-03-30`
+- **Artefatos:**
+  - `apps/admin/app/(console)/truck/orders/page.tsx`
+  - `apps/admin/app/(console)/truck/orders/actions.ts`
+  - `apps/admin/src/components/truck-order-status-actions.tsx`
+  - `apps/admin/src/lib/orders-api.ts`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - acoes operacionais renderizadas apenas para estados validos: ok
+  - mutacao de status integrada ao endpoint real da API: ok
+  - fila revalida apos transicao bem-sucedida: ok
+  - feedback de loading e erro aparece no painel: ok
+  - admin build: ok
+- **Observacoes de execucao em:** `2026-03-30`
+  - a primeira entrega cobre o fluxo principal `new -> in_progress -> ready -> completed`
+  - cancelamento operacional continua suportado na API, mas nao entrou na UI desta task para manter o diff pequeno e o foco no fluxo principal
+  - a fila permanece ancorada no contexto autenticado da barraca via `x-foodtruck-id`
+- **Commit:** `feat(admin): add operational status actions to truck queue`
 
 ## FT-069 - Refletir status operacional real do pedido no mobile
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `TODO`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Garantir que historico, detalhe e reconsulta de pedido no mobile reflitam as transicoes operacionais reais aplicadas pela barraca.
 - **Dependencias:** `FT-067`, `FT-068`
@@ -2268,13 +2287,13 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-068` - Integrar acoes operacionais de status na fila da barraca
+- `FT-069` - Refletir status operacional real do pedido no mobile
 
 ---
 
 # Ordem sugerida para comecar
 
-- fechar o ciclo operacional do pedido na ordem `FT-068 -> FT-069 -> FT-070 -> FT-071`
+- fechar o ciclo operacional do pedido na ordem `FT-069 -> FT-070 -> FT-071`
 - consolidar o admin operacional e as acoes da barraca antes de abrir produtos/estoque/cupons
 - usar `FT-032` como proxima frente tecnica separada, sem competir com o fluxo principal de produto
 - deixar `FT-061` para a proxima frente tecnica de hardening e testes

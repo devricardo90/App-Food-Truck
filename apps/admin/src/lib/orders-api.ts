@@ -27,6 +27,11 @@ export type AdminTruckOrderQueueResponse = {
   orders: AdminTruckOrderQueueItem[];
 };
 
+export type AdminTruckOrderStatusAction = {
+  targetStatus: 'in_progress' | 'ready' | 'completed';
+  label: string;
+};
+
 export async function fetchTruckOrderQueue(
   membership: AdminAuthMembership,
 ): Promise<AdminTruckOrderQueueResponse> {
@@ -67,6 +72,121 @@ export async function fetchTruckOrderQueue(
   }
 
   return (await response.json()) as AdminTruckOrderQueueResponse;
+}
+
+export async function updateTruckOrderStatus(
+  membership: AdminAuthMembership,
+  orderId: string,
+  targetStatus: AdminTruckOrderStatusAction['targetStatus'],
+) {
+  const apiBaseUrl =
+    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+  const clerkJwtTemplate =
+    process.env.CLERK_JWT_TEMPLATE ?? process.env.NEXT_PUBLIC_CLERK_JWT_TEMPLATE;
+
+  if (!apiBaseUrl) {
+    throw new Error(
+      'Defina `API_BASE_URL` ou `NEXT_PUBLIC_API_BASE_URL` para atualizar o status real do pedido.',
+    );
+  }
+
+  const authState = await auth();
+  const token = await authState.getToken(
+    clerkJwtTemplate ? { template: clerkJwtTemplate } : undefined,
+  );
+
+  if (!token) {
+    throw new Error(
+      'A sessao do admin nao retornou bearer token para atualizar o status do pedido.',
+    );
+  }
+
+  const response = await fetch(`${apiBaseUrl}/orders/${orderId}/status`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'x-foodtruck-id': membership.foodtruckId,
+    },
+    body: JSON.stringify({
+      targetStatus,
+    }),
+    cache: 'no-store',
+  });
+
+  if (!response.ok) {
+    const detail = await readAdminOrderErrorDetail(response);
+
+    throw new Error(
+      [
+        `A API respondeu ${response.status} ao atualizar o pedido ${orderId}.`,
+        detail,
+      ]
+        .filter(Boolean)
+        .join(' '),
+    );
+  }
+}
+
+async function readAdminOrderErrorDetail(response: Response) {
+  try {
+    const contentType = response.headers.get('content-type') ?? '';
+
+    if (contentType.includes('application/json')) {
+      const payload = (await response.json()) as {
+        message?: string | string[];
+        error?: string;
+      };
+
+      if (Array.isArray(payload.message)) {
+        return payload.message.join(' | ');
+      }
+
+      if (typeof payload.message === 'string') {
+        return payload.message;
+      }
+
+      if (typeof payload.error === 'string') {
+        return payload.error;
+      }
+    }
+
+    const text = (await response.text()).trim();
+
+    return text || null;
+  } catch {
+    return null;
+  }
+}
+
+export function getOperationalOrderActions(
+  status: string,
+): AdminTruckOrderStatusAction[] {
+  switch (status) {
+    case 'new':
+      return [
+        {
+          targetStatus: 'in_progress',
+          label: 'Iniciar preparo',
+        },
+      ];
+    case 'in_progress':
+      return [
+        {
+          targetStatus: 'ready',
+          label: 'Marcar pronto',
+        },
+      ];
+    case 'ready':
+      return [
+        {
+          targetStatus: 'completed',
+          label: 'Concluir retirada',
+        },
+      ];
+    default:
+      return [];
+  }
 }
 
 export function formatOrderStatusLabel(status: string) {
