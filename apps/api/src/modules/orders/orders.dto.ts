@@ -211,3 +211,20 @@ export class CreatedOrderResponseDto extends PickType(OrderResponseDto, [
   'createdAt',
   'updatedAt',
 ] as const) {}
+
+export class ConfirmMockPaymentResponseDto extends PickType(OrderResponseDto, [
+  'id',
+  'publicCode',
+  'status',
+  'subtotalAmount',
+  'totalAmount',
+  'currency',
+  'specialInstructions',
+  'capacityWindowStart',
+  'capacityWindowEnd',
+  'eventTruck',
+  'items',
+  'payment',
+  'createdAt',
+  'updatedAt',
+] as const) {}

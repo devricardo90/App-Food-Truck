@@ -162,3 +162,13 @@ export function fetchOrders(token: string) {
     method: 'GET',
   });
 }
+
+export function confirmMockPayment(token: string, orderId: string) {
+  return fetchAuthorizedFromApi<OrderSnapshot>(
+    `/orders/${encodeURIComponent(orderId)}/confirm-payment`,
+    token,
+    {
+      method: 'POST',
+    },
+  );
+}

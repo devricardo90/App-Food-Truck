@@ -20,6 +20,7 @@ import type {
   AuthenticatedRequestUser,
 } from '../auth/auth.types';
 import {
+  ConfirmMockPaymentResponseDto,
   CreateOrderRequestDto,
   CreatedOrderResponseDto,
   OrderResponseDto,
@@ -101,6 +102,33 @@ export class OrdersController {
     @Body() payload: CreateOrderRequestDto,
   ): Promise<CreatedOrderResponseDto> {
     return this.ordersService.createPendingOrder(authUser, payload);
+  }
+
+  @Post(':orderId/confirm-payment')
+  @ApiOperation({
+    summary:
+      'Confirm the mock payment handoff and promote the order to the operational queue.',
+  })
+  @ApiOkResponse({
+    description:
+      'Mock payment confirmed and order promoted from pending_payment to new.',
+    type: ConfirmMockPaymentResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Missing or invalid Clerk bearer token.',
+  })
+  @ApiConflictResponse({
+    description:
+      'Order is no longer pending payment or its payment snapshot cannot be promoted.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Order was not found for the authenticated customer.',
+  })
+  confirmMockPayment(
+    @CurrentAuthUser() authUser: AuthenticatedRequestUser,
+    @Param('orderId') orderId: string,
+  ): Promise<ConfirmMockPaymentResponseDto> {
+    return this.ordersService.confirmMockPayment(authUser, orderId);
   }
 
   @Patch(':orderId/status')

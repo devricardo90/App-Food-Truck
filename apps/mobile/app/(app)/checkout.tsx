@@ -83,8 +83,8 @@ export default function CheckoutScreen() {
         Confirmacao final do pedido
       </Text>
       <Text className="mt-3 text-base leading-6 text-neutral-600">
-        Esta tela prepara o handoff para pagamento sem promover o pedido para
-        confirmado por conta propria.
+        Esta tela cria o pedido em `pending_payment` e delega a confirmacao
+        controlada para a etapa seguinte do fluxo mock.
       </Text>
 
       <View className="mt-8 rounded-[28px] border border-amber-950/10 bg-white p-6 shadow-sm">
@@ -94,8 +94,8 @@ export default function CheckoutScreen() {
               {cart.foodtruckName}
             </Text>
             <Text className="mt-2 text-sm text-neutral-500">
-              Pedido criado como `pending_payment` ate a confirmacao oficial do
-              backend.
+              Pedido criado como `pending_payment` ate a confirmacao controlada
+              do backend na etapa de pagamento.
             </Text>
             <View className="mt-6 gap-3">
               {cart.items.map((item) => (

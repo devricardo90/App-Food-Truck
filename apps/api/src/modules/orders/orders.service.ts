@@ -218,6 +218,79 @@ export class OrdersService {
     return this.mapOrder(order);
   }
 
+  async confirmMockPayment(
+    authUser: AuthenticatedRequestUser,
+    orderId: string,
+  ): Promise<OrderResponseDto> {
+    const order = await this.prisma.order.findFirst({
+      where: {
+        id: orderId,
+        customerId: authUser.userId,
+      },
+      include: this.getOrderInclude(),
+    });
+
+    if (!order) {
+      throw new NotFoundException(
+        `Order '${orderId}' was not found for the authenticated user.`,
+      );
+    }
+
+    const payment = order.payments[0];
+
+    if (!payment) {
+      throw new NotFoundException(
+        `Order '${orderId}' does not have a payment snapshot to confirm.`,
+      );
+    }
+
+    if (order.status !== OrderStatus.pending_payment) {
+      throw new ConflictException(
+        `Order '${orderId}' is already in '${order.status}' and cannot be confirmed again.`,
+      );
+    }
+
+    if (payment.status !== PaymentStatus.pending) {
+      throw new ConflictException(
+        `Payment '${payment.id}' is already in '${payment.status}' and cannot be confirmed again.`,
+      );
+    }
+
+    const updatedOrder = await this.prisma.$transaction(async (tx) => {
+      await tx.payment.update({
+        where: {
+          id: payment.id,
+        },
+        data: {
+          status: PaymentStatus.paid,
+          paidAt: new Date(),
+        },
+      });
+
+      await tx.orderStatusHistory.create({
+        data: {
+          orderId: order.id,
+          fromStatus: order.status,
+          toStatus: OrderStatus.new,
+          actorType: OrderActorType.payment_provider,
+          reason: 'Mock payment confirmed and order promoted to the truck queue.',
+        },
+      });
+
+      return tx.order.update({
+        where: {
+          id: order.id,
+        },
+        data: {
+          status: OrderStatus.new,
+        },
+        include: this.getOrderInclude(),
+      });
+    });
+
+    return this.mapOrder(updatedOrder);
+  }
+
   async listOrdersForCustomer(
     authUser: AuthenticatedRequestUser,
   ): Promise<OrderSummaryDto[]> {

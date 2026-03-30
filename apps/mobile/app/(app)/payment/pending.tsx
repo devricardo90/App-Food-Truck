@@ -1,17 +1,25 @@
 import { useAuth } from '@clerk/clerk-expo';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
-import { ScrollView, Text, View } from 'react-native';
+import { useEffect } from 'react';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { formatPrice } from '../../../src/lib/foodtrucks-api';
-import { fetchOrderById } from '../../../src/lib/orders-api';
+import {
+  confirmMockPayment,
+  fetchOrderById,
+  OrdersApiError,
+} from '../../../src/lib/orders-api';
 import {
   getOperationalOrderRefreshInterval,
   mapOrderStatusLabel,
 } from '../../../src/lib/order-status';
+import { useCart } from '../../../src/providers/cart-provider';
 
 export default function PaymentPendingScreen() {
+  const queryClient = useQueryClient();
   const { getToken } = useAuth();
+  const { clearCart } = useCart();
   const { orderId } = useLocalSearchParams<{ orderId?: string }>();
   const clerkJwtTemplate =
     process.env.EXPO_PUBLIC_CLERK_JWT_TEMPLATE?.trim() || undefined;
@@ -37,6 +45,70 @@ export default function PaymentPendingScreen() {
     retry: false,
   });
 
+  const confirmPaymentMutation = useMutation({
+    mutationFn: async () => {
+      const token = await getToken(
+        clerkJwtTemplate ? { template: clerkJwtTemplate } : undefined,
+      );
+
+      if (!token || !orderId) {
+        throw new Error(
+          'Nao foi possivel autenticar a confirmacao do pagamento mock.',
+        );
+      }
+
+      return confirmMockPayment(token, orderId);
+    },
+    onSuccess: (order) => {
+      console.log('Mobile confirm mock payment success:', {
+        orderId: order.id,
+        publicCode: order.publicCode,
+        status: order.status,
+        paymentStatus: order.payment.status,
+      });
+      clearCart();
+      void queryClient.invalidateQueries({
+        queryKey: ['checkout-order', orderId],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ['orders-history'],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ['order-detail', orderId],
+      });
+    },
+    onError: (error) => {
+      console.log('Mobile confirm mock payment error:', {
+        message:
+          error instanceof OrdersApiError || error instanceof Error
+            ? error.message
+            : 'Falha ao confirmar pagamento mock.',
+        status: error instanceof OrdersApiError ? error.status : null,
+      });
+    },
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (
+      !orderQuery.data ||
+      confirmPaymentMutation.isPending ||
+      confirmPaymentMutation.isSuccess
+    ) {
+      return;
+    }
+
+    if (
+      orderQuery.data.status === 'pending_payment' &&
+      orderQuery.data.payment.status === 'pending'
+    ) {
+      confirmPaymentMutation.mutate();
+    }
+  }, [
+    confirmPaymentMutation,
+    orderQuery.data,
+  ]);
+
   return (
     <ScrollView
       className="flex-1 bg-sand"
@@ -50,8 +122,8 @@ export default function PaymentPendingScreen() {
         Aguardando confirmacao oficial
       </Text>
       <Text className="mt-3 text-base leading-6 text-neutral-600">
-        O frontend permanece em estado intermediario ate o backend confirmar o
-        pagamento.
+        O handoff do MVP confirma o pagamento mock nesta etapa antes de enviar
+        o pedido para a fila operacional da barraca.
       </Text>
 
       <View className="mt-8 rounded-[28px] border border-amber-950/10 bg-white p-6 shadow-sm">
@@ -62,6 +134,11 @@ export default function PaymentPendingScreen() {
         ) : orderQuery.isPending ? (
           <Text className="text-sm leading-6 text-neutral-600">
             Recarregando o pedido criado no checkout...
+          </Text>
+        ) : confirmPaymentMutation.isPending ? (
+          <Text className="text-sm leading-6 text-neutral-600">
+            Confirmando pagamento mock e promovendo o pedido para a fila da
+            barraca...
           </Text>
         ) : orderQuery.isError ? (
           <Text className="text-sm leading-6 text-rose-900">
@@ -94,11 +171,28 @@ export default function PaymentPendingScreen() {
               Payment provider: {orderQuery.data.payment.provider} | status:{' '}
               {orderQuery.data.payment.status}
             </Text>
+            {confirmPaymentMutation.isError ? (
+              <Text className="mt-4 text-sm leading-6 text-rose-900">
+                {confirmPaymentMutation.error instanceof Error
+                  ? confirmPaymentMutation.error.message
+                  : 'Falha ao confirmar o pagamento mock desta etapa.'}
+              </Text>
+            ) : null}
           </>
         ) : null}
       </View>
 
       <View className="mt-8 gap-3">
+        {orderId && confirmPaymentMutation.isError ? (
+          <Pressable
+            className="rounded-full bg-pine px-4 py-4"
+            onPress={() => confirmPaymentMutation.mutate()}
+          >
+            <Text className="text-center text-sm font-semibold text-white">
+              Tentar confirmar pagamento novamente
+            </Text>
+          </Pressable>
+        ) : null}
         <Link
           asChild
           href={

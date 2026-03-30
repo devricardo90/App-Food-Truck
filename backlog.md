@@ -2309,7 +2309,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-071 - Validar fluxo ponta a ponta pedido -> barraca -> cliente
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Validar manualmente o ciclo operacional completo do MVP, do checkout do cliente ate a atualizacao final do pedido apos a operacao da barraca.
 - **Dependencias:** `FT-067`, `FT-068`, `FT-069`
@@ -2338,12 +2338,15 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - sem esse handoff, a barraca nao recebe um pedido acionavel e o cliente nao consegue observar a progressao operacional completa
 - **Bloqueado por:**
   - ausencia de fluxo de confirmacao de pagamento ou promocao controlada de `pending_payment -> new`
+- **Observacoes adicionais em:** `2026-03-30`
+  - o bloqueio estrutural anterior foi tratado em `FT-072`
+  - a task volta para `READY` e deve ser repetida com evidencia manual do ciclo completo
 - **Commit:** `docs(backlog): record ft-071 blocker on payment handoff`
 
 ## FT-072 - Alinhar handoff de pagamento para operacao da barraca
 
 - **Skill dona:** `nest-api-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Definir, implementar e validar o contrato oficial que promove o pedido de `pending_payment` para `new`, destravando o handoff entre checkout, confirmacao de pagamento e fila operacional da barraca.
 - **Dependencias:** `FT-063`, `FT-067`, `FT-071`
@@ -2375,19 +2378,39 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - a barraca nao deve promover manualmente `pending_payment -> new`
   - o handoff deve acontecer na confirmacao de pagamento do fluxo mock atual
   - o objetivo desta task e destravar o ciclo operacional do MVP sem abrir uma frente grande de pagamentos reais
+- **Entrega em:** `2026-03-30`
+- **Artefatos:**
+  - `apps/api/src/modules/orders/orders.dto.ts`
+  - `apps/api/src/modules/orders/orders.controller.ts`
+  - `apps/api/src/modules/orders/orders.service.ts`
+  - `apps/mobile/src/lib/orders-api.ts`
+  - `apps/mobile/app/(app)/checkout.tsx`
+  - `apps/mobile/app/(app)/payment/pending.tsx`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - endpoint unico de confirmacao mock exposto na API: ok
+  - promocao transacional `pending_payment -> new` com `Payment.status = paid`: ok
+  - tela de pagamento pendente dispara o handoff controlado e reconsulta o pedido: ok
+  - api build: ok
+  - mobile typecheck: ok
+- **Observacoes de execucao em:** `2026-03-30`
+  - o handoff oficial ficou centralizado no backend via `POST /orders/:orderId/confirm-payment`
+  - a confirmacao mock promove o pedido para `new`, marca o pagamento como `paid` e registra `OrderStatusHistory`
+  - o mobile continua criando pedido em `pending_payment`, mas a tela pendente agora aciona a confirmacao controlada antes de entregar o pedido para a operacao
+- **Commit:** `feat(api): align mock payment handoff with truck operations`
 
 ---
 
 # READY atuais
 
-- `FT-072` - Alinhar handoff de pagamento para operacao da barraca
+- `FT-071` - Validar fluxo ponta a ponta pedido -> barraca -> cliente
 
 ---
 
 # Ordem sugerida para comecar
 
-- executar `FT-072` para destravar o handoff `pending_payment -> new`
-- repetir `FT-071` logo depois da entrega de `FT-072`
+- repetir `FT-071` com evidencia manual do fluxo completo apos o handoff de pagamento
 - consolidar o admin operacional e as acoes da barraca antes de abrir produtos/estoque/cupons
 - usar `FT-032` como proxima frente tecnica separada, sem competir com o fluxo principal de produto
 - deixar `FT-061` para a proxima frente tecnica de hardening e testes
