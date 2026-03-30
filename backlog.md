@@ -2048,7 +2048,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-063 - Implementar backend inicial de checkout e pedido pendente
 
 - **Skill dona:** `nest-api-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Criar a primeira camada real de pedido no backend para sustentar checkout do MVP, com criacao de pedido em `pending_payment`, itens, totais e contrato estavel para o mobile.
 - **Dependencias:** `FT-062`, `FT-023`, `FT-024`, `FT-025`, `FT-026`
@@ -2058,11 +2058,33 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - itens, totais e referencias basicas ficam persistidos
   - validacoes minimas de capacidade e disponibilidade ficam aplicadas ou explicitamente registradas
   - Swagger e Scalar refletem o contrato novo
+- **Entrega em:** `2026-03-30`
+- **Artefatos:**
+  - `apps/api/src/modules/orders/orders.dto.ts`
+  - `apps/api/src/modules/orders/orders.service.ts`
+  - `apps/api/src/modules/orders/orders.controller.ts`
+  - `apps/api/src/modules/orders/orders.module.ts`
+  - `apps/api/src/modules/app.module.ts`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - `POST /orders` cria pedido em `pending_payment`: ok
+  - `GET /orders/:orderId` reconsulta o pedido autenticado: ok
+  - snapshot inicial de payment pendente criado junto do pedido: ok
+  - disponibilidade e estoque diario minimo validados no backend: ok
+  - janela operacional inicial registrada no pedido: ok
+  - api build: ok
+- **Observacoes de execucao em:** `2026-03-30`
+  - o contrato inicial ficou focado em `POST /orders` e `GET /orders/:orderId` para sustentar o handoff mobile do checkout
+  - a criacao do pedido exige `EventTruck` e `MenuItem` persistidos no banco; o fallback publico de foodtrucks em fixture nao sustenta checkout real
+  - a validacao inicial cobre `acceptsOrders`, disponibilidade do item e estoque diario restante sem consumir estoque definitivo em `pending_payment`
+  - a verificacao operacional completa de capacidade por janela fica para a sequencia de integracao e endurecimento do fluxo
+- **Commit:** `feat(api): create pending-payment order contract`
 
 ## FT-064 - Integrar mobile ao checkout real e status pendente
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `TODO`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Conectar carrinho e checkout mobile ao backend real para criar pedido `pending_payment`, sair do placeholder atual e renderizar um estado confiavel de aguardando confirmacao.
 - **Dependencias:** `FT-063`
@@ -2102,13 +2124,13 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-063` - Implementar backend inicial de checkout e pedido pendente
+- `FT-064` - Integrar mobile ao checkout real e status pendente
 
 ---
 
 # Ordem sugerida para comecar
 
-- fechar o fluxo principal do MVP na ordem `FT-063 -> FT-064 -> FT-065 -> FT-066`
+- fechar o fluxo principal do MVP na ordem `FT-064 -> FT-065 -> FT-066`
 - retomar imediatamente as tasks de produto/MVP desbloqueadas apos a auth minima funcional
 - usar `FT-032` como proxima frente tecnica separada, sem competir com o fluxo principal de produto
 - deixar `FT-061` para a proxima frente tecnica de hardening e testes
