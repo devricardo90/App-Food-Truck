@@ -2149,7 +2149,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-066 - Integrar admin a fila operacional real de pedidos
 
 - **Skill dona:** `admin-web-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Substituir os placeholders da fila de pedidos do admin por leitura real de pedidos da barraca, preparando a operacao minima do MVP apos a criacao real dos pedidos.
 - **Dependencias:** `FT-063`, `FT-065`
@@ -2158,18 +2158,38 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - dashboard operacional deixa de depender de contadores mockados
   - a barraca consegue visualizar ao menos `pending_payment`, `new`, `in_progress` e `ready`
   - erros de contexto ou foodtruck sem pedidos ficam claros no painel
+- **Entrega em:** `2026-03-30`
+- **Artefatos:**
+  - `apps/api/src/modules/orders/orders.dto.ts`
+  - `apps/api/src/modules/orders/orders.service.ts`
+  - `apps/api/src/modules/orders/orders.controller.ts`
+  - `apps/admin/src/lib/orders-api.ts`
+  - `apps/admin/app/(console)/truck/orders/page.tsx`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - `GET /orders/foodtruck-queue` exposto para contexto autenticado da barraca: ok
+  - pagina `/truck/orders` passou a consumir fila real da API: ok
+  - contadores por estado deixaram de depender de placeholders: ok
+  - lista operacional inclui ao menos `pending_payment`, `new`, `in_progress` e `ready`: ok
+  - api build: ok
+  - admin build: ok
+- **Observacoes de execucao em:** `2026-03-30`
+  - a fila operacional usa o contexto ativo da barraca resolvido por `/auth/me` e enviado via `x-foodtruck-id`
+  - o contrato da API ficou separado entre historico do cliente e fila operacional da barraca
+  - edicao de status do pedido continua fora do escopo desta task e segue para frente posterior
+- **Commit:** `feat(admin): expose real truck order queue`
 
 ---
 
 # READY atuais
 
-- `FT-066` - Integrar admin a fila operacional real de pedidos
+- nenhuma task `READY` no momento
 
 ---
 
 # Ordem sugerida para comecar
 
-- fechar o fluxo principal do MVP na ordem `FT-066`
 - retomar imediatamente as tasks de produto/MVP desbloqueadas apos a auth minima funcional
 - usar `FT-032` como proxima frente tecnica separada, sem competir com o fluxo principal de produto
 - deixar `FT-061` para a proxima frente tecnica de hardening e testes

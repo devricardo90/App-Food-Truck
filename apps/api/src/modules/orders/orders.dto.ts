@@ -106,6 +106,34 @@ export class OrderSummaryDto {
   createdAt!: string;
 }
 
+export class TruckOrderQueueItemDto extends OrderSummaryDto {
+  @ApiPropertyOptional({ example: 'Ricardo Dev', nullable: true })
+  customerName!: string | null;
+
+  @ApiPropertyOptional({ example: 'cliente@foodtrucks.app', nullable: true })
+  customerEmail!: string | null;
+}
+
+export class TruckOrderQueueResponseDto {
+  @ApiProperty({ type: OrderEventTruckSnapshotDto })
+  activeFoodtruck!: OrderEventTruckSnapshotDto;
+
+  @ApiProperty({ example: '2' })
+  pendingPaymentCount!: number;
+
+  @ApiProperty({ example: '5' })
+  newCount!: number;
+
+  @ApiProperty({ example: '3' })
+  inProgressCount!: number;
+
+  @ApiProperty({ example: '1' })
+  readyCount!: number;
+
+  @ApiProperty({ type: TruckOrderQueueItemDto, isArray: true })
+  orders!: TruckOrderQueueItemDto[];
+}
+
 export class OrderResponseDto {
   @ApiProperty({ example: 'corder_123' })
   id!: string;

@@ -8,12 +8,16 @@ import {
 import { EventStatus, OrderActorType, OrderStatus, PaymentStatus } from '../../generated/prisma/enums';
 import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
-import type { AuthenticatedRequestUser } from '../auth/auth.types';
+import type {
+  AuthMembershipContext,
+  AuthenticatedRequestUser,
+} from '../auth/auth.types';
 import type {
   CreateOrderRequestDto,
   CreatedOrderResponseDto,
   OrderResponseDto,
   OrderSummaryDto,
+  TruckOrderQueueResponseDto,
 } from './orders.dto';
 
 @Injectable()
@@ -238,6 +242,82 @@ export class OrdersService {
     });
 
     return orders.map((order) => this.mapOrderSummary(order));
+  }
+
+  async listOrdersForFoodtruck(
+    activeFoodtruck: AuthMembershipContext,
+  ): Promise<TruckOrderQueueResponseDto> {
+    const orders = await this.prisma.order.findMany({
+      where: {
+        eventTruck: {
+          truckId: activeFoodtruck.foodtruckId,
+        },
+        status: {
+          in: [
+            OrderStatus.pending_payment,
+            OrderStatus.new,
+            OrderStatus.in_progress,
+            OrderStatus.ready,
+          ],
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        customer: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+        eventTruck: {
+          select: {
+            id: true,
+            truck: {
+              select: {
+                slug: true,
+                name: true,
+              },
+            },
+            event: {
+              select: {
+                slug: true,
+              },
+            },
+          },
+        },
+        payments: {
+          orderBy: {
+            createdAt: 'asc',
+          },
+          take: 1,
+        },
+      },
+    });
+
+    return {
+      activeFoodtruck: {
+        id: activeFoodtruck.foodtruckId,
+        foodtruckSlug: activeFoodtruck.foodtruckSlug,
+        foodtruckName: activeFoodtruck.foodtruckName,
+        eventSlug: orders[0]?.eventTruck.event.slug ?? 'sem-evento',
+      },
+      pendingPaymentCount: orders.filter(
+        (order) => order.status === OrderStatus.pending_payment,
+      ).length,
+      newCount: orders.filter((order) => order.status === OrderStatus.new).length,
+      inProgressCount: orders.filter(
+        (order) => order.status === OrderStatus.in_progress,
+      ).length,
+      readyCount: orders.filter((order) => order.status === OrderStatus.ready)
+        .length,
+      orders: orders.map((order) => ({
+        ...this.mapOrderSummary(order),
+        customerName: order.customer.name,
+        customerEmail: order.customer.email,
+      })),
+    };
   }
 
   private getOrderInclude() {

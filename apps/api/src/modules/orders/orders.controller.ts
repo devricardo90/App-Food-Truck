@@ -3,6 +3,7 @@ import {
   ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiHeader,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -10,13 +11,20 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
+import { MembershipRole } from '../../generated/prisma/enums';
+import { CurrentActiveFoodtruck } from '../auth/current-active-foodtruck.decorator';
+import { FoodtruckMembership } from '../auth/foodtruck-membership.decorator';
 import { CurrentAuthUser } from '../auth/current-auth-user.decorator';
-import type { AuthenticatedRequestUser } from '../auth/auth.types';
+import type {
+  AuthMembershipContext,
+  AuthenticatedRequestUser,
+} from '../auth/auth.types';
 import {
   CreateOrderRequestDto,
   CreatedOrderResponseDto,
   OrderResponseDto,
   OrderSummaryDto,
+  TruckOrderQueueResponseDto,
 } from './orders.dto';
 import { OrdersService } from './orders.service';
 
@@ -42,6 +50,30 @@ export class OrdersController {
     @CurrentAuthUser() authUser: AuthenticatedRequestUser,
   ): Promise<OrderSummaryDto[]> {
     return this.ordersService.listOrdersForCustomer(authUser);
+  }
+
+  @Get('foodtruck-queue')
+  @FoodtruckMembership(
+    MembershipRole.truck_operator,
+    MembershipRole.truck_manager,
+  )
+  @ApiHeader({
+    name: 'x-foodtruck-id',
+    required: false,
+    description:
+      'Optional active foodtruck id. Required when the authenticated user has multiple foodtruck memberships.',
+  })
+  @ApiOperation({
+    summary: 'List the operational queue for the active foodtruck context.',
+  })
+  @ApiOkResponse({
+    description: 'Operational queue grouped by status for the active foodtruck.',
+    type: TruckOrderQueueResponseDto,
+  })
+  listFoodtruckQueue(
+    @CurrentActiveFoodtruck() activeFoodtruck: AuthMembershipContext,
+  ): Promise<TruckOrderQueueResponseDto> {
+    return this.ordersService.listOrdersForFoodtruck(activeFoodtruck);
   }
 
   @Post()
