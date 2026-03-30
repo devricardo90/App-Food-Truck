@@ -1839,7 +1839,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - tentativa final de conclusao em `2026-03-30`: a lista permaneceu validada visualmente no emulador, mas o toque automatizado no card nao abriu o detalhe e a abertura por rota direta deixou o Expo Go preso na tela de transicao; detalhe e catalogo seguem sem evidencia visual concluida nesta rodada
   - conclusao oficial em `2026-03-30`: a lista passou a usar `ScrollView` real no Expo Go, os cards ficaram clicaveis via `Pressable`, o toque no card `Funky Chicken` abriu a tela de detalhe, o CTA `Abrir cardapio` abriu o catalogo e o catalogo respondeu a scroll real no emulador; a evidencia visual de lista -> detalhe -> catalogo ficou concluida
   - logs de navegacao adicionados no mobile para registrar estado da lista, card pressionado, rota e carregamento de detalhe/catalogo durante a validacao visual
-  - commit: pendente
+  - commit: `fix(mobile): close emulator navigation flow for ft-057`
 
 ---
 
