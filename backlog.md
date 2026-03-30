@@ -1828,6 +1828,8 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - decisao de reentrada em `2026-03-30`: a retomada oficial passa primeiro por consolidacao do estado real de auth/Clerk e depois por estabilizacao formal do fluxo real antes da validacao funcional final
   - nova tentativa em `2026-03-30` com configuracao minima real sem `JWT template`: login no mobile chegou ate `signIn.create()`, mas o Clerk respondeu `form_identifier_not_found: Couldn't find your account.`
   - confirmacao do ponto de falha em `2026-03-30`: o bloqueio atual ainda acontece antes de `/auth/me`, portanto nao ha evidencia de falha por ausencia de `JWT template` neste teste
+  - repeticao oficial em `2026-03-30` apos confirmacao do usuario no tenant atual: `signIn.create()` continuou retornando `form_identifier_not_found: Couldn't find your account.`
+  - estado confirmado em `2026-03-30`: `setActive()`, `/auth/me`, entrada autenticada e validacao de lista/detalhe/catalogo continuam sem evidencia porque o bloqueio permanece no login primario do Clerk
 
 ---
 
