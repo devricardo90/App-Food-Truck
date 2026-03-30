@@ -2010,13 +2010,86 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 ---
 
+# EPIC 14 - Fluxo principal de pedido do MVP
+
+## FT-062 - Implementar carrinho real no mobile
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `READY`
+- **Fluxo critico:** `sim`
+- **Descricao:** Substituir o carrinho mockado por um carrinho real no app mobile, permitindo adicionar itens do catalogo, agrupar por barraca e revisar o pedido antes do checkout.
+- **Dependencias:** `FT-057`
+- **Criterios de aceite:**
+  - item do catalogo pode ser adicionado ao carrinho
+  - o carrinho agrupa itens da barraca ativa
+  - quantidade, subtotal e total sao exibidos no mobile
+  - o carrinho deixa claro o limite de uma barraca por vez no MVP
+  - o fluxo item -> carrinho funciona sem mock de pedido
+
+## FT-063 - Implementar backend inicial de checkout e pedido pendente
+
+- **Skill dona:** `nest-api-architecture`
+- **Status:** `TODO`
+- **Fluxo critico:** `sim`
+- **Descricao:** Criar a primeira camada real de pedido no backend para sustentar checkout do MVP, com criacao de pedido em `pending_payment`, itens, totais e contrato estavel para o mobile.
+- **Dependencias:** `FT-062`, `FT-023`, `FT-024`, `FT-025`, `FT-026`
+- **Criterios de aceite:**
+  - API expone contrato de criacao de checkout ou pedido pendente
+  - pedido nasce em `pending_payment`
+  - itens, totais e referencias basicas ficam persistidos
+  - validacoes minimas de capacidade e disponibilidade ficam aplicadas ou explicitamente registradas
+  - Swagger e Scalar refletem o contrato novo
+
+## FT-064 - Integrar mobile ao checkout real e status pendente
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `TODO`
+- **Fluxo critico:** `sim`
+- **Descricao:** Conectar carrinho e checkout mobile ao backend real para criar pedido `pending_payment`, sair do placeholder atual e renderizar um estado confiavel de aguardando confirmacao.
+- **Dependencias:** `FT-063`
+- **Criterios de aceite:**
+  - checkout mobile envia o carrinho real para a API
+  - tela de pagamento pendente usa referencia real do pedido
+  - o app nao promove pedido por conta propria
+  - o usuario consegue reconsultar o pedido criado pela API
+
+## FT-065 - Expor e integrar historico e detalhe reais de pedidos no mobile
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `TODO`
+- **Fluxo critico:** `sim`
+- **Descricao:** Substituir mocks de historico e detalhe de pedidos no app cliente por leitura real do backend, fechando o fallback principal de acompanhamento do pedido no MVP.
+- **Dependencias:** `FT-063`, `FT-064`
+- **Criterios de aceite:**
+  - lista de pedidos do usuario vem da API
+  - detalhe de pedido vem da API
+  - timeline e status refletem o estado real do pedido
+  - o fluxo `payment/pending -> order detail` funciona com ids reais
+
+## FT-066 - Integrar admin a fila operacional real de pedidos
+
+- **Skill dona:** `admin-web-architecture`
+- **Status:** `TODO`
+- **Fluxo critico:** `sim`
+- **Descricao:** Substituir os placeholders da fila de pedidos do admin por leitura real de pedidos da barraca, preparando a operacao minima do MVP apos a criacao real dos pedidos.
+- **Dependencias:** `FT-063`, `FT-065`
+- **Criterios de aceite:**
+  - painel da barraca lista pedidos reais por estado
+  - dashboard operacional deixa de depender de contadores mockados
+  - a barraca consegue visualizar ao menos `pending_payment`, `new`, `in_progress` e `ready`
+  - erros de contexto ou foodtruck sem pedidos ficam claros no painel
+
+---
+
 # READY atuais
 
-- nenhuma task `READY` no momento
+- `FT-062` - Implementar carrinho real no mobile
 
 ---
 
 # Ordem sugerida para comecar
 
+- fechar o fluxo principal do MVP na ordem `FT-062 -> FT-063 -> FT-064 -> FT-065 -> FT-066`
 - retomar imediatamente as tasks de produto/MVP desbloqueadas apos a auth minima funcional
+- usar `FT-032` como proxima frente tecnica separada, sem competir com o fluxo principal de produto
 - deixar `FT-061` para a proxima frente tecnica de hardening e testes
