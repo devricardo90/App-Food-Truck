@@ -1826,6 +1826,8 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - evidencia do bloqueio: tentativa controlada com credencial invalida retornou `Couldn't find your account.`
   - causa registrada: sem sessao valida o layout autenticado redireciona para `/(auth)/sign-in`, impedindo a navegacao visual da aba de trucks
   - decisao de reentrada em `2026-03-30`: a retomada oficial passa primeiro por consolidacao do estado real de auth/Clerk e depois por estabilizacao formal do fluxo real antes da validacao funcional final
+  - nova tentativa em `2026-03-30` com configuracao minima real sem `JWT template`: login no mobile chegou ate `signIn.create()`, mas o Clerk respondeu `form_identifier_not_found: Couldn't find your account.`
+  - confirmacao do ponto de falha em `2026-03-30`: o bloqueio atual ainda acontece antes de `/auth/me`, portanto nao ha evidencia de falha por ausencia de `JWT template` neste teste
 
 ---
 
