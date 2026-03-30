@@ -52,14 +52,45 @@ export class AuthService {
       .map((value) => value.trim())
       .filter(Boolean);
 
-    const claims = (await verifyToken(token, {
-      secretKey,
-      jwtKey: process.env.CLERK_JWT_KEY,
-      authorizedParties: authorizedParties?.length
-        ? authorizedParties
-        : undefined,
-      audience: audience?.length ? audience : undefined,
-    })) as ClerkClaims;
+    let claims: ClerkClaims;
+
+    try {
+      claims = (await verifyToken(token, {
+        secretKey,
+        jwtKey: process.env.CLERK_JWT_KEY,
+        authorizedParties: authorizedParties?.length
+          ? authorizedParties
+          : undefined,
+        audience: audience?.length ? audience : undefined,
+      })) as ClerkClaims;
+    } catch (error) {
+      const validationError =
+        error instanceof Error
+          ? {
+              name: error.name,
+              message: error.message,
+            }
+          : {
+              name: 'UnknownError',
+              message: String(error),
+            };
+
+      console.error('Clerk token validation failed', {
+        stage: 'verifyToken',
+        tokenPreview: token.slice(0, 16),
+        tokenSegments: token.split('.').length,
+        hasJwtKey: Boolean(process.env.CLERK_JWT_KEY?.trim()),
+        audience: audience?.length ? audience : null,
+        authorizedParties: authorizedParties?.length
+          ? authorizedParties
+          : null,
+        errorName: validationError.name,
+        errorMessage: validationError.message,
+      });
+
+      throw error;
+    }
+
     const externalAuthId = claims.sub;
 
     if (!externalAuthId) {
