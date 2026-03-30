@@ -2084,7 +2084,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-064 - Integrar mobile ao checkout real e status pendente
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Conectar carrinho e checkout mobile ao backend real para criar pedido `pending_payment`, sair do placeholder atual e renderizar um estado confiavel de aguardando confirmacao.
 - **Dependencias:** `FT-063`
@@ -2093,11 +2093,30 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - tela de pagamento pendente usa referencia real do pedido
   - o app nao promove pedido por conta propria
   - o usuario consegue reconsultar o pedido criado pela API
+- **Entrega em:** `2026-03-30`
+- **Artefatos:**
+  - `apps/mobile/src/lib/orders-api.ts`
+  - `apps/mobile/app/(app)/checkout.tsx`
+  - `apps/mobile/app/(app)/payment/pending.tsx`
+  - `apps/mobile/app/(app)/orders/[orderId].tsx`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - checkout mobile usa o carrinho real para chamar `POST /orders`: ok
+  - redirecionamento para `payment/pending` usa `orderId` real: ok
+  - pagamento pendente reconsulta `GET /orders/:orderId`: ok
+  - detalhe de pedido reconsulta a API para ids reais: ok
+  - mobile typecheck: ok
+- **Observacoes de execucao em:** `2026-03-30`
+  - a integracao manteve o contrato de auth atual via bearer Clerk e template `foodtrucks-api`
+  - a lista/historico de pedidos ainda permanece mockada na aba de pedidos; esta task fechou apenas o handoff do checkout e a reconsulta imediata do pedido criado
+  - o fluxo real continua dependente de `EventTruck` e `MenuItem` persistidos no banco local para criar pedidos
+- **Commit:** `feat(mobile): integrate checkout with pending-payment order api`
 
 ## FT-065 - Expor e integrar historico e detalhe reais de pedidos no mobile
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `TODO`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Substituir mocks de historico e detalhe de pedidos no app cliente por leitura real do backend, fechando o fallback principal de acompanhamento do pedido no MVP.
 - **Dependencias:** `FT-063`, `FT-064`
@@ -2124,13 +2143,13 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-064` - Integrar mobile ao checkout real e status pendente
+- `FT-065` - Expor e integrar historico e detalhe reais de pedidos no mobile
 
 ---
 
 # Ordem sugerida para comecar
 
-- fechar o fluxo principal do MVP na ordem `FT-064 -> FT-065 -> FT-066`
+- fechar o fluxo principal do MVP na ordem `FT-065 -> FT-066`
 - retomar imediatamente as tasks de produto/MVP desbloqueadas apos a auth minima funcional
 - usar `FT-032` como proxima frente tecnica separada, sem competir com o fluxo principal de produto
 - deixar `FT-061` para a proxima frente tecnica de hardening e testes
