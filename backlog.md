@@ -2340,17 +2340,54 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - ausencia de fluxo de confirmacao de pagamento ou promocao controlada de `pending_payment -> new`
 - **Commit:** `docs(backlog): record ft-071 blocker on payment handoff`
 
+## FT-072 - Alinhar handoff de pagamento para operacao da barraca
+
+- **Skill dona:** `nest-api-architecture`
+- **Status:** `READY`
+- **Fluxo critico:** `sim`
+- **Descricao:** Definir, implementar e validar o contrato oficial que promove o pedido de `pending_payment` para `new`, destravando o handoff entre checkout, confirmacao de pagamento e fila operacional da barraca.
+- **Dependencias:** `FT-063`, `FT-067`, `FT-071`
+- **Criterios de aceite:**
+  - contrato oficial de estados do pedido fica explicitado entre pagamento e operacao
+  - existe um ponto unico e controlado para promover `pending_payment -> new`
+  - a barraca passa a receber o pedido em `new` sem assumir manualmente pedidos pendentes de pagamento
+  - `Order.status` e `Payment.status` ficam coerentes no handoff do fluxo mock atual
+  - `FT-071` fica destravavel apos a entrega
+- **Escopo aprovado:**
+  - definir quando o pedido sai de `pending_payment`
+  - definir quem executa a promocao para `new`
+  - implementar o handoff minimo no backend do fluxo mock atual
+  - alinhar mobile e admin ao contrato resultante
+  - registrar o comportamento oficial no backlog e nas docs operacionais afetadas
+- **Fora de escopo:**
+  - gateway real de pagamento
+  - webhooks externos completos
+  - hardening amplo de conciliacao financeira
+  - redesign completo do modulo de payments
+- **Contrato oficial proposto:**
+  - `pending_payment`: pedido criado, aguardando confirmacao de pagamento
+  - `new`: pagamento confirmado, pedido entra na fila da barraca
+  - `in_progress`: preparo iniciado pela barraca
+  - `ready`: pedido pronto para retirada
+  - `completed`: pedido entregue
+  - `cancelled`: pedido cancelado por falha operacional ou financeira
+- **Observacoes de planejamento em:** `2026-03-30`
+  - a barraca nao deve promover manualmente `pending_payment -> new`
+  - o handoff deve acontecer na confirmacao de pagamento do fluxo mock atual
+  - o objetivo desta task e destravar o ciclo operacional do MVP sem abrir uma frente grande de pagamentos reais
+
 ---
 
 # READY atuais
 
-- nenhuma task `READY` no momento
+- `FT-072` - Alinhar handoff de pagamento para operacao da barraca
 
 ---
 
 # Ordem sugerida para comecar
 
-- desbloquear primeiro o handoff `pending_payment -> new` antes de repetir `FT-071`
+- executar `FT-072` para destravar o handoff `pending_payment -> new`
+- repetir `FT-071` logo depois da entrega de `FT-072`
 - consolidar o admin operacional e as acoes da barraca antes de abrir produtos/estoque/cupons
 - usar `FT-032` como proxima frente tecnica separada, sem competir com o fluxo principal de produto
 - deixar `FT-061` para a proxima frente tecnica de hardening e testes
