@@ -1896,7 +1896,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-059 - Estabilizar auth real para validacao em emulador
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Estabilizar oficialmente o fluxo real de auth Clerk entre mobile, admin e API para permitir validacao em emulador sem bypass e com contrato autenticado coerente.
 - **Dependencias:** `FT-058`
@@ -1905,17 +1905,52 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - bootstrap autenticado via `/auth/me` funciona sem bypass temporario
   - callbacks e configuracoes necessarias de Clerk ficam documentados no estado oficial
   - erros de `401`, `403` ou token ausente ficam reproduziveis e explicados
-- **Observacao:** task intermediaria obrigatoria antes da retomada oficial de `FT-057`
+- **Entrega em:** `2026-03-30`
+- **Artefatos:**
+  - `backlog.md`
+  - `apps/admin/package.json`
+  - `apps/admin/.env.example`
+  - `apps/admin/src/lib/auth-context.ts`
+  - `apps/mobile/.env.example`
+  - `apps/mobile/src/lib/auth-api.ts`
+  - `apps/mobile/src/providers/auth-bootstrap-provider.tsx`
+  - `apps/mobile/app/(app)/_layout.tsx`
+  - `apps/mobile/app/(app)/(tabs)/account.tsx`
+  - `docs/auth/auth-strategy.md`
+  - `docs/auth/clerk-runtime-config.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - admin local fixado em `http://localhost:3001` para nao conflitar com a API: ok
+  - exemplos oficiais de `.env` adicionados para admin e mobile: ok
+  - diagnostico de `missing-token`, `401` e `403` enriquecido em admin e mobile: ok
+  - baseline oficial desta fase documentado sem callback hospedado ou OAuth nativo: ok
+  - mobile lint: ok
+  - mobile typecheck: ok
+  - mobile build/export web: ok
+  - admin lint: ok
+  - admin typecheck: ok
+  - admin build: ok
+  - api lint: ok
+  - api typecheck: ok
+  - api build: ok
+  - observacao operacional: a validacao funcional com credencial Clerk real continua em `FT-057`
+- **Observacoes de estabilizacao em:** `2026-03-30`
+  - o runtime local agora diferencia `missing-token`, `401` e `403` com mensagens acionaveis
+  - `apps/admin/.env` local foi criado fora de versionamento para alinhar `API_BASE_URL` e `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+  - o baseline oficial desta fase usa email e senha com `signIn.create()` + `setActive()` no mobile e `SignIn` do Clerk no admin
+  - callback hospedado, OAuth nativo e SSO continuam fora do escopo oficial
+  - `FT-057` permanece bloqueada somente pela ausencia de credencial Clerk valida para evidencia funcional final no emulador
+- **Commit:** `chore(auth): stabilize local clerk runtime contract before emulator validation`
 
 ---
 
 # READY atuais
 
-- `FT-059 - Estabilizar auth real para validacao em emulador`
+- nenhuma task `READY` no momento
 
 ---
 
 # Ordem sugerida para comecar
 
-- executar `FT-059` para estabilizar o fluxo autenticado oficial
-- so depois reabrir `FT-057` para validacao funcional final no emulador
+- fornecer uma credencial Clerk valida de teste para destravar `FT-057`
+- executar `FT-057` para validacao funcional final no emulador

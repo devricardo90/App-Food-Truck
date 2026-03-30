@@ -13,12 +13,20 @@ type AuthBootstrapContextValue = {
   authMe: AuthMeResponse | null;
   isBootstrapping: boolean;
   errorMessage: string | null;
+  phase:
+    | 'signed-out'
+    | 'loading-clerk'
+    | 'loading-user'
+    | 'fetching-auth-me'
+    | 'ready'
+    | 'error';
 };
 
 const AuthBootstrapContext = createContext<AuthBootstrapContextValue>({
   authMe: null,
   isBootstrapping: false,
   errorMessage: null,
+  phase: 'signed-out',
 });
 
 export function AuthBootstrapProvider({ children }: PropsWithChildren) {
@@ -46,7 +54,13 @@ export function AuthBootstrapProvider({ children }: PropsWithChildren) {
 
       if (!token) {
         console.log('Mobile /auth/me token missing');
-        throw new Error('A sessao ativa nao retornou bearer token.');
+        const templateHint = clerkJwtTemplate
+          ? `O template '${clerkJwtTemplate}' nao retornou token para a API.`
+          : 'Configure EXPO_PUBLIC_CLERK_JWT_TEMPLATE se o ambiente depender de JWT template do Clerk.';
+
+        throw new Error(
+          `A sessao ativa nao retornou bearer token. ${templateHint}`,
+        );
       }
 
       console.log('Mobile /auth/me request:', {
@@ -74,6 +88,18 @@ export function AuthBootstrapProvider({ children }: PropsWithChildren) {
       ? authMeQuery.error.message
       : 'Falha ao resolver o contexto autenticado.';
   }, [authMeQuery.error, authMeQuery.isError]);
+
+  const phase: AuthBootstrapContextValue['phase'] = !isSignedIn
+    ? 'signed-out'
+    : !isAuthLoaded
+      ? 'loading-clerk'
+      : !isUserLoaded
+        ? 'loading-user'
+        : authMeQuery.isPending
+          ? 'fetching-auth-me'
+          : authMeQuery.isError
+            ? 'error'
+            : 'ready';
 
   useEffect(() => {
     if (authMeQuery.isSuccess) {
@@ -127,6 +153,7 @@ export function AuthBootstrapProvider({ children }: PropsWithChildren) {
         authMe: authMeQuery.data ?? null,
         isBootstrapping,
         errorMessage,
+        phase,
       }}
     >
       {children}

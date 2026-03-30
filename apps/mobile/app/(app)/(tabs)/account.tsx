@@ -6,7 +6,7 @@ import { useAuthBootstrap } from '../../../src/providers/auth-bootstrap-provider
 export default function AccountScreen() {
   const { signOut } = useAuth();
   const { user } = useUser();
-  const { authMe, errorMessage, isBootstrapping } = useAuthBootstrap();
+  const { authMe, errorMessage, isBootstrapping, phase } = useAuthBootstrap();
 
   return (
     <View className="flex-1 bg-sand px-6 pt-16">
@@ -42,6 +42,9 @@ export default function AccountScreen() {
                   ? `role=${authMe.role} | memberships=${authMe.memberships.length}`
                   : 'Contexto autenticado indisponivel.'}
           </Text>
+          <Text className="mt-2 text-xs uppercase tracking-[0.2em] text-stone-400">
+            phase={phase}
+          </Text>
           {authMe?.activeFoodtruck ? (
             <Text className="mt-2 text-sm leading-6 text-stone-300">
               foodtruck ativo: {authMe.activeFoodtruck.foodtruckName}
@@ -50,6 +53,13 @@ export default function AccountScreen() {
           {authMe?.requiresFoodtruckSelection ? (
             <Text className="mt-2 text-sm leading-6 text-stone-300">
               O backend exige selecao de foodtruck para concluir o bootstrap.
+            </Text>
+          ) : null}
+          {errorMessage ? (
+            <Text className="mt-2 text-sm leading-6 text-stone-300">
+              Verifique `EXPO_PUBLIC_CLERK_JWT_TEMPLATE`, a sessao ativa do
+              Clerk e a configuracao da API para `CLERK_AUDIENCE` e
+              `CLERK_AUTHORIZED_PARTIES`.
             </Text>
           ) : null}
         </View>

@@ -34,6 +34,7 @@ packages/
 ```
 
 Documentacao da arquitetura do workspace: `docs/architecture/monorepo.md`
+Configuracao runtime de auth Clerk: `docs/auth/clerk-runtime-config.md`
 
 ## Stack base
 

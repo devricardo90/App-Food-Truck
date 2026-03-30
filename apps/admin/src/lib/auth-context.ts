@@ -31,12 +31,45 @@ type BackendAuthContext =
         | 'request-failed';
       data: null;
       message: string;
+      detail?: string | null;
     }
   | {
       status: 'ready';
       data: AdminAuthMeResponse;
       message: string;
+      detail?: string | null;
     };
+
+async function readAdminAuthErrorDetail(response: Response) {
+  try {
+    const contentType = response.headers.get('content-type') ?? '';
+
+    if (contentType.includes('application/json')) {
+      const payload = (await response.json()) as {
+        message?: string | string[];
+        error?: string;
+      };
+
+      if (Array.isArray(payload.message)) {
+        return payload.message.join(' | ');
+      }
+
+      if (typeof payload.message === 'string') {
+        return payload.message;
+      }
+
+      if (typeof payload.error === 'string') {
+        return payload.error;
+      }
+    }
+
+    const text = (await response.text()).trim();
+
+    return text || null;
+  } catch {
+    return null;
+  }
+}
 
 export async function resolveAdminAuthContext(): Promise<BackendAuthContext> {
   try {
@@ -69,10 +102,14 @@ export async function resolveAdminAuthContext(): Promise<BackendAuthContext> {
     );
 
     if (!token) {
+      const templateHint = clerkJwtTemplate
+        ? `O template '${clerkJwtTemplate}' nao retornou token para a API.`
+        : 'Configure `CLERK_JWT_TEMPLATE` ou `NEXT_PUBLIC_CLERK_JWT_TEMPLATE` se este ambiente depender de JWT template do Clerk.';
+
       return {
         status: 'missing-token',
         data: null,
-        message: 'A sessao existe, mas nao gerou bearer token para a API.',
+        message: `A sessao existe, mas nao gerou bearer token para a API. ${templateHint}`,
       };
     }
 
@@ -84,10 +121,24 @@ export async function resolveAdminAuthContext(): Promise<BackendAuthContext> {
     });
 
     if (!response.ok) {
+      const detail = await readAdminAuthErrorDetail(response);
+
       return {
         status: 'api-error',
         data: null,
-        message: `A API respondeu ${response.status} ao consultar /auth/me.`,
+        message: [
+          `A API respondeu ${response.status} ao consultar /auth/me.`,
+          detail,
+          response.status === 401
+            ? 'Verifique o template JWT do Clerk e a sessao do painel.'
+            : null,
+          response.status === 403
+            ? 'Verifique membership, contexto de foodtruck e permissoes do usuario.'
+            : null,
+        ]
+          .filter(Boolean)
+          .join(' '),
+        detail,
       };
     }
 
@@ -97,6 +148,7 @@ export async function resolveAdminAuthContext(): Promise<BackendAuthContext> {
       status: 'ready',
       data,
       message: 'Contrato /auth/me validado com token do Clerk.',
+      detail: null,
     };
   } catch (error) {
     const message =
@@ -108,6 +160,7 @@ export async function resolveAdminAuthContext(): Promise<BackendAuthContext> {
       status: 'request-failed',
       data: null,
       message: `Nao foi possivel resolver o contexto autenticado: ${message}`,
+      detail: message,
     };
   }
 }

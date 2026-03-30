@@ -132,6 +132,18 @@ O backend valida a identidade emitida pelo Clerk.
 - backend desacoplado de login manual
 - base pronta para RBAC na task seguinte
 
+## Configuracao runtime consolidada
+
+Durante a fase de integracao real, a configuracao operacional de Clerk entre mobile, admin e API passa a seguir o guia:
+
+- `docs/auth/clerk-runtime-config.md`
+
+Esse guia concentra:
+
+- templates JWT por cliente
+- variaveis de ambiente minimas
+- diagnostico de `missing-token`, `401` e `403` em `/auth/me`
+
 ## Regras de seguranca
 
 - backend nunca confia em dados de perfil enviados pelo frontend sem validar o token

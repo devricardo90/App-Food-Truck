@@ -8,7 +8,7 @@ import { useAuthBootstrap } from '../../src/providers/auth-bootstrap-provider';
 export default function AppLayout() {
   const { isLoaded: isAuthLoaded, isSignedIn } = useAuth();
   const { isLoaded: isUserLoaded } = useUser();
-  const { authMe, errorMessage, isBootstrapping } = useAuthBootstrap();
+  const { authMe, errorMessage, isBootstrapping, phase } = useAuthBootstrap();
 
   useEffect(() => {
     console.log('Mobile AppLayout state:', {
@@ -18,6 +18,7 @@ export default function AppLayout() {
       isBootstrapping,
       hasAuthMe: Boolean(authMe),
       errorMessage,
+      phase,
     });
   }, [
     authMe,
@@ -26,6 +27,7 @@ export default function AppLayout() {
     isBootstrapping,
     isSignedIn,
     isUserLoaded,
+    phase,
   ]);
 
   if (!isAuthLoaded || (isSignedIn && !isUserLoaded)) {
@@ -37,6 +39,9 @@ export default function AppLayout() {
         </Text>
         <Text className="mt-2 max-w-sm text-center text-sm leading-6 text-neutral-600">
           Waiting for the Clerk session and user resources to finish loading.
+        </Text>
+        <Text className="mt-3 text-xs uppercase tracking-[1.5px] text-neutral-400">
+          phase={phase}
         </Text>
       </View>
     );
@@ -57,6 +62,9 @@ export default function AppLayout() {
         <Text className="mt-2 max-w-sm text-center text-sm leading-6 text-neutral-600">
           Validando a sessao atual com o contrato oficial `/auth/me`.
         </Text>
+        <Text className="mt-3 text-xs uppercase tracking-[1.5px] text-neutral-400">
+          phase={phase}
+        </Text>
       </View>
     );
   }
@@ -70,6 +78,9 @@ export default function AppLayout() {
         </Text>
         <Text className="mt-2 max-w-sm text-center text-sm leading-6 text-neutral-600">
           {errorMessage}
+        </Text>
+        <Text className="mt-3 text-xs uppercase tracking-[1.5px] text-neutral-400">
+          phase={phase}
         </Text>
       </View>
     );
@@ -85,6 +96,9 @@ export default function AppLayout() {
         <Text className="mt-2 max-w-sm text-center text-sm leading-6 text-neutral-600">
           Aguardando o contexto autenticado estabilizar antes de liberar a
           navegacao.
+        </Text>
+        <Text className="mt-3 text-xs uppercase tracking-[1.5px] text-neutral-400">
+          phase={phase}
         </Text>
       </View>
     );
