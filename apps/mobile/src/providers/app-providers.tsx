@@ -5,6 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 
 import { mobileQueryClient } from '../lib/query-client';
 import { AuthBootstrapProvider } from './auth-bootstrap-provider';
+import { CartProvider } from './cart-provider';
 
 export function AppProviders({ children }: PropsWithChildren) {
   const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
@@ -12,7 +13,9 @@ export function AppProviders({ children }: PropsWithChildren) {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <QueryClientProvider client={mobileQueryClient}>
-        <AuthBootstrapProvider>{children}</AuthBootstrapProvider>
+        <AuthBootstrapProvider>
+          <CartProvider>{children}</CartProvider>
+        </AuthBootstrapProvider>
       </QueryClientProvider>
     </ClerkProvider>
   );

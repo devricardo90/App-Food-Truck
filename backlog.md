@@ -2015,7 +2015,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-062 - Implementar carrinho real no mobile
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Substituir o carrinho mockado por um carrinho real no app mobile, permitindo adicionar itens do catalogo, agrupar por barraca e revisar o pedido antes do checkout.
 - **Dependencias:** `FT-057`
@@ -2025,11 +2025,30 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - quantidade, subtotal e total sao exibidos no mobile
   - o carrinho deixa claro o limite de uma barraca por vez no MVP
   - o fluxo item -> carrinho funciona sem mock de pedido
+- **Entrega em:** `2026-03-30`
+- **Artefatos:**
+  - `apps/mobile/src/providers/cart-provider.tsx`
+  - `apps/mobile/src/providers/app-providers.tsx`
+  - `apps/mobile/app/(app)/trucks/[truckId]/menu/[itemId].tsx`
+  - `apps/mobile/app/(app)/cart.tsx`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - item detail passou a adicionar item real ao carrinho local: ok
+  - carrinho agrupa itens da barraca ativa e soma quantidades: ok
+  - regra de uma barraca por vez ficou explicita no app: ok
+  - subtotal e total reais renderizados no carrinho: ok
+  - mobile typecheck: ok
+- **Observacoes de execucao em:** `2026-03-30`
+  - o estado do carrinho foi implementado em memoria no mobile, sem abrir backend nem checkout real nesta task
+  - adicionar item de outra barraca reinicia o carrinho e informa o limite operacional do MVP
+  - checkout e criacao real do pedido permanecem para `FT-063` e `FT-064`
+- **Commit:** `feat(mobile): implement real cart flow for mvp`
 
 ## FT-063 - Implementar backend inicial de checkout e pedido pendente
 
 - **Skill dona:** `nest-api-architecture`
-- **Status:** `TODO`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Criar a primeira camada real de pedido no backend para sustentar checkout do MVP, com criacao de pedido em `pending_payment`, itens, totais e contrato estavel para o mobile.
 - **Dependencias:** `FT-062`, `FT-023`, `FT-024`, `FT-025`, `FT-026`
@@ -2083,13 +2102,13 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-062` - Implementar carrinho real no mobile
+- `FT-063` - Implementar backend inicial de checkout e pedido pendente
 
 ---
 
 # Ordem sugerida para comecar
 
-- fechar o fluxo principal do MVP na ordem `FT-062 -> FT-063 -> FT-064 -> FT-065 -> FT-066`
+- fechar o fluxo principal do MVP na ordem `FT-063 -> FT-064 -> FT-065 -> FT-066`
 - retomar imediatamente as tasks de produto/MVP desbloqueadas apos a auth minima funcional
 - usar `FT-032` como proxima frente tecnica separada, sem competir com o fluxo principal de produto
 - deixar `FT-061` para a proxima frente tecnica de hardening e testes
