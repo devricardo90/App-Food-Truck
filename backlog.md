@@ -1832,6 +1832,8 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - estado confirmado em `2026-03-30`: `setActive()`, `/auth/me`, entrada autenticada e validacao de lista/detalhe/catalogo continuam sem evidencia porque o bloqueio permanece no login primario do Clerk
   - nova repeticao oficial em `2026-03-30` com a credencial `ricardo.foodtruck.test01@gmail.com`: o bloqueio mudou para `form_password_incorrect: Password is incorrect. Try again, or use another method.`
   - estado confirmado em `2026-03-30` para a nova credencial: o Clerk reconheceu o identificador, mas a sessao ainda nao foi criada; `setActive()`, `/auth/me`, entrada autenticada e lista/detalhe/catalogo permanecem sem evidencia funcional
+  - nova repeticao oficial em `2026-03-30` apos criar o JWT template `foodtrucks-api` e configurar `EXPO_PUBLIC_CLERK_JWT_TEMPLATE`: o app voltou ao formulario real do projeto no emulador, o email foi aceito e a senha ficou mascarada na UI, mas o submit falhou com `form_param_nil: Enter password.`
+  - estado confirmado em `2026-03-30` para a tentativa com template: nao ha evidencia valida de `signIn.create()` porque o formulario enviou `password` vazio apesar do campo visualmente preenchido; `setActive()`, `/auth/me`, entrada autenticada e lista/detalhe/catalogo continuam sem evidencia funcional nesta rodada
 
 ---
 
