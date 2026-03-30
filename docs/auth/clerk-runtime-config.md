@@ -101,3 +101,29 @@ Arquivo de referencia: `apps/admin/.env.example`
 
 - o fluxo oficial estabilizado e email + senha com sessao real do Clerk
 - callbacks hospedados e fluxos alternativos nao fazem parte da base oficial desta task
+
+## Estado atual minimo
+
+- o estado minimo funcional desta fase ficou assim:
+  - mobile faz `signIn.create()` + `setActive()`
+  - mobile solicita bearer com `getToken({ template: "foodtrucks-api" })`
+  - mobile chama `GET /auth/me`
+  - `AppLayout` separa fluxo autenticado e nao autenticado
+  - existe retry curto para token ausente e para `401` transitorio antes de `signOut`
+  - logs basicos permitem diferenciar token ausente, tentativa de `/auth/me` e falhas de backend
+- este baseline e suficiente para manter o login mobile utilizavel e destravar o MVP
+
+## Fora de escopo agora
+
+- hardening profundo de sessao e permissoes
+- redesign do guard ou da estrategia inteira de auth
+- troca de provider ou template JWT ja validado
+- suite automatizada completa de auth
+- observabilidade estrutural completa
+
+## Pendencias para fase futura
+
+- consolidar hardening de auth em task propria
+- revisar roles/permissoes e cenarios `403`
+- substituir instrumentacao temporaria por observabilidade mais estruturada
+- adicionar testes automatizados de login, bootstrap e `GET /auth/me`

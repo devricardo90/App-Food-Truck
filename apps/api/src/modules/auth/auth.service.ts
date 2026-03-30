@@ -32,6 +32,7 @@ export class AuthService {
 
   async authenticateBearerToken(token: string) {
     const secretKey = process.env.CLERK_SECRET_KEY;
+    const tokenPreview = token.slice(0, 16);
 
     if (!secretKey) {
       throw new InternalServerErrorException(
@@ -77,7 +78,7 @@ export class AuthService {
 
       console.error('Clerk token validation failed', {
         stage: 'verifyToken',
-        tokenPreview: token.slice(0, 16),
+        tokenPreview,
         tokenSegments: token.split('.').length,
         hasJwtKey: Boolean(process.env.CLERK_JWT_KEY?.trim()),
         audience: audience?.length ? audience : null,
@@ -93,13 +94,68 @@ export class AuthService {
 
     const externalAuthId = claims.sub;
 
+    console.log('Clerk token validation passed', {
+      stage: 'verifyToken',
+      tokenPreview,
+      tokenSegments: token.split('.').length,
+      subjectPresent: Boolean(externalAuthId),
+      emailPresent: Boolean(claims.email),
+    });
+
     if (!externalAuthId) {
+      console.error('Clerk token claims unexpected', {
+        stage: 'verifyTokenClaims',
+        tokenPreview,
+        subjectPresent: false,
+        emailPresent: Boolean(claims.email),
+      });
       throw new UnauthorizedException('Clerk token is missing a subject.');
     }
 
-    const user = await this.syncDomainUser(externalAuthId, claims);
-    const memberships =
-      await this.foodtruckMembershipsService.listActiveForUser(user.id);
+    let user: Awaited<ReturnType<AuthService['syncDomainUser']>>;
+
+    try {
+      user = await this.syncDomainUser(externalAuthId, claims);
+      console.log('Clerk auth domain sync passed', {
+        stage: 'syncDomainUser',
+        externalAuthId,
+        userId: user.id,
+      });
+    } catch (error) {
+      console.error('Clerk auth domain sync failed', {
+        stage: 'syncDomainUser',
+        externalAuthId,
+        tokenPreview,
+        errorName: error instanceof Error ? error.name : 'UnknownError',
+        errorMessage:
+          error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    }
+
+    let memberships: Awaited<
+      ReturnType<FoodtruckMembershipsService['listActiveForUser']>
+    >;
+
+    try {
+      memberships =
+        await this.foodtruckMembershipsService.listActiveForUser(user.id);
+      console.log('Clerk auth membership lookup passed', {
+        stage: 'listActiveForUser',
+        userId: user.id,
+        membershipCount: memberships.length,
+      });
+    } catch (error) {
+      console.error('Clerk auth membership lookup failed', {
+        stage: 'listActiveForUser',
+        userId: user.id,
+        tokenPreview,
+        errorName: error instanceof Error ? error.name : 'UnknownError',
+        errorMessage:
+          error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    }
 
     const authUser: AuthenticatedRequestUser = {
       userId: user.id,
@@ -116,12 +172,20 @@ export class AuthService {
 
   extractBearerToken(headerValue: string | undefined) {
     if (!headerValue) {
+      console.warn('Clerk auth bearer missing', {
+        stage: 'extractBearerToken',
+      });
       throw new UnauthorizedException('Authorization header is required.');
     }
 
     const [scheme, token] = headerValue.split(' ');
 
     if (scheme?.toLowerCase() !== 'bearer' || !token) {
+      console.warn('Clerk auth bearer malformed', {
+        stage: 'extractBearerToken',
+        scheme: scheme ?? null,
+        hasToken: Boolean(token),
+      });
       throw new UnauthorizedException(
         'Authorization header must use Bearer token.',
       );

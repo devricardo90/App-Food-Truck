@@ -1806,7 +1806,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-057 - Validar fluxo basico no emulador
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Validar no emulador o fluxo basico de descoberta, detalhe de foodtruck e catalogo com a API local em execucao.
 - **Dependencias:** `FT-056`, `FT-059`
@@ -1834,6 +1834,8 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - estado confirmado em `2026-03-30` para a nova credencial: o Clerk reconheceu o identificador, mas a sessao ainda nao foi criada; `setActive()`, `/auth/me`, entrada autenticada e lista/detalhe/catalogo permanecem sem evidencia funcional
   - nova repeticao oficial em `2026-03-30` apos criar o JWT template `foodtrucks-api` e configurar `EXPO_PUBLIC_CLERK_JWT_TEMPLATE`: o app voltou ao formulario real do projeto no emulador, o email foi aceito e a senha ficou mascarada na UI, mas o submit falhou com `form_param_nil: Enter password.`
   - estado confirmado em `2026-03-30` para a tentativa com template: nao ha evidencia valida de `signIn.create()` porque o formulario enviou `password` vazio apesar do campo visualmente preenchido; `setActive()`, `/auth/me`, entrada autenticada e lista/detalhe/catalogo continuam sem evidencia funcional nesta rodada
+  - revalidacao oficial em `2026-03-30`: `signIn.create()`, `setActive()` e `GET /auth/me` passaram com o template `foodtrucks-api`; o `AppLayout` entrou em `phase: ready` e a aba `BARRACAS` exibiu a lista real de foodtrucks no emulador
+  - estado oficial apos estabilizacao minima de auth em `2026-03-30`: o bloqueio por JWT/Clerk foi removido; o restante desta task fica restrito a evidenciar detalhe e catalogo no emulador, sem abrir nova frente de auth
 
 ---
 
@@ -1949,15 +1951,69 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - `FT-057` permanece bloqueada somente pela ausencia de credencial Clerk valida para evidencia funcional final no emulador
 - **Commit:** `chore(auth): stabilize local clerk runtime contract before emulator validation`
 
+## FT-060 - Fechar auth minima funcional do mobile
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `DONE`
+- **Fluxo critico:** `sim`
+- **Descricao:** Encerrar uma camada minima e funcional de autenticacao no mobile para nao travar mais o MVP, mantendo login Clerk, sessao, `getToken({ template: "foodtrucks-api" })`, `/auth/me`, protecao basica de layout e retry simples antes de `signOut`.
+- **Dependencias:** `FT-059`
+- **Criterios de aceite:**
+  - sign-in mobile funciona com Clerk
+  - `setActive()` funciona
+  - `getToken({ template: "foodtrucks-api" })` funciona
+  - `GET /auth/me` funciona
+  - `AppLayout` separa fluxo autenticado e nao autenticado
+  - um `401` transitorio nao causa `signOut` imediato
+  - logs minimos permitem diagnosticar token ausente, tentativa de `/auth/me` e falhas basicas do backend
+- **Entrega em:** `2026-03-30`
+- **Artefatos:**
+  - `apps/mobile/src/providers/auth-bootstrap-provider.tsx`
+  - `apps/api/src/modules/auth/auth.service.ts`
+  - `apps/api/src/modules/auth/auth.guard.ts`
+  - `docs/auth/clerk-runtime-config.md`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - mobile sign-in com Clerk: ok
+  - `setActive()`: ok
+  - `GET /auth/me` com template `foodtrucks-api`: ok
+  - `AppLayout` autenticado vs nao autenticado: ok
+  - retry simples antes de `signOut` no `401`: ok
+  - mobile typecheck: ok
+  - api build: ok
+- **Observacoes de encerramento em:** `2026-03-30`
+  - a validacao JWT basica ficou comprovada; nao e necessario mexer em provider, publishable key ou template atual nesta fase
+  - o backend passou a diferenciar melhor bearer ausente/malformado, falha em `verifyToken`, claims inesperadas e falhas posteriores de dominio para diagnostico
+  - o endurecimento ficou propositalmente minimo para nao travar o fluxo do MVP
+  - hardening mais amplo, testes automatizados e observabilidade de auth ficam explicitamente adiados para task futura
+- **Commit:** `pendente`
+
+## FT-061 - Hardening e testes de auth
+
+- **Skill dona:** `auth-rbac`
+- **Status:** `TODO`
+- **Fluxo critico:** `nao`
+- **Descricao:** Reforcar auth apos o destravamento do MVP com foco em hardening, observabilidade e testes automatizados.
+- **Dependencias:** `FT-060`
+- **Escopo previsto:**
+  - hardening de sessao e erros intermitentes
+  - revisao de roles e permissoes
+  - observabilidade estruturada de auth
+  - testes automatizados de login, bootstrap e `/auth/me`
+  - cleanup tecnico da instrumentacao temporaria
+- **Observacao:** task futura; nao bloqueia a retomada das features do MVP
+
 ---
 
 # READY atuais
 
-- nenhuma task `READY` no momento
+- `FT-057` - Validar fluxo basico no emulador
 
 ---
 
 # Ordem sugerida para comecar
 
-- fornecer uma credencial Clerk valida de teste para destravar `FT-057`
-- executar `FT-057` para validacao funcional final no emulador
+- concluir a evidencia visual restante de `FT-057` para detalhe e catalogo
+- retomar imediatamente as tasks de produto/MVP desbloqueadas apos a auth minima funcional
+- deixar `FT-061` para a proxima frente tecnica de hardening e testes

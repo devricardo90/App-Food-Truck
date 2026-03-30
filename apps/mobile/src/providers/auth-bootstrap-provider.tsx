@@ -9,6 +9,15 @@ import {
   fetchAuthMe,
 } from '../lib/auth-api';
 
+const AUTH_ME_MAX_ATTEMPTS = 2;
+const AUTH_ME_RETRY_DELAY_MS = 500;
+
+function delay(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 type AuthBootstrapContextValue = {
   authMe: AuthMeResponse | null;
   isBootstrapping: boolean;
@@ -48,28 +57,79 @@ export function AuthBootstrapProvider({ children }: PropsWithChildren) {
   const authMeQuery = useQuery({
     queryKey: ['auth-me', user?.id],
     queryFn: async () => {
-      const token = await getToken(
-        clerkJwtTemplate ? { template: clerkJwtTemplate } : undefined,
-      );
+      let lastError: Error | null = null;
 
-      if (!token) {
-        console.log('Mobile /auth/me token missing');
-        const templateHint = clerkJwtTemplate
-          ? `O template '${clerkJwtTemplate}' nao retornou token para a API.`
-          : 'Configure EXPO_PUBLIC_CLERK_JWT_TEMPLATE se o ambiente depender de JWT template do Clerk.';
-
-        throw new Error(
-          `A sessao ativa nao retornou bearer token. ${templateHint}`,
+      for (let attempt = 1; attempt <= AUTH_ME_MAX_ATTEMPTS; attempt += 1) {
+        const token = await getToken(
+          clerkJwtTemplate ? { template: clerkJwtTemplate } : undefined,
         );
+        const hasToken = Boolean(token);
+
+        console.log('Mobile /auth/me token state:', {
+          attempt,
+          isAuthLoaded,
+          isSignedIn,
+          userId: user?.id ?? null,
+          template: clerkJwtTemplate ?? null,
+          hasToken,
+        });
+
+        if (!token) {
+          const templateHint = clerkJwtTemplate
+            ? `O template '${clerkJwtTemplate}' nao retornou token para a API.`
+            : 'Configure EXPO_PUBLIC_CLERK_JWT_TEMPLATE se o ambiente depender de JWT template do Clerk.';
+
+          if (attempt < AUTH_ME_MAX_ATTEMPTS) {
+            console.log('Mobile /auth/me retry due to missing token', {
+              attempt,
+              nextAttempt: attempt + 1,
+              delayMs: AUTH_ME_RETRY_DELAY_MS,
+            });
+            await delay(AUTH_ME_RETRY_DELAY_MS);
+            continue;
+          }
+
+          throw new Error(
+            `A sessao ativa nao retornou bearer token. ${templateHint}`,
+          );
+        }
+
+        console.log('Mobile /auth/me request:', {
+          attempt,
+          userId: user?.id ?? null,
+          template: clerkJwtTemplate ?? null,
+          tokenPreview: token.slice(0, 12),
+        });
+
+        try {
+          return await fetchAuthMe(token);
+        } catch (error) {
+          const status =
+            error instanceof AuthApiError ? error.status : null;
+
+          console.log('Mobile /auth/me attempt failed:', {
+            attempt,
+            status,
+            message: error instanceof Error ? error.message : String(error),
+          });
+
+          if (status === 401 && attempt < AUTH_ME_MAX_ATTEMPTS) {
+            console.log('Mobile /auth/me retry after transient 401', {
+              attempt,
+              nextAttempt: attempt + 1,
+              delayMs: AUTH_ME_RETRY_DELAY_MS,
+            });
+            await delay(AUTH_ME_RETRY_DELAY_MS);
+            continue;
+          }
+
+          lastError =
+            error instanceof Error ? error : new Error(String(error));
+          break;
+        }
       }
 
-      console.log('Mobile /auth/me request:', {
-        userId: user?.id ?? null,
-        template: clerkJwtTemplate ?? null,
-        tokenPreview: token.slice(0, 12),
-      });
-
-      return fetchAuthMe(token);
+      throw lastError ?? new Error('Falha ao resolver o contexto autenticado.');
     },
     enabled: Boolean(isAuthLoaded && isUserLoaded && isSignedIn && user),
     retry: false,
@@ -130,7 +190,7 @@ export function AuthBootstrapProvider({ children }: PropsWithChildren) {
     if (
       !authMeQuery.isError ||
       !(authMeQuery.error instanceof AuthApiError) ||
-      ![401, 403].includes(authMeQuery.error.status)
+      authMeQuery.error.status !== 401
     ) {
       hasHandledAuthErrorRef.current = false;
       return;
