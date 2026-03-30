@@ -83,6 +83,29 @@ export class OrderPaymentSnapshotDto {
   currency!: string;
 }
 
+export class OrderSummaryDto {
+  @ApiProperty({ example: 'corder_123' })
+  id!: string;
+
+  @ApiProperty({ example: 'ord_kx9s3w7b' })
+  publicCode!: string;
+
+  @ApiProperty({ example: 'pending_payment' })
+  status!: string;
+
+  @ApiProperty({ example: '132.00' })
+  totalAmount!: string;
+
+  @ApiProperty({ example: 'EUR' })
+  currency!: string;
+
+  @ApiProperty({ type: OrderEventTruckSnapshotDto })
+  eventTruck!: OrderEventTruckSnapshotDto;
+
+  @ApiProperty({ example: '2026-03-30T17:55:12.000Z' })
+  createdAt!: string;
+}
+
 export class OrderResponseDto {
   @ApiProperty({ example: 'corder_123' })
   id!: string;

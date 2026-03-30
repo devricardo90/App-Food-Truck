@@ -48,6 +48,21 @@ export type OrderSnapshot = {
   updatedAt: string;
 };
 
+export type OrderSummary = {
+  id: string;
+  publicCode: string;
+  status: string;
+  totalAmount: string;
+  currency: string;
+  eventTruck: {
+    id: string;
+    foodtruckSlug: string;
+    foodtruckName: string;
+    eventSlug: string;
+  };
+  createdAt: string;
+};
+
 export class OrdersApiError extends Error {
   constructor(
     message: string,
@@ -140,4 +155,10 @@ export function fetchOrderById(token: string, orderId: string) {
       method: 'GET',
     },
   );
+}
+
+export function fetchOrders(token: string) {
+  return fetchAuthorizedFromApi<OrderSummary[]>('/orders', token, {
+    method: 'GET',
+  });
 }

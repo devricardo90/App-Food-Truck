@@ -2116,7 +2116,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-065 - Expor e integrar historico e detalhe reais de pedidos no mobile
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Substituir mocks de historico e detalhe de pedidos no app cliente por leitura real do backend, fechando o fallback principal de acompanhamento do pedido no MVP.
 - **Dependencias:** `FT-063`, `FT-064`
@@ -2125,11 +2125,31 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - detalhe de pedido vem da API
   - timeline e status refletem o estado real do pedido
   - o fluxo `payment/pending -> order detail` funciona com ids reais
+- **Entrega em:** `2026-03-30`
+- **Artefatos:**
+  - `apps/api/src/modules/orders/orders.dto.ts`
+  - `apps/api/src/modules/orders/orders.service.ts`
+  - `apps/api/src/modules/orders/orders.controller.ts`
+  - `apps/mobile/src/lib/orders-api.ts`
+  - `apps/mobile/app/(app)/(tabs)/orders/index.tsx`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - `GET /orders` exposto para o cliente autenticado: ok
+  - aba de historico no mobile passou a consumir a API real: ok
+  - detalhe de pedido segue consultando a API com id real: ok
+  - api build: ok
+  - mobile typecheck: ok
+- **Observacoes de execucao em:** `2026-03-30`
+  - a task consolidou o fallback principal do MVP para acompanhamento do pedido sem depender de notificacao
+  - o detalhe real do pedido, iniciado na `FT-064`, foi mantido e alinhado ao novo endpoint de lista
+  - a fila operacional da barraca permanece para a `FT-066`
+- **Commit:** `feat(mobile): expose real customer order history`
 
 ## FT-066 - Integrar admin a fila operacional real de pedidos
 
 - **Skill dona:** `admin-web-architecture`
-- **Status:** `TODO`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Substituir os placeholders da fila de pedidos do admin por leitura real de pedidos da barraca, preparando a operacao minima do MVP apos a criacao real dos pedidos.
 - **Dependencias:** `FT-063`, `FT-065`
@@ -2143,13 +2163,13 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-065` - Expor e integrar historico e detalhe reais de pedidos no mobile
+- `FT-066` - Integrar admin a fila operacional real de pedidos
 
 ---
 
 # Ordem sugerida para comecar
 
-- fechar o fluxo principal do MVP na ordem `FT-065 -> FT-066`
+- fechar o fluxo principal do MVP na ordem `FT-066`
 - retomar imediatamente as tasks de produto/MVP desbloqueadas apos a auth minima funcional
 - usar `FT-032` como proxima frente tecnica separada, sem competir com o fluxo principal de produto
 - deixar `FT-061` para a proxima frente tecnica de hardening e testes

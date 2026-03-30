@@ -16,6 +16,7 @@ import {
   CreateOrderRequestDto,
   CreatedOrderResponseDto,
   OrderResponseDto,
+  OrderSummaryDto,
 } from './orders.dto';
 import { OrdersService } from './orders.service';
 
@@ -24,6 +25,24 @@ import { OrdersService } from './orders.service';
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
+
+  @Get()
+  @ApiOperation({
+    summary: 'List the authenticated customer orders ordered by most recent.',
+  })
+  @ApiOkResponse({
+    description: 'Authenticated order history for the current customer.',
+    type: OrderSummaryDto,
+    isArray: true,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Missing or invalid Clerk bearer token.',
+  })
+  listOrders(
+    @CurrentAuthUser() authUser: AuthenticatedRequestUser,
+  ): Promise<OrderSummaryDto[]> {
+    return this.ordersService.listOrdersForCustomer(authUser);
+  }
 
   @Post()
   @ApiOperation({

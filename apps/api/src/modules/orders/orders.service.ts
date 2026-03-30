@@ -13,6 +13,7 @@ import type {
   CreateOrderRequestDto,
   CreatedOrderResponseDto,
   OrderResponseDto,
+  OrderSummaryDto,
 } from './orders.dto';
 
 @Injectable()
@@ -200,6 +201,45 @@ export class OrdersService {
     return this.mapOrder(order);
   }
 
+  async listOrdersForCustomer(
+    authUser: AuthenticatedRequestUser,
+  ): Promise<OrderSummaryDto[]> {
+    const orders = await this.prisma.order.findMany({
+      where: {
+        customerId: authUser.userId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        eventTruck: {
+          select: {
+            id: true,
+            truck: {
+              select: {
+                slug: true,
+                name: true,
+              },
+            },
+            event: {
+              select: {
+                slug: true,
+              },
+            },
+          },
+        },
+        payments: {
+          orderBy: {
+            createdAt: 'asc',
+          },
+          take: 1,
+        },
+      },
+    });
+
+    return orders.map((order) => this.mapOrderSummary(order));
+  }
+
   private getOrderInclude() {
     return {
       eventTruck: {
@@ -279,6 +319,52 @@ export class OrdersService {
       },
       createdAt: order.createdAt.toISOString(),
       updatedAt: order.updatedAt.toISOString(),
+    };
+  }
+
+  private mapOrderSummary(
+    order: Prisma.OrderGetPayload<{
+      include: {
+        eventTruck: {
+          select: {
+            id: true;
+            truck: {
+              select: {
+                slug: true;
+                name: true;
+              };
+            };
+            event: {
+              select: {
+                slug: true;
+              };
+            };
+          };
+        };
+        payments: {
+          orderBy: {
+            createdAt: 'asc';
+          };
+          take: 1;
+        };
+      };
+    }>,
+  ): OrderSummaryDto {
+    const payment = order.payments[0];
+
+    return {
+      id: order.id,
+      publicCode: order.publicCode,
+      status: order.status,
+      totalAmount: order.totalAmount.toString(),
+      currency: payment?.currency ?? 'EUR',
+      eventTruck: {
+        id: order.eventTruck.id,
+        foodtruckSlug: order.eventTruck.truck.slug,
+        foodtruckName: order.eventTruck.truck.name,
+        eventSlug: order.eventTruck.event.slug,
+      },
+      createdAt: order.createdAt.toISOString(),
     };
   }
 }
