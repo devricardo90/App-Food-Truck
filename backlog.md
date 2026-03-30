@@ -1836,6 +1836,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - estado confirmado em `2026-03-30` para a tentativa com template: nao ha evidencia valida de `signIn.create()` porque o formulario enviou `password` vazio apesar do campo visualmente preenchido; `setActive()`, `/auth/me`, entrada autenticada e lista/detalhe/catalogo continuam sem evidencia funcional nesta rodada
   - revalidacao oficial em `2026-03-30`: `signIn.create()`, `setActive()` e `GET /auth/me` passaram com o template `foodtrucks-api`; o `AppLayout` entrou em `phase: ready` e a aba `BARRACAS` exibiu a lista real de foodtrucks no emulador
   - estado oficial apos estabilizacao minima de auth em `2026-03-30`: o bloqueio por JWT/Clerk foi removido; o restante desta task fica restrito a evidenciar detalhe e catalogo no emulador, sem abrir nova frente de auth
+  - tentativa final de conclusao em `2026-03-30`: a lista permaneceu validada visualmente no emulador, mas o toque automatizado no card nao abriu o detalhe e a abertura por rota direta deixou o Expo Go preso na tela de transicao; detalhe e catalogo seguem sem evidencia visual concluida nesta rodada
 
 ---
 
