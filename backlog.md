@@ -1830,6 +1830,8 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - confirmacao do ponto de falha em `2026-03-30`: o bloqueio atual ainda acontece antes de `/auth/me`, portanto nao ha evidencia de falha por ausencia de `JWT template` neste teste
   - repeticao oficial em `2026-03-30` apos confirmacao do usuario no tenant atual: `signIn.create()` continuou retornando `form_identifier_not_found: Couldn't find your account.`
   - estado confirmado em `2026-03-30`: `setActive()`, `/auth/me`, entrada autenticada e validacao de lista/detalhe/catalogo continuam sem evidencia porque o bloqueio permanece no login primario do Clerk
+  - nova repeticao oficial em `2026-03-30` com a credencial `ricardo.foodtruck.test01@gmail.com`: o bloqueio mudou para `form_password_incorrect: Password is incorrect. Try again, or use another method.`
+  - estado confirmado em `2026-03-30` para a nova credencial: o Clerk reconheceu o identificador, mas a sessao ainda nao foi criada; `setActive()`, `/auth/me`, entrada autenticada e lista/detalhe/catalogo permanecem sem evidencia funcional
 
 ---
 
