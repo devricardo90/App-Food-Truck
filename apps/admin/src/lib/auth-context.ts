@@ -42,6 +42,9 @@ export async function resolveAdminAuthContext(): Promise<BackendAuthContext> {
   try {
     const apiBaseUrl =
       process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
+    const clerkJwtTemplate =
+      process.env.CLERK_JWT_TEMPLATE ??
+      process.env.NEXT_PUBLIC_CLERK_JWT_TEMPLATE;
     const authState = await auth();
 
     if (!authState.userId) {
@@ -61,7 +64,9 @@ export async function resolveAdminAuthContext(): Promise<BackendAuthContext> {
       };
     }
 
-    const token = await authState.getToken();
+    const token = await authState.getToken(
+      clerkJwtTemplate ? { template: clerkJwtTemplate } : undefined,
+    );
 
     if (!token) {
       return {

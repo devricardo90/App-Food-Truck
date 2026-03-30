@@ -25,6 +25,8 @@ export function AuthBootstrapProvider({ children }: PropsWithChildren) {
   const { getToken, isLoaded: isAuthLoaded, isSignedIn, signOut } = useAuth();
   const { isLoaded: isUserLoaded, user } = useUser();
   const hasHandledAuthErrorRef = useRef(false);
+  const clerkJwtTemplate =
+    process.env.EXPO_PUBLIC_CLERK_JWT_TEMPLATE?.trim() || undefined;
 
   useEffect(() => {
     console.log('Mobile auth state:', {
@@ -38,7 +40,9 @@ export function AuthBootstrapProvider({ children }: PropsWithChildren) {
   const authMeQuery = useQuery({
     queryKey: ['auth-me', user?.id],
     queryFn: async () => {
-      const token = await getToken();
+      const token = await getToken(
+        clerkJwtTemplate ? { template: clerkJwtTemplate } : undefined,
+      );
 
       if (!token) {
         console.log('Mobile /auth/me token missing');
@@ -47,6 +51,7 @@ export function AuthBootstrapProvider({ children }: PropsWithChildren) {
 
       console.log('Mobile /auth/me request:', {
         userId: user?.id ?? null,
+        template: clerkJwtTemplate ?? null,
         tokenPreview: token.slice(0, 12),
       });
 

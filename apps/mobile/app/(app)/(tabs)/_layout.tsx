@@ -19,13 +19,13 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="trucks"
+        name="trucks/index"
         options={{
           title: 'Barracas',
         }}
       />
       <Tabs.Screen
-        name="orders"
+        name="orders/index"
         options={{
           title: 'Pedidos',
         }}

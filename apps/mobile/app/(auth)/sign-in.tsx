@@ -3,8 +3,6 @@ import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 
-import { getClerkRedirectUrl } from '../../src/lib/clerk-auth-session';
-
 type SignInDebugState = {
   attemptStatus: string | null;
   createdSessionId: string | null;
@@ -96,7 +94,6 @@ export default function SignInScreen() {
   const { isLoaded, setActive, signIn } = useSignIn();
   const router = useRouter();
   const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
-  const redirectUrl = getClerkRedirectUrl();
   const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -203,9 +200,6 @@ export default function SignInScreen() {
         <Text className="mt-3 text-base leading-6 text-neutral-600">
           O app usa Clerk para identidade e sessao. O contexto do produto segue
           vindo do backend proprio em `/auth/me`.
-        </Text>
-        <Text className="mt-3 text-xs leading-5 text-neutral-500">
-          {`Hosted redirect URI: ${redirectUrl}`}
         </Text>
 
         {!publishableKey ? (

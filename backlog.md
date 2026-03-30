@@ -1809,7 +1809,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 - **Status:** `BLOCKED`
 - **Fluxo critico:** `sim`
 - **Descricao:** Validar no emulador o fluxo basico de descoberta, detalhe de foodtruck e catalogo com a API local em execucao.
-- **Dependencias:** `FT-056`
+- **Dependencias:** `FT-056`, `FT-059`
 - **Criterios de aceite:**
   - lista de foodtrucks abre no emulador
   - detalhe de foodtruck abre no emulador
@@ -1825,15 +1825,96 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - bloqueio atual: falta uma sessao Clerk valida para atravessar o gate de auth do app e validar visualmente lista, detalhe e catalogo no emulador
   - evidencia do bloqueio: tentativa controlada com credencial invalida retornou `Couldn't find your account.`
   - causa registrada: sem sessao valida o layout autenticado redireciona para `/(auth)/sign-in`, impedindo a navegacao visual da aba de trucks
+  - decisao de reentrada em `2026-03-30`: a retomada oficial passa primeiro por consolidacao do estado real de auth/Clerk e depois por estabilizacao formal do fluxo real antes da validacao funcional final
+
+---
+
+# EPIC 13 - Reentrada limpa do fluxo de auth
+
+## FT-058 - Consolidar estado real do fluxo de auth Clerk entre mobile, admin e API
+
+- **Skill dona:** `auth-rbac`
+- **Status:** `DONE`
+- **Fluxo critico:** `sim`
+- **Descricao:** Regularizar o estado real do projeto antes de retomar a validacao em emulador, absorvendo oficialmente o trabalho feito fora do fluxo, revisando auth/Clerk entre mobile, admin e API e alinhando backlog, codigo e execucao.
+- **Dependencias:** `FT-056`, `FT-040`, `FT-041`, `FT-042`, `FT-046`
+- **Criterios de aceite:**
+  - commit e mudancas locais fora do backlog em auth/Clerk ficam mapeados
+  - worktree de auth/admin/mobile/api fica classificado entre `fica`, `descarta` ou `vira task posterior`
+  - flags temporarias, bypasses e callbacks auxiliares ficam decididos e registrados
+  - divergencias entre backlog e implementacao ficam explicitadas no backlog
+  - backlog passa a refletir a sequencia oficial de retomada sem ambiguidade
+- **Escopo entra:**
+  - revisar o commit `f9553aa` e os diffs locais ligados a auth, token, bootstrap e callbacks Clerk
+  - decidir o destino de arquivos novos e alteracoes em `apps/mobile`, `apps/admin` e `apps/api`
+  - registrar o que foi descoberto fora do fluxo oficial e o que permanece como base valida
+  - preparar o backlog para a estabilizacao formal do auth real antes de reabrir a validacao funcional
+- **Escopo nao entra:**
+  - validar visualmente descoberta, detalhe e catalogo no emulador
+  - expandir escopo de produto, catalogo, pedidos ou pagamentos
+  - abrir novas frentes fora de auth/contexto autenticado
+- **Riscos:**
+  - consolidar hack temporario como base oficial
+  - perder evidencia util de investigacao recente
+  - misturar regularizacao com implementacao nova fora do escopo
+- **Subagente executor ideal:** `auth-rbac`
+- **Subagente revisor ideal:** `mobile-app-architecture`
+- **Entrega em:** `2026-03-30`
+- **Artefatos:**
+  - `backlog.md`
+  - `apps/admin/src/lib/auth-context.ts`
+  - `apps/api/.env.example`
+  - `apps/api/src/modules/auth/auth.guard.ts`
+  - `apps/api/src/modules/auth/auth.service.ts`
+  - `apps/mobile/app/(app)/(tabs)/_layout.tsx`
+  - `apps/mobile/app/(auth)/sign-in.tsx`
+  - `apps/mobile/src/providers/auth-bootstrap-provider.tsx`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - commit `f9553aa` mapeado e comparado com backlog: ok
+  - worktree de auth/admin/mobile/api classificado entre manter e descartar: ok
+  - bypass temporario de bootstrap autenticado removido: ok
+  - callbacks experimentais sem cobertura oficial descartados: ok
+  - suporte explicito a `CLERK_JWT_TEMPLATE` mantido em mobile, admin e `.env.example`: ok
+  - `apps/api/.env.example` alinhado ao PostgreSQL validado em `127.0.0.1:54333`: ok
+  - ajuste de Expo Router para tabs indexadas mantido como correcao valida: ok
+  - mobile lint: ok
+  - mobile typecheck: ok
+  - admin lint: ok
+  - admin typecheck: ok
+  - api lint: ok
+  - api typecheck: ok
+  - commit: pendente
+- **Observacoes de consolidacao em:** `2026-03-30`
+  - existe commit fora do backlog: `f9553aa Fix mobile auth bootstrap navigation loop`
+  - partes absorvidas do desvio: guardas de carregamento do Clerk, instrumentacao util de sign-in, suporte a template JWT, protecao contra `CLERK_SECRET_KEY` placeholder e correcao de tabs do Expo Router
+  - partes descartadas do desvio: bypass por `EXPO_PUBLIC_DISABLE_AUTH_BOOTSTRAP`, helper e callbacks experimentais do Clerk sem task oficial e drift acidental em arquivos `Claude/*` e `expo-env`
+  - `FT-059` passa a ser a proxima task oficial para estabilizar auth real antes da retomada funcional
+  - `FT-057` permanece bloqueada ate a conclusao de `FT-059`
+
+## FT-059 - Estabilizar auth real para validacao em emulador
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `READY`
+- **Fluxo critico:** `sim`
+- **Descricao:** Estabilizar oficialmente o fluxo real de auth Clerk entre mobile, admin e API para permitir validacao em emulador sem bypass e com contrato autenticado coerente.
+- **Dependencias:** `FT-058`
+- **Criterios de aceite:**
+  - emissao e consumo de token Clerk ficam coerentes entre mobile, admin e API
+  - bootstrap autenticado via `/auth/me` funciona sem bypass temporario
+  - callbacks e configuracoes necessarias de Clerk ficam documentados no estado oficial
+  - erros de `401`, `403` ou token ausente ficam reproduziveis e explicados
+- **Observacao:** task intermediaria obrigatoria antes da retomada oficial de `FT-057`
 
 ---
 
 # READY atuais
 
-- nenhuma task `READY` no momento
+- `FT-059 - Estabilizar auth real para validacao em emulador`
 
 ---
 
 # Ordem sugerida para comecar
 
-- fornecer uma credencial Clerk valida de teste para concluir `FT-057` no emulador
+- executar `FT-059` para estabilizar o fluxo autenticado oficial
+- so depois reabrir `FT-057` para validacao funcional final no emulador

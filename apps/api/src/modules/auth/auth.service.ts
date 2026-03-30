@@ -39,6 +39,12 @@ export class AuthService {
       );
     }
 
+    if (secretKey === 'sk_test_example') {
+      throw new InternalServerErrorException(
+        'CLERK_SECRET_KEY is still using the example placeholder. Configure the real Clerk secret for this environment.',
+      );
+    }
+
     const authorizedParties = process.env.CLERK_AUTHORIZED_PARTIES?.split(',')
       .map((party) => party.trim())
       .filter(Boolean);
