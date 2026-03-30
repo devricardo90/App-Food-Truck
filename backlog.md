@@ -1908,7 +1908,6 @@ Quando houver multiplas tasks `READY`, priorizar por:
 - **Entrega em:** `2026-03-30`
 - **Artefatos:**
   - `backlog.md`
-  - `apps/admin/package.json`
   - `apps/admin/.env.example`
   - `apps/admin/src/lib/auth-context.ts`
   - `apps/mobile/.env.example`
