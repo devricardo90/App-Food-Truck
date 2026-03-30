@@ -32,6 +32,19 @@ export type AdminTruckOrderStatusAction = {
   label: string;
 };
 
+export function formatOperationalTargetStatusLabel(targetStatus: string) {
+  switch (targetStatus) {
+    case 'in_progress':
+      return 'Em preparo';
+    case 'ready':
+      return 'Pronto para retirada';
+    case 'completed':
+      return 'Concluido';
+    default:
+      return targetStatus;
+  }
+}
+
 export async function fetchTruckOrderQueue(
   membership: AdminAuthMembership,
 ): Promise<AdminTruckOrderQueueResponse> {

@@ -13,10 +13,25 @@ export default async function TruckOrdersPage() {
   const activeFoodtruck =
     authContext.status === 'ready' ? authContext.data.activeFoodtruck : null;
 
-  const queue =
-    activeFoodtruck && authContext.status === 'ready'
-      ? await fetchTruckOrderQueue(activeFoodtruck).catch(() => null)
-      : null;
+  let queue = null;
+  let queueErrorMessage: string | null = null;
+
+  if (activeFoodtruck && authContext.status === 'ready') {
+    try {
+      queue = await fetchTruckOrderQueue(activeFoodtruck);
+    } catch (error) {
+      queueErrorMessage =
+        error instanceof Error
+          ? error.message
+          : `Nao foi possivel carregar a fila real de pedidos para ${activeFoodtruck.foodtruckName}.`;
+    }
+  }
+
+  const hasOperationalOrders =
+    (queue?.newCount ?? 0) +
+      (queue?.inProgressCount ?? 0) +
+      (queue?.readyCount ?? 0) >
+    0;
 
   return (
     <ConsoleShell
@@ -43,6 +58,11 @@ export default async function TruckOrdersPage() {
           value: String(queue?.inProgressCount ?? 0),
           hint: 'Pedidos com cozinha em andamento.',
         },
+        {
+          title: 'Prontos',
+          value: String(queue?.readyCount ?? 0),
+          hint: 'Pedidos liberados para retirada no balcao.',
+        },
       ]}
     >
       {queue ? (
@@ -61,6 +81,11 @@ export default async function TruckOrdersPage() {
                 {queue.readyCount}
               </span>
             </div>
+            <p className="mt-4 text-sm leading-6 text-stone-600">
+              A fila revalida a tela apos cada mutacao. Checkouts em
+              `pending_payment` continuam visiveis nos cards, mas so entram no
+              fluxo operacional quando forem confirmados.
+            </p>
           </article>
 
           {queue.orders.length > 0 ? (
@@ -80,6 +105,9 @@ export default async function TruckOrdersPage() {
                     <p className="mt-3 text-sm leading-6 text-stone-600">
                       {order.customerName ?? 'Cliente sem nome no dominio'}{' '}
                       {order.customerEmail ? `- ${order.customerEmail}` : ''}
+                    </p>
+                    <p className="mt-2 text-xs uppercase tracking-[0.18em] text-stone-500">
+                      Estado operacional atual: {order.status}
                     </p>
                   </div>
 
@@ -104,17 +132,36 @@ export default async function TruckOrdersPage() {
                 </div>
               </article>
             ))
+          ) : hasOperationalOrders ? (
+            <article className="rounded-[1.75rem] border border-amber-200 bg-amber-50 p-6 text-sm leading-6 text-amber-950 shadow-[0_18px_50px_rgba(15,23,42,0.05)]">
+              A fila retornou contadores operacionais, mas nenhum pedido foi
+              listado. Recarregue a tela ou repita a consulta para confirmar a
+              consistencia da fila.
+            </article>
           ) : (
             <article className="rounded-[1.75rem] border border-stone-200 bg-white p-6 text-sm leading-6 text-stone-600 shadow-[0_18px_50px_rgba(15,23,42,0.05)]">
-              Nenhum pedido ativo foi encontrado para a barraca neste momento.
+              Nenhum pedido operacional foi encontrado para a barraca neste
+              momento. Quando novos pedidos entrarem em `new`, `in_progress` ou
+              `ready`, as acoes aparecerao aqui.
             </article>
           )}
         </section>
       ) : (
         <section className="rounded-[1.75rem] border border-amber-200 bg-amber-50 p-6 text-sm leading-6 text-amber-950">
-          {activeFoodtruck
-            ? `Nao foi possivel carregar a fila real de pedidos para ${activeFoodtruck.foodtruckName}.`
-            : 'Nenhum foodtruck ativo foi resolvido para carregar a fila operacional.'}
+          <p className="font-semibold">
+            {activeFoodtruck
+              ? `Nao foi possivel carregar a fila real de pedidos para ${activeFoodtruck.foodtruckName}.`
+              : 'Nenhum foodtruck ativo foi resolvido para carregar a fila operacional.'}
+          </p>
+          {queueErrorMessage ? (
+            <p className="mt-3 text-sm leading-6 text-amber-900">
+              Detalhe: {queueErrorMessage}
+            </p>
+          ) : null}
+          <p className="mt-3 text-sm leading-6 text-amber-900">
+            Revise a sessao do painel, o contexto ativo da barraca e a
+            disponibilidade da API antes de repetir a consulta.
+          </p>
         </section>
       )}
     </ConsoleShell>

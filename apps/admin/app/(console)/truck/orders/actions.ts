@@ -3,7 +3,10 @@
 import { revalidatePath } from 'next/cache';
 
 import { resolveAdminAuthContext } from '../../../../src/lib/auth-context';
-import { updateTruckOrderStatus } from '../../../../src/lib/orders-api';
+import {
+  formatOperationalTargetStatusLabel,
+  updateTruckOrderStatus,
+} from '../../../../src/lib/orders-api';
 
 export type UpdateTruckOrderActionState = {
   status: 'idle' | 'success' | 'error';
@@ -45,7 +48,7 @@ export async function updateTruckOrderStatusAction(
 
     return {
       status: 'success',
-      message: `Pedido atualizado para ${targetStatus}.`,
+      message: `Pedido atualizado para ${formatOperationalTargetStatusLabel(targetStatus)} e fila recarregada.`,
     };
   } catch (error) {
     return {

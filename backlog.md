@@ -2277,7 +2277,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-070 - Consolidar estados operacionais do painel da barraca
 
 - **Skill dona:** `admin-web-architecture`
-- **Status:** `READY`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Consolidar loading, erro, empty state e feedback visual das acoes operacionais no painel da barraca para tornar a operacao local utilizavel.
 - **Dependencias:** `FT-068`
@@ -2286,11 +2286,30 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - erros de mutacao e refresh ficam claros
   - loading por acao evita duplo clique e ambiguidades
   - feedback visual do estado resultante fica consistente
+- **Entrega em:** `2026-03-30`
+- **Artefatos:**
+  - `apps/admin/app/(console)/truck/orders/page.tsx`
+  - `apps/admin/app/(console)/truck/orders/actions.ts`
+  - `apps/admin/src/components/truck-order-status-actions.tsx`
+  - `apps/admin/src/lib/orders-api.ts`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - empty state operacional da fila ficou explicito: ok
+  - erro de carga da fila agora expone detalhe util no painel: ok
+  - feedback visual das mutacoes ficou consistente entre sucesso e erro: ok
+  - loading por acao continua bloqueando duplo clique: ok
+  - admin build: ok
+- **Observacoes de execucao em:** `2026-03-30`
+  - a task consolidou UX operacional sobre a fila ja integrada, sem alterar contrato da API
+  - o painel agora diferencia melhor fila vazia, inconsistencia de retorno e falha real de consulta
+  - o foco permaneceu no uso local da barraca antes da validacao ponta a ponta
+- **Commit:** `feat(admin): consolidate truck queue operational states`
 
 ## FT-071 - Validar fluxo ponta a ponta pedido -> barraca -> cliente
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `TODO`
+- **Status:** `READY`
 - **Fluxo critico:** `sim`
 - **Descricao:** Validar manualmente o ciclo operacional completo do MVP, do checkout do cliente ate a atualizacao final do pedido apos a operacao da barraca.
 - **Dependencias:** `FT-067`, `FT-068`, `FT-069`
@@ -2305,13 +2324,13 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-070` - Consolidar estados operacionais do painel da barraca
+- `FT-071` - Validar fluxo ponta a ponta pedido -> barraca -> cliente
 
 ---
 
 # Ordem sugerida para comecar
 
-- fechar o ciclo operacional do pedido na ordem `FT-070 -> FT-071`
+- fechar o ciclo operacional do pedido na ordem `FT-071`
 - consolidar o admin operacional e as acoes da barraca antes de abrir produtos/estoque/cupons
 - usar `FT-032` como proxima frente tecnica separada, sem competir com o fluxo principal de produto
 - deixar `FT-061` para a proxima frente tecnica de hardening e testes
