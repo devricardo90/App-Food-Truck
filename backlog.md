@@ -2702,10 +2702,55 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 ---
 
+## FT-080 - Implantar CI/CD minima de staging para API e admin
+
+- **Skill dona:** `deployment-infra`
+- **Status:** `REVIEW`
+- **Fluxo critico:** `nao`
+- **Descricao:** Automatizar a verificacao de qualidade e o deploy de staging para `api` e `admin`, reduzindo dependencia de publicacao manual e criando trilha minima de entrega reproduzivel por branch protegida.
+- **Dependencias:** `FT-076`
+- **Objetivo:**
+  - executar `lint`, `typecheck` e `test` antes de publicar
+  - automatizar deploy de staging para `api` e `admin`
+  - manter gatilho manual controlado para rerun por servico quando necessario
+  - registrar os secrets e o fluxo operacional no runbook
+- **Escopo aprovado:**
+  - workflow GitHub Actions para checks em `pull_request` e `push` em `main`
+  - deploy de staging da API e do admin via Railway CLI
+  - suporte a `workflow_dispatch` para rerun controlado por servico
+  - documentacao minima de secrets e gatilhos
+- **Fora de escopo:**
+  - producao
+  - preview environments por PR
+  - rollback automatizado
+  - smoke tests autenticados completos pos-deploy
+- **Criterios de aceite:**
+  - existe workflow versionado no repositorio
+  - `pull_request` e `push` em `main` executam checks minimos
+  - `push` em `main` consegue disparar deploy de staging para `api` e `admin`
+  - `workflow_dispatch` permite rerun controlado por servico
+  - backlog e runbook registram secrets, gatilhos e limites da automacao
+- **Observacoes de execucao em:** `2026-04-03`
+  - workflow inicial criado em `.github/workflows/staging-ci-cd.yml`
+  - checks minimos configurados com `pnpm lint`, `pnpm typecheck` e `pnpm test`
+  - deploys de staging configurados por `railway up` com `--project`, `--environment staging`, `--service` e `--path-as-root`
+  - o baseline desta fase depende dos secrets `RAILWAY_TOKEN` e `RAILWAY_PROJECT_ID` no GitHub
+- **Artefatos:**
+  - `.github/workflows/staging-ci-cd.yml`
+  - `docs/architecture/railway-staging.md`
+  - `backlog.md`
+- **Validacoes:**
+  - workflow versionado criado no repositorio: ok
+  - gates minimos configurados com `lint`, `typecheck` e `test`: ok
+  - deploy de `api` e `admin` configurado com `workflow_dispatch`: ok
+  - deploy de `api` e `admin` configurado em `push` para `main`: ok
+  - validacao final no GitHub Actions: pendente de configuracao dos secrets `RAILWAY_TOKEN` e `RAILWAY_PROJECT_ID` e da primeira execucao remota
+
+---
+
 # Ordem sugerida para comecar
 
-- executar `FT-076` para sair do ambiente local validado e abrir o primeiro staging remoto de `api` e `admin`
-- manter auth fora de expansao estrutural enquanto o baseline validado permanecer estavel
-- reabrir frente de auth apenas se surgir regressao real fora da cobertura minima agora adicionada
+- fechar a `FT-080` para tirar o staging da dependencia de publicacao manual de `api` e `admin`
+- depois abrir observabilidade minima do ambiente para acompanhar o staging automatizado
 
 ---
