@@ -2632,7 +2632,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-076 - Provisionar staging inicial e primeiro deploy remoto de API/admin
 
 - **Skill dona:** `deployment-infra`
-- **Status:** `IN_PROGRESS`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Escolher o provedor oficial, provisionar o ambiente inicial de staging e executar o primeiro deploy remoto reproduzivel da API e do admin.
 - **Dependencias:** `FT-032`, `FT-033`, `FT-061`
@@ -2663,7 +2663,42 @@ Quando houver multiplas tasks `READY`, priorizar por:
 - **Observacoes de execucao em:** `2026-04-03`
   - Railway adotada como recomendacao oficial desta fase por acomodar monorepo pnpm/turbo, Next.js, NestJS e PostgreSQL sob o mesmo baseline inicial
   - a configuracao versionada do staging foi iniciada em `apps/api/railway.json`, `apps/admin/railway.json` e `docs/architecture/railway-staging.md`
-  - o provisionamento remoto depende de CLI instalada, autenticacao Railway e credenciais reais de Clerk para staging
+  - o provisionamento remoto foi concluido com Railway CLI autenticada via token e comandos registrados no runbook
+- **Entrega em:** `2026-04-03`
+- **Artefatos:**
+  - `apps/api/Dockerfile`
+  - `apps/admin/Dockerfile`
+  - `apps/api/railway.json`
+  - `apps/admin/railway.json`
+  - `apps/api/package.json`
+  - `apps/admin/package.json`
+  - `apps/api/tsconfig.json`
+  - `apps/api/tsconfig.base.json`
+  - `apps/admin/tsconfig.json`
+  - `apps/admin/tsconfig.base.json`
+  - `docs/architecture/railway-staging.md`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - Railway como provedor oficial de staging: ok
+  - PostgreSQL de staging provisionado: ok
+  - deploy inicial da API: ok
+  - deploy inicial do admin: ok
+  - variaveis minimas por servico configuradas: ok
+  - URL oficial da API de staging definida: ok
+  - URL oficial do admin de staging definida: ok
+  - fluxo minimo reproduzivel por CLI/documentacao registrado: ok
+  - `GET /docs` na API de staging: `200`
+  - `GET /health` na API de staging: `200`
+  - `GET /login` no admin de staging: `200`
+  - `GET /auth/me` sem token na API de staging: `401`
+- **Observacoes de encerramento em:** `2026-04-03`
+  - o projeto Railway oficial desta fase ficou como `app-food-truck-staging`
+  - a API publica ficou em `https://foodtrucks-api-staging-staging.up.railway.app`
+  - o admin publico ficou em `https://foodtrucks-admin-staging-staging.up.railway.app`
+  - o deploy remoto ficou reproduzivel por CLI usando `railway up apps/api --path-as-root` e `railway up apps/admin --path-as-root`
+  - para viabilizar deploy isolado por app, `api` e `admin` receberam baseline local de `tsconfig.base.json`, `typescript` como dependencia local de build e Dockerfiles proprios
+  - o staging inicial usa as credenciais Clerk de desenvolvimento ja existentes; hardening de secrets e segregacao completa de auth por ambiente continuam como pendencia posterior nao bloqueante
 
 ---
 

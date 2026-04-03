@@ -20,6 +20,8 @@ Esta documentacao existe para evitar ambiente magico. O staging inicial deve ser
 
 - config da API: [`apps/api/railway.json`](/C:/Users/ricardodev/Desktop/App-Food-Truck/apps/api/railway.json)
 - config do admin: [`apps/admin/railway.json`](/C:/Users/ricardodev/Desktop/App-Food-Truck/apps/admin/railway.json)
+- Dockerfile da API: [`apps/api/Dockerfile`](/C:/Users/ricardodev/Desktop/App-Food-Truck/apps/api/Dockerfile)
+- Dockerfile do admin: [`apps/admin/Dockerfile`](/C:/Users/ricardodev/Desktop/App-Food-Truck/apps/admin/Dockerfile)
 
 ## Variaveis obrigatorias por servico
 
@@ -27,6 +29,7 @@ Esta documentacao existe para evitar ambiente magico. O staging inicial deve ser
 
 - `DATABASE_URL`
   - origem esperada: referencia ao `Postgres.DATABASE_URL` do servico de banco
+- `RAILWAY_DOCKERFILE_PATH=/Dockerfile`
 - `CLERK_SECRET_KEY`
 - `CLERK_JWT_KEY`
   - opcional, conforme estrategia do ambiente
@@ -40,6 +43,7 @@ Esta documentacao existe para evitar ambiente magico. O staging inicial deve ser
 
 ### Admin
 
+- `RAILWAY_DOCKERFILE_PATH=/Dockerfile`
 - `API_BASE_URL`
 - `NEXT_PUBLIC_API_BASE_URL`
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
@@ -84,24 +88,22 @@ Criar:
 - `foodtrucks-api-staging`
 - `foodtrucks-admin-staging`
 
-### 5. Configurar os servicos para usar config as code
+### 5. Configurar os servicos para usar o Dockerfile versionado
 
-No dashboard da Railway, em cada servico:
+Definir em cada servico a variavel:
 
-- manter a source apontando para este repositorio
-- usar config file path:
-  - API: `/apps/api/railway.json`
-  - Admin: `/apps/admin/railway.json`
-- manter root directory em `/`
+- API: `RAILWAY_DOCKERFILE_PATH=/Dockerfile`
+- Admin: `RAILWAY_DOCKERFILE_PATH=/Dockerfile`
 
-Isso preserva os comandos com `pnpm --filter ...` e evita quebrar o workspace.
+Cada deploy sobe apenas o diretório do app correspondente com `--path-as-root`, reduzindo upload, evitando timeout do monorepo inteiro e mantendo o fluxo reproduzível por CLI.
 
 ### 6. Configurar variaveis
 
 #### API
 
 ```txt
-DATABASE_URL=${{foodtrucks-staging-db.DATABASE_URL}}
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+RAILWAY_DOCKERFILE_PATH=/Dockerfile
 CLERK_SECRET_KEY=<real_secret>
 CLERK_JWT_KEY=<optional_or_blank>
 CLERK_JWT_TEMPLATE=<staging_template>
@@ -112,6 +114,7 @@ CLERK_AUTHORIZED_PARTIES=<optional_or_blank>
 #### Admin
 
 ```txt
+RAILWAY_DOCKERFILE_PATH=/Dockerfile
 API_BASE_URL=<staging_api_url>
 NEXT_PUBLIC_API_BASE_URL=<staging_api_url>
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=<staging_publishable_key>
@@ -121,19 +124,19 @@ NEXT_PUBLIC_CLERK_JWT_TEMPLATE=<staging_template>
 
 ### 7. Deploy inicial
 
-Depois de linkar o projeto, cada deploy pode ser repetido por CLI:
+Depois de linkar o projeto, cada deploy pode ser repetido por CLI a partir da raiz do monorepo:
 
 ```bash
 railway service link foodtrucks-api-staging
-railway up
+railway up apps/api --service foodtrucks-api-staging --environment staging --path-as-root
 ```
 
 ```bash
 railway service link foodtrucks-admin-staging
-railway up
+railway up apps/admin --service foodtrucks-admin-staging --environment staging --path-as-root
 ```
 
-Se estiver operando a partir da raiz do repositorio, use o dashboard apenas para garantir que cada servico esteja apontando para o config file path correto e para a source deste repo.
+O fluxo minimo oficial fica ancorado nesses comandos e nas variaveis versionadas/documentadas, nao em configuracao manual solta.
 
 ## Validacao minima pos-deploy
 
@@ -156,8 +159,8 @@ Se estiver operando a partir da raiz do repositorio, use o dashboard apenas para
 
 ## URLs finais de staging
 
-- API staging: `PENDENTE`
-- Admin staging: `PENDENTE`
+- API staging: `https://foodtrucks-api-staging-staging.up.railway.app`
+- Admin staging: `https://foodtrucks-admin-staging-staging.up.railway.app`
 
 ## Pendencias nao bloqueantes desta fase
 

@@ -2,19 +2,10 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "RAILPACK",
-    "buildCommand": "pnpm install --frozen-lockfile && pnpm --filter @foodtrucks/admin build",
-    "watchPatterns": [
-      "/apps/admin/**",
-      "/packages/**",
-      "/package.json",
-      "/pnpm-lock.yaml",
-      "/pnpm-workspace.yaml",
-      "/turbo.json",
-      "/tsconfig.base.json"
-    ]
+    "buildCommand": "pnpm install --no-frozen-lockfile && pnpm build"
   },
   "deploy": {
-    "startCommand": "pnpm --filter @foodtrucks/admin start",
+    "startCommand": "pnpm start",
     "healthcheckPath": "/login",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",

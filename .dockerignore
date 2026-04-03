@@ -1,0 +1,12 @@
+.git
+.gitignore
+.turbo
+.pnpm-store
+.codex-runtime
+node_modules
+**/node_modules
+**/.next
+**/dist
+**/.expo
+**/.codex-test
+stitch (36).zip
