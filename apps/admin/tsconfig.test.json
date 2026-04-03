@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "./.codex-test",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
+    "jsx": "preserve",
+    "incremental": false
+  },
+  "include": [
+    "src/lib/auth-context-core.ts",
+    "src/lib/auth-context-core.test.ts"
+  ]
+}

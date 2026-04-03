@@ -12,7 +12,7 @@
     "build": "expo export --platform web --output-dir dist",
     "lint": "eslint \"**/*.{js,cjs,mjs,ts,tsx}\" --max-warnings=0 --no-error-on-unmatched-pattern",
     "typecheck": "tsc -p tsconfig.json",
-    "test": "node -e \"console.log('mobile test scaffold pending FT-029')\"",
+    "test": "tsc -p tsconfig.test.json && node .codex-test/auth-api.test.js",
     "clean": "node -e \"require('fs').rmSync('.expo', { recursive: true, force: true }); require('fs').rmSync('dist', { recursive: true, force: true }); console.log('mobile clean ok')\""
   },
   "dependencies": {

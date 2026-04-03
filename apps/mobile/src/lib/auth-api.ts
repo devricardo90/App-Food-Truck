@@ -19,10 +19,18 @@ export type AuthMeResponse = {
   activeFoodtruck: AuthMembership | null;
 };
 
+export type AuthApiErrorKind =
+  | 'missing-config'
+  | 'unauthorized'
+  | 'forbidden'
+  | 'request-failed'
+  | 'unknown';
+
 export class AuthApiError extends Error {
   constructor(
     message: string,
     public readonly status: number,
+    public readonly kind: AuthApiErrorKind,
     public readonly detail: string | null = null,
   ) {
     super(message);
@@ -61,20 +69,45 @@ async function readAuthErrorDetail(response: Response) {
   }
 }
 
-export async function fetchAuthMe(token: string): Promise<AuthMeResponse> {
-  const apiBaseUrl = process.env.EXPO_PUBLIC_API_BASE_URL;
+type FetchAuthMeDependencies = {
+  apiBaseUrl: string | undefined;
+  fetchImpl: typeof fetch;
+};
 
+export async function fetchAuthMeWithDependencies(
+  token: string,
+  { apiBaseUrl, fetchImpl }: FetchAuthMeDependencies,
+): Promise<AuthMeResponse> {
   if (!apiBaseUrl) {
-    throw new Error(
+    throw new AuthApiError(
       'Defina EXPO_PUBLIC_API_BASE_URL para consultar /auth/me no mobile.',
+      0,
+      'missing-config',
+      null,
     );
   }
 
-  const response = await fetch(`${apiBaseUrl}/auth/me`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  let response: Response;
+
+  try {
+    response = await fetchImpl(`${apiBaseUrl}/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error) {
+    const detail =
+      error instanceof Error
+        ? error.message
+        : 'Falha inesperada de rede ao consultar /auth/me.';
+
+    throw new AuthApiError(
+      `Nao foi possivel consultar /auth/me no mobile. ${detail}`,
+      0,
+      'request-failed',
+      detail,
+    );
+  }
 
   if (!response.ok) {
     const detail = await readAuthErrorDetail(response);
@@ -91,8 +124,24 @@ export async function fetchAuthMe(token: string): Promise<AuthMeResponse> {
       .filter(Boolean)
       .join(' ');
 
-    throw new AuthApiError(diagnostics, response.status, detail);
+    throw new AuthApiError(
+      diagnostics,
+      response.status,
+      response.status === 401
+        ? 'unauthorized'
+        : response.status === 403
+          ? 'forbidden'
+          : 'request-failed',
+      detail,
+    );
   }
 
   return (await response.json()) as AuthMeResponse;
+}
+
+export async function fetchAuthMe(token: string): Promise<AuthMeResponse> {
+  return fetchAuthMeWithDependencies(token, {
+    apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL,
+    fetchImpl: fetch,
+  });
 }

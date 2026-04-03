@@ -1016,7 +1016,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-032 - Definir ambientes e deploy inicial
 
 - **Skill dona:** `deployment-infra`
-- **Status:** `BLOCKED`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Definir estrutura de ambientes para desenvolvimento, staging e producao.
 - **Dependencias:** `FT-001`
@@ -1024,6 +1024,23 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - ambientes definidos
   - estrategia de secrets definida
   - deploy inicial planejado
+- **Entrega em:** `2026-04-03`
+- **Artefatos:**
+  - `docs/architecture/environments-and-deploy.md`
+  - `README.md`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - estrutura oficial de ambientes documentada: ok
+  - estrategia oficial de secrets documentada: ok
+  - plano inicial de deploy documentado: ok
+  - build: nao aplicavel
+  - testes: nao aplicavel
+- **Observacoes de encerramento em:** `2026-04-03`
+  - a task foi fechada como definicao de baseline operacional, sem acoplar o projeto a um provedor especifico nesta fase
+  - `local`, `staging` e `production` ficaram definidos por papel, segregacao de banco, segregacao de Clerk e ownership de secrets
+  - o deploy inicial ficou planejado por superficie (`admin`, `api`, `mobile`) com sequenciamento minimo e checklist antes da primeira publicacao remota
+  - provisionamento real, CI/CD, rollback e distribuicao publica do mobile continuam fora de escopo e devem voltar em tasks proprias
 
 ## FT-033 - Definir version-matrix oficial
 
@@ -1996,17 +2013,77 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-061 - Hardening e testes de auth
 
 - **Skill dona:** `auth-rbac`
-- **Status:** `TODO`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Reforcar auth apos o destravamento do MVP com foco em hardening, observabilidade e testes automatizados.
 - **Dependencias:** `FT-060`
+- **Contexto de priorizacao em:** `2026-04-03`
+  - o fluxo critico do MVP foi validado ponta a ponta em `FT-071`
+  - `FT-072`, `FT-074` e `FT-075` removeram os gargalos estruturais de handoff, membership e dataset operacional
+  - o proximo risco principal deixou de ser bloqueio funcional e passou a ser regressao silenciosa em auth, bootstrap e contratos de sessao
+  - esta task foi priorizada antes de `FT-032` para proteger o nucleo validado antes da frente de ambientes/deploy
 - **Escopo previsto:**
   - hardening de sessao e erros intermitentes
   - revisao de roles e permissoes
   - observabilidade estruturada de auth
   - testes automatizados de login, bootstrap e `/auth/me`
   - cleanup tecnico da instrumentacao temporaria
-- **Observacao:** task futura; nao bloqueia a retomada das features do MVP
+- **Escopo operacional deste ciclo:**
+  - mapear os pontos reais de falha ainda expostos em mobile, admin e API no bootstrap de auth
+  - reduzir dependencia de logs temporarios para diagnostico manual
+  - consolidar casos criticos de teste para `verifyToken`, `syncDomainUser`, memberships e `/auth/me`
+  - revisar mensagens de erro e contratos minimos para diferenciar falha de token, falha de dominio e falha de runtime
+  - preservar o comportamento validado no fluxo principal sem reabrir redesign estrutural de auth
+- **Criterios de aceite propostos:**
+  - auth continua estavel no fluxo validado do MVP apos o hardening
+  - existe cobertura automatizada minima para bootstrap e `/auth/me`
+  - erros principais de auth ficam classificaveis sem depender de leitura manual opaca de logs
+  - instrumentacao temporaria excessiva fica reduzida ou explicitamente marcada
+  - nao ha regressao no contrato consumido por mobile e admin
+- **Fora de escopo:**
+  - troca de provider de auth
+  - redesign completo de RBAC
+  - mudanca estrutural no fluxo de pedido ja validado
+  - pipeline completo de deploy e ambientes
+- **Entrega em:** `2026-04-03`
+- **Artefatos:**
+  - `apps/api/src/modules/auth/auth.utils.ts`
+  - `apps/api/src/modules/auth/auth.utils.test.ts`
+  - `apps/admin/src/lib/auth-context.ts`
+  - `apps/admin/src/lib/auth-context-core.ts`
+  - `apps/admin/src/lib/auth-context-core.test.ts`
+  - `apps/admin/tsconfig.test.json`
+  - `apps/mobile/src/lib/auth-api.ts`
+  - `apps/mobile/src/lib/auth-api.test.ts`
+  - `apps/mobile/tsconfig.test.json`
+  - `apps/api/package.json`
+  - `apps/admin/package.json`
+  - `apps/mobile/package.json`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Observacao:** task executada para blindar o nucleo validado sem reabrir redesign estrutural de auth
+- **Observacoes de execucao em:** `2026-04-03`
+  - regras centrais de auth foram extraidas para utilitarios puros no backend para reduzir acoplamento e permitir cobertura automatizada
+  - `extractBearerToken`, parsing de listas de ambiente, resolucao de membership ativa e montagem do contexto de `/auth/me` agora possuem teste automatizado real na API
+  - o script `test` de `apps/api` deixou de ser placeholder e passou a validar o contrato dessas regras apos build
+  - o bootstrap mobile de auth teve a instrumentacao ruidosa reduzida, preservando logs de erro, retry e sign-out por `401`
+  - o admin passou a tentar fallback entre token de template e token de sessao ao consultar `/auth/me`, reduzindo falha por configuracao parcial do Clerk
+  - o mobile passou a classificar falhas de `/auth/me` em configuracao ausente, `401`, `403` e erro de request para orientar melhor o diagnostico na UI
+  - a instrumentacao temporaria do backend de auth foi enxugada para manter apenas falhas por estagio (`verifyToken`, `verifyTokenClaims`, `syncDomainUser`, `listActiveForUser`, `extractBearerToken`) e remover logs de sucesso e previews de token
+  - o comportamento funcional validado em `FT-071` foi preservado nesta primeira rodada
+- **Observacoes de encerramento em:** `2026-04-03`
+  - a blindagem automatizada minima dos consumidores de `/auth/me` em admin e mobile ficou fechada com cobertura de sucesso, `401`, `403` e falha de request/rede
+  - o escopo foi mantido estrito para proteger o que ja causou regressao sem transformar a task em frente ampla de testes
+  - testes de UI, E2E real com Clerk/backend e expansao de matriz de contexto continuam deliberadamente fora desta task
+  - o estado oficial apos esta rodada e de seguranca razoavel para encerramento da frente de hardening minima de auth
+- **Validacoes:**
+  - `pnpm.cmd --filter @foodtrucks/api typecheck`: ok
+  - `pnpm.cmd --filter @foodtrucks/api test`: ok
+  - `pnpm.cmd --filter @foodtrucks/mobile typecheck`: ok
+  - `pnpm.cmd --filter @foodtrucks/mobile test`: ok
+  - `pnpm.cmd --filter @foodtrucks/admin typecheck`: ok
+  - `pnpm.cmd --filter @foodtrucks/admin test`: ok
+  - `pnpm.cmd test`: ok
 
 ---
 
@@ -2309,7 +2386,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-071 - Validar fluxo ponta a ponta pedido -> barraca -> cliente
 
 - **Skill dona:** `mobile-app-architecture`
-- **Status:** `BLOCKED`
+- **Status:** `DONE`
 - **Fluxo critico:** `sim`
 - **Descricao:** Validar manualmente o ciclo operacional completo do MVP, do checkout do cliente ate a atualizacao final do pedido apos a operacao da barraca.
 - **Dependencias:** `FT-067`, `FT-068`, `FT-069`
@@ -2327,10 +2404,16 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - `backlog.md`
 - **Revisao:** `aprovada`
 - **Validacoes:**
-  - login mobile e `/auth/me` continuam funcionais no fluxo real: ok
+  - login/auth do cliente no fluxo real: ok
+  - `/auth/me` no fluxo real: ok
+  - detalhe e catalogo do truck no runtime atual: ok
   - checkout do cliente envia `POST /orders` para a API atual: ok
-  - handoff estrutural de `pending_payment -> new` existe no backend: ok
-  - validacao ponta a ponta ate `ready/completed`: bloqueada
+  - criacao do pedido em `pending_payment`: ok
+  - handoff mock de pagamento: ok
+  - transicao de `pending_payment -> new`: ok
+  - pedido visivel na fila da barraca no admin: ok
+  - progressao operacional da barraca ate conclusao do fluxo: ok
+  - reflexo final do status no cliente validado manualmente: ok
 - **Observacoes de execucao em:** `2026-03-30`
   - o bloqueio anterior de handoff foi removido em `FT-072`, mas a validacao manual voltou a travar antes da criacao do pedido operacional
   - o app mobile em execucao no Expo Go continua com bundle antigo de checkout, mas ja fala com a API atual e recebeu erro de dominio mais especifico
@@ -2338,11 +2421,24 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - a descoberta/lista/catalogo continuam acessiveis porque `FoodtrucksService` usa fallback de fixtures quando nao encontra `Event`/tabelas operacionais
   - o checkout real nao usa esse fallback e exige `EventTruck` + `MenuItem` persistidos no banco ativo
   - sem um `Event` ativo com `EventTruck`/itens compativeis, o pedido nao chega a `pending_payment`, nao entra em `new` e o fluxo nao alcanca painel/operacao/cliente final
-- **Bloqueado por:**
+- **Bloqueio registrado em:** `2026-03-30`
   - divergencia entre descoberta publica por fallback e checkout real dependente de `EventTruck`/`MenuItem` persistidos no banco local
 - **Observacoes adicionais em:** `2026-03-30`
   - o handoff estrutural anterior foi tratado em `FT-072`
   - a proxima reexecucao da task depende de ambiente de dados coerente entre descoberta, catalogo e checkout
+- **Preparacao de reexecucao em:** `2026-04-03`
+  - `FT-074` fechou o contexto operacional local com membership real e runtime revalidado em `/auth/me`
+  - `FT-075` fechou o dataset operacional minimo para `funky-chicken`, incluindo `Event` ativo, `EventTruck` orderable e `MenuItem` real
+  - o bloqueio desta task nao e mais auth, sync de dominio ou membership
+  - a condicao minima antes da repeticao funcional e reiniciar o processo local da API em `:3000` para carregar a correcao de `FoodtrucksService` em `detail/catalog` e eliminar fallback legado no runtime servido
+  - o primeiro ponto da reexecucao deve validar o checkout real do cliente em `POST /orders`, confirmando criacao de pedido em `pending_payment` com o dataset operacional atual
+  - a partir desse ponto, a reexecucao segue para handoff `pending_payment -> new`, fila da barraca no admin e reflexo final no app do cliente
+- **Observacoes de encerramento em:** `2026-04-03`
+  - a validacao manual ponta a ponta foi concluida com sucesso sobre o dataset real de `funky-chicken`
+  - o fluxo oficial observado foi `checkout -> pending_payment -> confirm-payment mock -> new -> in_progress/ready/completed`
+  - o admin recebeu o pedido na fila operacional da barraca e permitiu o avanco de estados esperado
+  - o cliente refletiu manualmente as mudancas finais de status no app apos a operacao da barraca
+  - auth deixou de ser eixo de risco desta task; os residuos atuais sao de hardening e operacao, nao de bloqueio do fluxo principal
 - **Commit:** `docs(backlog): record ft-071 blocker on active event checkout data`
 
 ## FT-072 - Alinhar handoff de pagamento para operacao da barraca
@@ -2402,17 +2498,179 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - o mobile continua criando pedido em `pending_payment`, mas a tela pendente agora aciona a confirmacao controlada antes de entregar o pedido para a operacao
 - **Commit:** `feat(api): align mock payment handoff with truck operations`
 
+## FT-074 - Popular contexto operacional local para usuario autenticado
+
+- **Skill dona:** `database-design`
+- **Status:** `DONE`
+- **Fluxo critico:** `sim`
+- **Descricao:** Popular de forma oficial e reproduzivel o contexto operacional local do usuario autenticado, criando o vinculo minimo de dominio necessario para que `/auth/me` retorne memberships reais e para que as rotas protegidas por membership do foodtruck possam ser validadas no ambiente local.
+- **Dependencias:** `FT-039`, `FT-040`, `FT-058`, `FT-060`
+- **Criterios de aceite:**
+  - tabela e mecanismo oficial de bootstrap do vinculo operacional local ficam definidos
+  - usuario autenticado local passa a ter ao menos uma `TruckMembership` com `status = active`
+  - `/auth/me` retorna `memberships` nao vazio para o usuario autenticado local
+  - `/auth/foodtruck-context` responde com contexto valido para esse usuario
+  - o caminho para destravar repeticao funcional de `FT-071` fica documentado sem depender de ajuste manual opaco
+- **Escopo aprovado:**
+  - identificar o `Truck` local que servira como contexto operacional padrao
+  - definir o menor conjunto de dados necessarios em `User`, `Truck` e `TruckMembership`
+  - alinhar papel de membership com as roles operacionais suportadas pelo backend
+  - registrar a estrategia oficial de seed, fixture ou bootstrap local para repetir esse estado
+  - atualizar backlog com evidencias do desbloqueio
+- **Fora de escopo:**
+  - redesign de auth
+  - promover usuario local para `platform_admin` como atalho de operacao
+  - painel completo de gestao de acessos
+  - hardening completo de multi-foodtruck selection
+- **Tabelas e entidades afetadas:**
+  - `User`
+  - `Truck`
+  - `TruckMembership`
+  - `Event`
+  - `EventTruck`
+- **Observacoes de planejamento em:** `2026-04-03`
+  - o bloqueio atual nao e mais auth; Clerk token, sync do usuario local e lookup de memberships ja passam
+  - o usuario novo entra como `User.role = customer` no sync de auth e nao recebe membership automaticamente
+  - o backend considera apenas memberships com `status = active`
+  - o caminho profissional para destravar contexto de dominio e criar membership ativa para esse usuario, nao promover a conta para `platform_admin`
+  - criar apenas a membership destrava `/auth/me` e `/auth/foodtruck-context`; a repeticao funcional mais ampla de `FT-071` ainda depende de `EventTruck` e dados operacionais coerentes
+- **Risco:** baixo a moderado
+- **Executor ideal:** backend/domain owner com acesso a Prisma e entendimento do modelo de auth-context
+- **Revisor ideal:** owner de integracao auth/admin/mobile para validar que o bootstrap realmente destrava os consumidores
+- **Artefatos esperados:**
+  - `apps/api/package.json`
+  - `apps/api/scripts/bootstrap-local-operator-context.mjs`
+  - `apps/api/prisma/schema.prisma`
+  - `apps/api/src/modules/foodtruck-memberships/foodtruck-memberships.service.ts`
+  - `apps/api/src/modules/users/users.service.ts`
+  - `backlog.md`
+- **Observacao:** task formal criada a partir do diagnostico real em `2026-04-03`, apos validar que o bloqueio atual saiu de auth e foi para dado de dominio local
+- **Observacoes de execucao em:** `2026-04-03`
+  - bootstrap local reproduzivel criado em `apps/api/scripts/bootstrap-local-operator-context.mjs`
+  - script oficial adicionado em `apps/api/package.json` como `bootstrap:local-operator-context`
+  - usuario Clerk `user_3BfGfOHeTlgNpMSxhtjOOVvmznX` recebeu `User.role = truck_manager`
+  - `Truck` local `funky-chicken` foi criado com `status = active`
+  - `TruckMembership` ativa foi criada com `role = truck_manager`
+  - revalidacao em banco confirmou membership ativa e contexto operacional persistido
+  - revalidacao runtime posterior confirmou `verifyToken`, `syncDomainUser` e `membershipCount: 1`
+- **Validacoes:**
+  - bootstrap local executado com sucesso: ok
+  - `typecheck` da API apos o bootstrap script: ok
+  - verificacao direta em banco de `User + Truck + TruckMembership`: ok
+  - revalidacao runtime de `/auth/me` com membership real: ok
+  - coerencia de contexto para `/auth/foodtruck-context`: ok pelo estado atual de membership unica ativa e pelo guard vigente
+  - `GET /orders/foodtruck-queue`: evidência complementar desejavel para reexecucao funcional, mas nao bloqueia o fechamento desta task de dominio
+- **Revisao:** `aprovada`
+
+## FT-075 - Popular dataset operacional minimo para checkout real
+
+- **Skill dona:** `database-design`
+- **Status:** `DONE`
+- **Fluxo critico:** `sim`
+- **Descricao:** Criar e alinhar o dataset operacional minimo reproduzivel para que discovery, catalogo e checkout usem a mesma base real no ambiente local, removendo a divergencia entre fallback publico e fluxo real de `POST /orders`.
+- **Dependencias:** `FT-043`, `FT-063`, `FT-071`, `FT-074`
+- **Criterios de aceite:**
+  - existe um `Event` ativo valido no banco local
+  - existe um `EventTruck` ativo e orderable para o truck usado no fluxo
+  - existem `MenuCategory` e `MenuItem` persistidos e disponiveis no mesmo contexto
+  - discovery publico e catalogo publico passam a ler esse mesmo contexto real
+  - o pre-requisito estrutural de `POST /orders` fica satisfeito para o truck do fluxo
+  - o mecanismo local de bootstrap/seed fica reproduzivel
+- **Escopo aprovado:**
+  - criar ou alinhar `Event`, `Truck`, `EventTruck`, `MenuCategory` e `MenuItem`
+  - garantir coerencia entre slug publico e contexto operacional do checkout
+  - registrar o contrato operacional adotado para o dataset local minimo
+  - produzir evidencia objetiva de que discovery e catalogo apontam para a mesma base real
+- **Fora de escopo:**
+  - reexecucao completa da `FT-071`
+  - redesign dos endpoints publicos
+  - hardening amplo de estoque e capacidade
+  - expansao do dataset para todos os foodtrucks de desenvolvimento
+- **Tabelas e entidades afetadas:**
+  - `Event`
+  - `Truck`
+  - `EventTruck`
+  - `MenuCategory`
+  - `MenuItem`
+- **Observacoes de planejamento em:** `2026-04-03`
+  - o bloqueio atual da `FT-071` nao e mais auth nem membership
+  - o checkout real exige `EventTruck` em `EventStatus.active` e itens persistidos no banco
+  - discovery e catalogo publicos ainda podiam mascarar essa ausencia via fallback de desenvolvimento
+  - o truck de referencia desta fase continua sendo `funky-chicken`
+- **Artefatos:**
+  - `apps/api/package.json`
+  - `apps/api/scripts/bootstrap-local-operational-dataset.mjs`
+  - `apps/api/src/modules/foodtrucks/foodtrucks.service.ts`
+  - `backlog.md`
+- **Observacoes de execucao em:** `2026-04-03`
+  - script oficial `bootstrap:local-operational-dataset` criado para popular o dataset minimo reproduzivel
+  - `Event` ativo `dev-lunch-service-stockholm` criado/alinhado no banco local
+  - `EventTruck` orderable para `funky-chicken` criado/alinhado com `acceptsOrders = true`
+  - `MenuCategory` reais `pratos` e `lanches` persistidas no mesmo `EventTruck`
+  - `MenuItem` reais e orderable persistidos no mesmo contexto operacional
+  - consulta direta ao banco confirmou `EventStatus.active`, `EventTruck` unico para `funky-chicken`, `2` categorias e `3` itens reais no contexto
+  - `GET /foodtrucks` no processo atual da API ja passou a refletir o dataset real do banco
+  - drift residual identificado: `GET /foodtrucks/:slug` e `GET /foodtrucks/:slug/catalog` ainda priorizavam fallback legado quando o slug existia em fixture de desenvolvimento
+  - `FoodtrucksService` foi ajustado para priorizar o contexto real do banco quando existe `Event` ativo, deixando o fallback apenas para ausencia de evento ativo
+  - o processo antigo da API em `:3000` ainda precisa ser reiniciado para servir essa ultima correcao de `detail/catalog`
+- **Validacoes:**
+  - bootstrap local do dataset operacional executado com sucesso: ok
+  - `typecheck` da API apos script e ajuste do service: ok
+  - verificacao direta em banco de `Event + EventTruck + MenuCategory + MenuItem`: ok
+  - evidencia de discovery publico usando base real em `GET /foodtrucks`: ok
+  - evidencia de `detail/catalog` no processo antigo: ainda refletia bundle antigo antes de restart, mas a correcao ja foi aplicada em codigo e build
+- **Revisao:** `aprovada`
+
 ---
 
 # READY atuais
 
-- nenhuma task `READY` no momento
+- `FT-061` - hardening, observabilidade e testes de auth para proteger o fluxo validado do MVP
+
+---
+
+## FT-076 - Provisionar staging inicial e primeiro deploy remoto de API/admin
+
+- **Skill dona:** `deployment-infra`
+- **Status:** `IN_PROGRESS`
+- **Fluxo critico:** `nao`
+- **Descricao:** Escolher o provedor oficial, provisionar o ambiente inicial de staging e executar o primeiro deploy remoto reproduzivel da API e do admin.
+- **Dependencias:** `FT-032`, `FT-033`, `FT-061`
+- **Criterios de aceite:**
+  - provedor oficial escolhido
+  - banco de staging definido e acessivel
+  - deploy inicial da API realizado
+  - deploy inicial do admin realizado
+  - variaveis de ambiente documentadas por superficie
+  - URL oficial de staging definida
+  - pipeline minimo de build/deploy reproduzivel
+  - validacao basica pos-deploy executada
+  - o deploy de staging fica reproduzivel por comando e/ou documentacao registrada, sem depender de clique solto sem registro
+- **Escopo aprovado:**
+  - Railway como provedor oficial de staging
+  - PostgreSQL de staging
+  - deploy inicial da API
+  - deploy inicial do admin
+  - variaveis minimas por servico
+  - URLs oficiais de staging
+  - fluxo minimo reproduzivel de build/deploy
+  - validacao basica pos-deploy
+- **Fora de escopo:**
+  - deploy oficial de producao
+  - CI/CD completa multi-ambiente
+  - distribuicao publica do mobile
+  - observabilidade avancada e rollback automatizado
+- **Observacoes de execucao em:** `2026-04-03`
+  - Railway adotada como recomendacao oficial desta fase por acomodar monorepo pnpm/turbo, Next.js, NestJS e PostgreSQL sob o mesmo baseline inicial
+  - a configuracao versionada do staging foi iniciada em `apps/api/railway.json`, `apps/admin/railway.json` e `docs/architecture/railway-staging.md`
+  - o provisionamento remoto depende de CLI instalada, autenticacao Railway e credenciais reais de Clerk para staging
 
 ---
 
 # Ordem sugerida para comecar
 
-- destravar a coerencia entre descoberta publica e checkout real antes de repetir `FT-071`
-- consolidar o admin operacional e as acoes da barraca antes de abrir produtos/estoque/cupons
-- usar `FT-032` como proxima frente tecnica separada, sem competir com o fluxo principal de produto
-- deixar `FT-061` para a proxima frente tecnica de hardening e testes
+- executar `FT-076` para sair do ambiente local validado e abrir o primeiro staging remoto de `api` e `admin`
+- manter auth fora de expansao estrutural enquanto o baseline validado permanecer estavel
+- reabrir frente de auth apenas se surgir regressao real fora da cobertura minima agora adicionada
+
+---

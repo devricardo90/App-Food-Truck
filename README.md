@@ -34,6 +34,8 @@ packages/
 ```
 
 Documentacao da arquitetura do workspace: `docs/architecture/monorepo.md`
+Baseline oficial de ambientes e deploy: `docs/architecture/environments-and-deploy.md`
+Runbook de staging Railway: `docs/architecture/railway-staging.md`
 Configuracao runtime de auth Clerk: `docs/auth/clerk-runtime-config.md`
 
 ## Stack base
