@@ -51,7 +51,8 @@ export async function fetchTruckOrderQueue(
   const apiBaseUrl =
     process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
   const clerkJwtTemplate =
-    process.env.CLERK_JWT_TEMPLATE ?? process.env.NEXT_PUBLIC_CLERK_JWT_TEMPLATE;
+    process.env.CLERK_JWT_TEMPLATE ??
+    process.env.NEXT_PUBLIC_CLERK_JWT_TEMPLATE;
 
   if (!apiBaseUrl) {
     throw new Error(
@@ -95,7 +96,8 @@ export async function updateTruckOrderStatus(
   const apiBaseUrl =
     process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
   const clerkJwtTemplate =
-    process.env.CLERK_JWT_TEMPLATE ?? process.env.NEXT_PUBLIC_CLERK_JWT_TEMPLATE;
+    process.env.CLERK_JWT_TEMPLATE ??
+    process.env.NEXT_PUBLIC_CLERK_JWT_TEMPLATE;
 
   if (!apiBaseUrl) {
     throw new Error(

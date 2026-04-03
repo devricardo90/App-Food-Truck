@@ -69,7 +69,8 @@ export class OrdersController {
     summary: 'List the operational queue for the active foodtruck context.',
   })
   @ApiOkResponse({
-    description: 'Operational queue grouped by status for the active foodtruck.',
+    description:
+      'Operational queue grouped by status for the active foodtruck.',
     type: TruckOrderQueueResponseDto,
   })
   listFoodtruckQueue(
@@ -170,7 +171,8 @@ export class OrdersController {
 
   @Get(':orderId')
   @ApiOperation({
-    summary: 'Resolve a pending or active order for the authenticated customer.',
+    summary:
+      'Resolve a pending or active order for the authenticated customer.',
   })
   @ApiOkResponse({
     description: 'Order detail resolved for the authenticated customer.',

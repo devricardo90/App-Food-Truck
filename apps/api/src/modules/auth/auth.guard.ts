@@ -47,8 +47,7 @@ export class AuthGuard implements CanActivate {
     } catch (error) {
       console.error('AuthGuard bearer authentication failed', {
         errorName: error instanceof Error ? error.name : 'UnknownError',
-        errorMessage:
-          error instanceof Error ? error.message : String(error),
+        errorMessage: error instanceof Error ? error.message : String(error),
         isHttpException: error instanceof HttpException,
       });
 

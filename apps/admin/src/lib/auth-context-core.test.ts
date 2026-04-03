@@ -81,58 +81,64 @@ async function main() {
     },
   );
 
-  await runTest('resolveAdminAuthContextFromState reports 401 from /auth/me', async () => {
-    const result = await resolveAdminAuthContextFromState({
-      apiBaseUrl: 'http://localhost:3333',
-      clerkJwtTemplate: undefined,
-      authState: createAuthState(),
-      fetchImpl: async () =>
-        new Response(
-          JSON.stringify({
-            message: 'Token invalido',
-          }),
-          {
-            status: 401,
-            headers: {
-              'content-type': 'application/json',
+  await runTest(
+    'resolveAdminAuthContextFromState reports 401 from /auth/me',
+    async () => {
+      const result = await resolveAdminAuthContextFromState({
+        apiBaseUrl: 'http://localhost:3333',
+        clerkJwtTemplate: undefined,
+        authState: createAuthState(),
+        fetchImpl: async () =>
+          new Response(
+            JSON.stringify({
+              message: 'Token invalido',
+            }),
+            {
+              status: 401,
+              headers: {
+                'content-type': 'application/json',
+              },
             },
-          },
-        ),
-    });
+          ),
+      });
 
-    assert.equal(result.status, 'api-error');
-    assert.match(result.message, /401/);
-    assert.match(result.message, /Token invalido/);
-    assert.match(result.message, /template JWT do Clerk/i);
-  });
+      assert.equal(result.status, 'api-error');
+      assert.match(result.message, /401/);
+      assert.match(result.message, /Token invalido/);
+      assert.match(result.message, /template JWT do Clerk/i);
+    },
+  );
 
-  await runTest('resolveAdminAuthContextFromState reports 403 from /auth/me', async () => {
-    const result = await resolveAdminAuthContextFromState({
-      apiBaseUrl: 'http://localhost:3333',
-      clerkJwtTemplate: undefined,
-      authState: createAuthState(),
-      fetchImpl: async () =>
-        new Response(
-          JSON.stringify({
-            message: 'Membership ausente',
-          }),
-          {
-            status: 403,
-            headers: {
-              'content-type': 'application/json',
+  await runTest(
+    'resolveAdminAuthContextFromState reports 403 from /auth/me',
+    async () => {
+      const result = await resolveAdminAuthContextFromState({
+        apiBaseUrl: 'http://localhost:3333',
+        clerkJwtTemplate: undefined,
+        authState: createAuthState(),
+        fetchImpl: async () =>
+          new Response(
+            JSON.stringify({
+              message: 'Membership ausente',
+            }),
+            {
+              status: 403,
+              headers: {
+                'content-type': 'application/json',
+              },
             },
-          },
-        ),
-    });
+          ),
+      });
 
-    assert.equal(result.status, 'api-error');
-    assert.match(result.message, /403/);
-    assert.match(result.message, /Membership ausente/);
-    assert.match(
-      result.message,
-      /membership, contexto de foodtruck e permissoes/i,
-    );
-  });
+      assert.equal(result.status, 'api-error');
+      assert.match(result.message, /403/);
+      assert.match(result.message, /Membership ausente/);
+      assert.match(
+        result.message,
+        /membership, contexto de foodtruck e permissoes/i,
+      );
+    },
+  );
 
   await runTest(
     'resolveAdminAuthContextFromState reports request failure when fetch throws',

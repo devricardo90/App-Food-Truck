@@ -5,7 +5,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { EventStatus, OrderActorType, OrderStatus, PaymentStatus } from '../../generated/prisma/enums';
+import {
+  EventStatus,
+  OrderActorType,
+  OrderStatus,
+  PaymentStatus,
+} from '../../generated/prisma/enums';
 import { Prisma } from '../../generated/prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import type {
@@ -184,7 +189,8 @@ export class OrdersService {
               toStatus: OrderStatus.pending_payment,
               actorType: OrderActorType.customer,
               actorUserId: authUser.userId,
-              reason: 'Initial pending payment checkout created by mobile client.',
+              reason:
+                'Initial pending payment checkout created by mobile client.',
             },
           },
         },
@@ -273,7 +279,8 @@ export class OrdersService {
           fromStatus: order.status,
           toStatus: OrderStatus.new,
           actorType: OrderActorType.payment_provider,
-          reason: 'Mock payment confirmed and order promoted to the truck queue.',
+          reason:
+            'Mock payment confirmed and order promoted to the truck queue.',
         },
       });
 
@@ -392,7 +399,8 @@ export class OrdersService {
       pendingPaymentCount: orders.filter(
         (order) => order.status === OrderStatus.pending_payment,
       ).length,
-      newCount: orders.filter((order) => order.status === OrderStatus.new).length,
+      newCount: orders.filter((order) => order.status === OrderStatus.new)
+        .length,
       inProgressCount: orders.filter(
         (order) => order.status === OrderStatus.in_progress,
       ).length,

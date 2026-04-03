@@ -40,8 +40,7 @@ export class UpdateOrderStatusRequestDto {
   @ApiPropertyOptional({
     example: 'Falha operacional na cozinha',
     maxLength: 500,
-    description:
-      'Required when cancelling an order from an operational state.',
+    description: 'Required when cancelling an order from an operational state.',
   })
   reason?: string;
 }

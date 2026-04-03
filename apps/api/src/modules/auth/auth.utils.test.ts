@@ -65,110 +65,116 @@ runTest('extractBearerToken rejects missing or malformed headers', () => {
   );
 });
 
-runTest('resolveActiveFoodtruckContext auto-selects a single membership', () => {
-  const membership = {
-    id: 'membership_1',
-    foodtruckId: 'truck_1',
-    foodtruckSlug: 'funky-chicken',
-    foodtruckName: 'Funky Chicken',
-    role: 'truck_manager',
-    status: 'active',
-  } as AuthenticatedRequestUser['memberships'][number];
-
-  assert.deepEqual(
-    resolveActiveFoodtruckContext(buildAuthUser([membership])),
-    membership,
-  );
-});
-
 runTest(
-  'resolveActiveFoodtruckContext requires explicit selection when needed',
+  'resolveActiveFoodtruckContext auto-selects a single membership',
   () => {
-  const authUser = buildAuthUser([
-    {
+    const membership = {
       id: 'membership_1',
       foodtruckId: 'truck_1',
       foodtruckSlug: 'funky-chicken',
       foodtruckName: 'Funky Chicken',
       role: 'truck_manager',
       status: 'active',
-    } as AuthenticatedRequestUser['memberships'][number],
-    {
-      id: 'membership_2',
-      foodtruckId: 'truck_2',
-      foodtruckSlug: 'smoke-house',
-      foodtruckName: 'Smoke House',
-      role: 'truck_operator',
-      status: 'active',
-    } as AuthenticatedRequestUser['memberships'][number],
-  ]);
+    } as AuthenticatedRequestUser['memberships'][number];
 
-  assert.equal(resolveActiveFoodtruckContext(authUser), null);
+    assert.deepEqual(
+      resolveActiveFoodtruckContext(buildAuthUser([membership])),
+      membership,
+    );
+  },
+);
 
-  assert.throws(
-    () =>
-      resolveActiveFoodtruckContext(authUser, undefined, {
-        requireSelection: true,
-      }),
-    (error: unknown) =>
-      error instanceof ForbiddenException &&
-      error.message ===
-        'x-foodtruck-id header is required when multiple foodtruck memberships exist.',
-  );
+runTest(
+  'resolveActiveFoodtruckContext requires explicit selection when needed',
+  () => {
+    const authUser = buildAuthUser([
+      {
+        id: 'membership_1',
+        foodtruckId: 'truck_1',
+        foodtruckSlug: 'funky-chicken',
+        foodtruckName: 'Funky Chicken',
+        role: 'truck_manager',
+        status: 'active',
+      } as AuthenticatedRequestUser['memberships'][number],
+      {
+        id: 'membership_2',
+        foodtruckId: 'truck_2',
+        foodtruckSlug: 'smoke-house',
+        foodtruckName: 'Smoke House',
+        role: 'truck_operator',
+        status: 'active',
+      } as AuthenticatedRequestUser['memberships'][number],
+    ]);
+
+    assert.equal(resolveActiveFoodtruckContext(authUser), null);
+
+    assert.throws(
+      () =>
+        resolveActiveFoodtruckContext(authUser, undefined, {
+          requireSelection: true,
+        }),
+      (error: unknown) =>
+        error instanceof ForbiddenException &&
+        error.message ===
+          'x-foodtruck-id header is required when multiple foodtruck memberships exist.',
+    );
   },
 );
 
 runTest(
   'resolveActiveFoodtruckContext rejects unauthorized foodtruck selection',
   () => {
-  const authUser = buildAuthUser([
-    {
+    const authUser = buildAuthUser([
+      {
+        id: 'membership_1',
+        foodtruckId: 'truck_1',
+        foodtruckSlug: 'funky-chicken',
+        foodtruckName: 'Funky Chicken',
+        role: 'truck_manager',
+        status: 'active',
+      } as AuthenticatedRequestUser['memberships'][number],
+    ]);
+
+    assert.throws(
+      () => resolveActiveFoodtruckContext(authUser, 'truck_2'),
+      (error: unknown) =>
+        error instanceof ForbiddenException &&
+        error.message ===
+          'Requested foodtruck is not available for the authenticated user.',
+    );
+  },
+);
+
+runTest(
+  'buildMeContext marks platform access and resolves active membership',
+  () => {
+    const membership = {
       id: 'membership_1',
       foodtruckId: 'truck_1',
       foodtruckSlug: 'funky-chicken',
       foodtruckName: 'Funky Chicken',
       role: 'truck_manager',
       status: 'active',
-    } as AuthenticatedRequestUser['memberships'][number],
-  ]);
+    } as AuthenticatedRequestUser['memberships'][number];
 
-  assert.throws(
-    () => resolveActiveFoodtruckContext(authUser, 'truck_2'),
-    (error: unknown) =>
-      error instanceof ForbiddenException &&
-      error.message ===
-        'Requested foodtruck is not available for the authenticated user.',
-  );
+    const authUser: AuthenticatedRequestUser = {
+      ...buildAuthUser([membership]),
+      role: UserRole.platform_admin,
+    };
+
+    assert.deepEqual(buildMeContext(authUser, 'truck_1'), {
+      userId: authUser.userId,
+      externalAuthId: authUser.externalAuthId,
+      role: UserRole.platform_admin,
+      email: authUser.email,
+      name: authUser.name,
+      canAccessPlatform: true,
+      requiresFoodtruckSelection: false,
+      memberships: [membership],
+      activeFoodtruck: membership,
+    });
   },
 );
-
-runTest('buildMeContext marks platform access and resolves active membership', () => {
-  const membership = {
-    id: 'membership_1',
-    foodtruckId: 'truck_1',
-    foodtruckSlug: 'funky-chicken',
-    foodtruckName: 'Funky Chicken',
-    role: 'truck_manager',
-    status: 'active',
-  } as AuthenticatedRequestUser['memberships'][number];
-
-  const authUser: AuthenticatedRequestUser = {
-    ...buildAuthUser([membership]),
-    role: UserRole.platform_admin,
-  };
-
-  assert.deepEqual(buildMeContext(authUser, 'truck_1'), {
-    userId: authUser.userId,
-    externalAuthId: authUser.externalAuthId,
-    role: UserRole.platform_admin,
-    email: authUser.email,
-    name: authUser.name,
-    canAccessPlatform: true,
-    requiresFoodtruckSelection: false,
-    memberships: [membership],
-    activeFoodtruck: membership,
-  });
-});
 
 runTest(
   'buildMeContext flags selection requirement when multiple memberships exist',

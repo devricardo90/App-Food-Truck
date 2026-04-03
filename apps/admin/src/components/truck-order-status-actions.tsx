@@ -14,11 +14,7 @@ const INITIAL_STATE: UpdateTruckOrderActionState = {
   message: null,
 };
 
-function SubmitButton({
-  action,
-}: {
-  action: AdminTruckOrderStatusAction;
-}) {
+function SubmitButton({ action }: { action: AdminTruckOrderStatusAction }) {
   const { pending } = useFormStatus();
 
   return (

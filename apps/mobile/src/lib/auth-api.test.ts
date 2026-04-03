@@ -67,57 +67,63 @@ async function main() {
     },
   );
 
-  await runTest('fetchAuthMeWithDependencies maps 401 to unauthorized', async () => {
-    await assert.rejects(
-      () =>
-        fetchAuthMeWithDependencies('token_123', {
-          apiBaseUrl: 'http://localhost:3333',
-          fetchImpl: async () =>
-            new Response(
-              JSON.stringify({
-                message: 'Token expirado',
-              }),
-              {
-                status: 401,
-                headers: {
-                  'content-type': 'application/json',
+  await runTest(
+    'fetchAuthMeWithDependencies maps 401 to unauthorized',
+    async () => {
+      await assert.rejects(
+        () =>
+          fetchAuthMeWithDependencies('token_123', {
+            apiBaseUrl: 'http://localhost:3333',
+            fetchImpl: async () =>
+              new Response(
+                JSON.stringify({
+                  message: 'Token expirado',
+                }),
+                {
+                  status: 401,
+                  headers: {
+                    'content-type': 'application/json',
+                  },
                 },
-              },
-            ),
-        }),
-      (error: unknown) =>
-        error instanceof AuthApiError &&
-        error.kind === 'unauthorized' &&
-        error.status === 401 &&
-        /Token expirado/.test(error.message),
-    );
-  });
+              ),
+          }),
+        (error: unknown) =>
+          error instanceof AuthApiError &&
+          error.kind === 'unauthorized' &&
+          error.status === 401 &&
+          /Token expirado/.test(error.message),
+      );
+    },
+  );
 
-  await runTest('fetchAuthMeWithDependencies maps 403 to forbidden', async () => {
-    await assert.rejects(
-      () =>
-        fetchAuthMeWithDependencies('token_123', {
-          apiBaseUrl: 'http://localhost:3333',
-          fetchImpl: async () =>
-            new Response(
-              JSON.stringify({
-                message: 'Sem membership ativa',
-              }),
-              {
-                status: 403,
-                headers: {
-                  'content-type': 'application/json',
+  await runTest(
+    'fetchAuthMeWithDependencies maps 403 to forbidden',
+    async () => {
+      await assert.rejects(
+        () =>
+          fetchAuthMeWithDependencies('token_123', {
+            apiBaseUrl: 'http://localhost:3333',
+            fetchImpl: async () =>
+              new Response(
+                JSON.stringify({
+                  message: 'Sem membership ativa',
+                }),
+                {
+                  status: 403,
+                  headers: {
+                    'content-type': 'application/json',
+                  },
                 },
-              },
-            ),
-        }),
-      (error: unknown) =>
-        error instanceof AuthApiError &&
-        error.kind === 'forbidden' &&
-        error.status === 403 &&
-        /Sem membership ativa/.test(error.message),
-    );
-  });
+              ),
+          }),
+        (error: unknown) =>
+          error instanceof AuthApiError &&
+          error.kind === 'forbidden' &&
+          error.status === 403 &&
+          /Sem membership ativa/.test(error.message),
+      );
+    },
+  );
 
   await runTest(
     'fetchAuthMeWithDependencies maps request failures to request-failed',
