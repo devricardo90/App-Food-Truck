@@ -86,7 +86,8 @@ export default function CartScreen() {
             {cart.totalItems} item(ns)
           </Text>
           <Text className="mt-2 text-xl font-bold text-ink">
-            Total {formatPrice(String(cart.totalAmount), cart.currency ?? 'EUR')}
+            Total{' '}
+            {formatPrice(String(cart.totalAmount), cart.currency ?? 'EUR')}
           </Text>
         </View>
       ) : (

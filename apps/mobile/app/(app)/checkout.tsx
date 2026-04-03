@@ -5,10 +5,7 @@ import { Link, useRouter } from 'expo-router';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { formatPrice } from '../../src/lib/foodtrucks-api';
-import {
-  createPendingOrder,
-  OrdersApiError,
-} from '../../src/lib/orders-api';
+import { createPendingOrder, OrdersApiError } from '../../src/lib/orders-api';
 import { useCart } from '../../src/providers/cart-provider';
 
 export default function CheckoutScreen() {
@@ -32,7 +29,9 @@ export default function CheckoutScreen() {
       }
 
       if (!cart.foodtruckSlug || cart.items.length === 0) {
-        throw new Error('Adicione itens ao carrinho antes de iniciar o checkout.');
+        throw new Error(
+          'Adicione itens ao carrinho antes de iniciar o checkout.',
+        );
       }
 
       return createPendingOrder(token, {
@@ -116,7 +115,8 @@ export default function CheckoutScreen() {
               ))}
             </View>
             <Text className="mt-8 text-xl font-bold text-ink">
-              Total {formatPrice(String(cart.totalAmount), cart.currency ?? 'EUR')}
+              Total{' '}
+              {formatPrice(String(cart.totalAmount), cart.currency ?? 'EUR')}
             </Text>
           </>
         ) : (
@@ -137,7 +137,9 @@ export default function CheckoutScreen() {
       <View className="mt-8 gap-3">
         <Pressable
           className={`rounded-full px-4 py-4 ${
-            hasItems && !createOrderMutation.isPending ? 'bg-pine' : 'bg-stone-300'
+            hasItems && !createOrderMutation.isPending
+              ? 'bg-pine'
+              : 'bg-stone-300'
           }`}
           disabled={!hasItems || createOrderMutation.isPending}
           onPress={() => {

@@ -82,9 +82,7 @@ export class AuthService {
         tokenSegments: token.split('.').length,
         hasJwtKey: Boolean(process.env.CLERK_JWT_KEY?.trim()),
         audience: audience?.length ? audience : null,
-        authorizedParties: authorizedParties?.length
-          ? authorizedParties
-          : null,
+        authorizedParties: authorizedParties?.length ? authorizedParties : null,
         errorName: validationError.name,
         errorMessage: validationError.message,
       });
@@ -127,8 +125,7 @@ export class AuthService {
         externalAuthId,
         tokenPreview,
         errorName: error instanceof Error ? error.name : 'UnknownError',
-        errorMessage:
-          error instanceof Error ? error.message : String(error),
+        errorMessage: error instanceof Error ? error.message : String(error),
       });
       throw error;
     }
@@ -138,8 +135,9 @@ export class AuthService {
     >;
 
     try {
-      memberships =
-        await this.foodtruckMembershipsService.listActiveForUser(user.id);
+      memberships = await this.foodtruckMembershipsService.listActiveForUser(
+        user.id,
+      );
       console.log('Clerk auth membership lookup passed', {
         stage: 'listActiveForUser',
         userId: user.id,
@@ -151,8 +149,7 @@ export class AuthService {
         userId: user.id,
         tokenPreview,
         errorName: error instanceof Error ? error.name : 'UnknownError',
-        errorMessage:
-          error instanceof Error ? error.message : String(error),
+        errorMessage: error instanceof Error ? error.message : String(error),
       });
       throw error;
     }

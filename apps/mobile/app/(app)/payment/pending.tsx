@@ -104,10 +104,7 @@ export default function PaymentPendingScreen() {
     ) {
       confirmPaymentMutation.mutate();
     }
-  }, [
-    confirmPaymentMutation,
-    orderQuery.data,
-  ]);
+  }, [confirmPaymentMutation, orderQuery.data]);
 
   return (
     <ScrollView
@@ -122,8 +119,8 @@ export default function PaymentPendingScreen() {
         Aguardando confirmacao oficial
       </Text>
       <Text className="mt-3 text-base leading-6 text-neutral-600">
-        O handoff do MVP confirma o pagamento mock nesta etapa antes de enviar
-        o pedido para a fila operacional da barraca.
+        O handoff do MVP confirma o pagamento mock nesta etapa antes de enviar o
+        pedido para a fila operacional da barraca.
       </Text>
 
       <View className="mt-8 rounded-[28px] border border-amber-950/10 bg-white p-6 shadow-sm">
@@ -195,9 +192,7 @@ export default function PaymentPendingScreen() {
         ) : null}
         <Link
           asChild
-          href={
-            orderId ? `/(app)/orders/${orderId}` : '/(app)/(tabs)/orders'
-          }
+          href={orderId ? `/(app)/orders/${orderId}` : '/(app)/(tabs)/orders'}
         >
           <Text className="rounded-full bg-pine px-4 py-4 text-center text-sm font-semibold text-white">
             Reconsultar pedido

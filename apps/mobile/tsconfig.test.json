@@ -7,8 +7,5 @@
     "moduleResolution": "NodeNext",
     "target": "ES2022"
   },
-  "include": [
-    "src/lib/auth-api.ts",
-    "src/lib/auth-api.test.ts"
-  ]
+  "include": ["src/lib/auth-api.ts", "src/lib/auth-api.test.ts"]
 }

@@ -131,7 +131,10 @@ export default function OrderDetailScreen() {
         </Text>
         <View className="mt-4 gap-3">
           {order.items.map((item) => (
-            <View className="flex-row items-center justify-between" key={item.id}>
+            <View
+              className="flex-row items-center justify-between"
+              key={item.id}
+            >
               <Text className="max-w-[70%] text-sm text-neutral-700">
                 {item.quantity}x {item.itemName}
               </Text>

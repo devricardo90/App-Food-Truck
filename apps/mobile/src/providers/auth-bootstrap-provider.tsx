@@ -104,8 +104,7 @@ export function AuthBootstrapProvider({ children }: PropsWithChildren) {
         try {
           return await fetchAuthMe(token);
         } catch (error) {
-          const status =
-            error instanceof AuthApiError ? error.status : null;
+          const status = error instanceof AuthApiError ? error.status : null;
 
           console.log('Mobile /auth/me attempt failed:', {
             attempt,
@@ -123,8 +122,7 @@ export function AuthBootstrapProvider({ children }: PropsWithChildren) {
             continue;
           }
 
-          lastError =
-            error instanceof Error ? error : new Error(String(error));
+          lastError = error instanceof Error ? error : new Error(String(error));
           break;
         }
       }

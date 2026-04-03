@@ -168,3 +168,28 @@ O fluxo minimo oficial fica ancorado nesses comandos e nas variaveis versionadas
 - custom domain
 - rollout de producao
 - distribuicao tecnica do mobile contra o staging
+
+## CI/CD minima proposta para staging
+
+- workflow versionado: `.github/workflows/staging-ci-cd.yml`
+- gatilhos:
+  - `pull_request` para `main`: roda `lint`, `typecheck` e `test`
+  - `push` para `main`: roda checks e, em seguida, deploy da `api` e do `admin`
+  - `workflow_dispatch`: permite rerun manual controlado por servico
+- deploy oficial no workflow:
+  - `railway up apps/api --service foodtrucks-api-staging --environment staging --project <project_id> --path-as-root --ci`
+  - `railway up apps/admin --service foodtrucks-admin-staging --environment staging --project <project_id> --path-as-root --ci`
+
+### Secrets esperados no GitHub
+
+- `RAILWAY_TOKEN`
+  - usar Project Token de `staging`, conforme docs oficiais da Railway para CI/CD com CLI
+- `RAILWAY_PROJECT_ID`
+  - id do projeto `app-food-truck-staging`
+
+### Limites desta fase
+
+- o workflow nao cobre producao
+- o workflow nao cria environments efemeros para PR
+- o workflow ainda nao executa smoke tests autenticados completos apos deploy
+- a validacao final do workflow depende da configuracao desses secrets no repositorio GitHub
