@@ -1,4 +1,4 @@
-import { Controller, Get, Headers } from '@nestjs/common';
+import { Controller, Get, Headers, Req } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiForbiddenResponse,
@@ -9,6 +9,11 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
+import {
+  type ApiAuthDiagnostic,
+  emitApiLog,
+  setAuthDiagnostic,
+} from '../../common/observability';
 import { MembershipRole, UserRole } from '../../generated/prisma/enums';
 import {
   AuthMeResponseDto,
@@ -73,10 +78,39 @@ export class AuthController {
       'Requested foodtruck does not belong to the authenticated user.',
   })
   getMe(
+    @Req()
+    request: {
+      authDiagnostic?: ApiAuthDiagnostic;
+    },
     @CurrentAuthUser() authUser: AuthenticatedRequestUser,
     @Headers('x-foodtruck-id') requestedFoodtruckId?: string,
   ): AuthMeResponseDto {
-    return this.authService.buildMeContext(authUser, requestedFoodtruckId);
+    const context = this.authService.buildMeContext(
+      authUser,
+      requestedFoodtruckId,
+    );
+    const diagnosticCode =
+      context.memberships.length === 0
+        ? 'membership-missing'
+        : context.requiresFoodtruckSelection
+          ? 'foodtruck-selection-required'
+          : 'ok';
+
+    setAuthDiagnostic(request, {
+      code: diagnosticCode,
+      stage: 'auth.controller.getMe',
+      detail: null,
+    });
+
+    emitApiLog('log', 'auth.me.resolved', {
+      diagnosticCode,
+      membershipCount: context.memberships.length,
+      requiresFoodtruckSelection: context.requiresFoodtruckSelection,
+      hasActiveFoodtruck: Boolean(context.activeFoodtruck),
+      canAccessPlatform: context.canAccessPlatform,
+    });
+
+    return context;
   }
 
   @Get('foodtruck-context')

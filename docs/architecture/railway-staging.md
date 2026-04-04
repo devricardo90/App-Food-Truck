@@ -169,6 +169,49 @@ O fluxo minimo oficial fica ancorado nesses comandos e nas variaveis versionadas
 - rollout de producao
 - distribuicao tecnica do mobile contra o staging
 
+## FT-081 Checklist de execucao e validacao remota
+
+### 1. Publicacao do recorte
+
+- [ ] Criar/publicar branch isolada da FT-081
+- [ ] Garantir que so os arquivos do recorte entraram no PR
+- [ ] Abrir PR para `main`
+
+### 2. GitHub Actions
+
+- [ ] Confirmar `Verify Workspace` verde no PR
+- [ ] Fazer merge em `main`
+- [ ] Confirmar `Deploy API to Staging` verde
+- [ ] Confirmar `Deploy Admin to Staging` verde
+- [ ] Se necessario, rerodar por `workflow_dispatch`
+
+### 3. Validacao HTTP em staging
+
+- [ ] `GET /health` = `200`
+- [ ] `GET /docs` = `200`
+- [ ] `GET /auth/me` sem token = `401`
+- [ ] `OPTIONS /auth/me` com `Origin` invalida executado
+
+### 4. Logs e eventos esperados
+
+- [ ] `api.bootstrap.completed`
+- [ ] `api.request.completed`
+- [ ] falha de `/auth/me` classificada (`missing-auth` ou equivalente)
+- [ ] `api.cors.origin_rejected` para origem invalida
+- [ ] `Admin auth context resolution failed` ao provocar falha no admin
+- [ ] nenhum segredo, token ou cookie exposto nos logs
+
+### 5. Criterio de DONE
+
+- [ ] deploy remoto com nova instrumentacao confirmado
+- [ ] staging saudavel sem regressao funcional visivel
+- [ ] eventos minimos de observabilidade confirmados
+- [ ] evidencia remota registrada no backlog ou na documentacao
+
+### 6. Observacao de escopo
+
+- [ ] problemas de `lint` preexistentes fora do recorte nao bloqueiam a FT-081
+
 ## CI/CD minima proposta para staging
 
 - workflow versionado: `.github/workflows/staging-ci-cd.yml`
