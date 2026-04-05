@@ -193,3 +193,14 @@ O fluxo minimo oficial fica ancorado nesses comandos e nas variaveis versionadas
 - o workflow nao cria environments efemeros para PR
 - o workflow ainda nao executa smoke tests autenticados completos apos deploy
 - a validacao final do workflow depende da configuracao desses secrets no repositorio GitHub
+
+## Manutencao do pipeline na FT-083
+
+- ajuste local em `2026-04-05`:
+  - `actions/checkout@v4` foi atualizado para `actions/checkout@v5`
+  - `actions/setup-node@v4` foi atualizado para `actions/setup-node@v5`
+  - `NODE_VERSION=22`, gatilhos e condicionais de deploy foram preservados
+- validacao remota pendente:
+  - executar o workflow `staging-ci-cd` no GitHub Actions
+  - confirmar que `Verify Workspace`, `Deploy API to Staging` e `Deploy Admin to Staging` continuam saudaveis
+  - confirmar que os avisos ligados ao runtime legado de Node.js 20 deixaram de aparecer

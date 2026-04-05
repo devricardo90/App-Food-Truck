@@ -2748,9 +2748,44 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 ---
 
+## FT-083 - Atualizar pipeline de staging para remover deprecacoes de Node.js 20 no GitHub Actions
+
+- **Skill dona:** `deployment-infra`
+- **Status:** `REVIEW`
+- **Fluxo critico:** `nao`
+- **Descricao:** Ajustar o workflow de staging para eliminar as anotacoes de deprecacao ligadas a runtime legado no GitHub Actions, preservando o comportamento atual do pipeline sem misturar essa manutencao com novas frentes funcionais.
+- **Dependencias:** `FT-080`
+- **Objetivo:**
+  - remover os avisos ligados ao runtime legado de Node.js 20 nas actions do pipeline
+  - preservar `Verify Workspace`, `Deploy API to Staging` e `Deploy Admin to Staging` sem regressao
+  - manter a manutencao restrita ao menor recorte possivel do workflow
+- **Escopo aprovado:**
+  - atualizar as actions do workflow de staging para a geracao compativel com o runtime atual do GitHub Actions
+  - preservar `NODE_VERSION=22`, os gatilhos e as condicionais de deploy
+  - registrar o ajuste e o limite da rodada no backlog e no runbook
+- **Fora de escopo:**
+  - redesign amplo de CI/CD
+  - alteracao de jobs, gates ou deploy logic fora do necessario
+  - mudancas funcionais em `api`, `admin` ou `mobile`
+- **Observacoes de execucao em:** `2026-04-05`
+  - a origem mais provavel dos avisos estava em `actions/checkout@v4` e `actions/setup-node@v4`
+  - o workflow `.github/workflows/staging-ci-cd.yml` foi ajustado para `actions/checkout@v5` e `actions/setup-node@v5` em todos os jobs
+  - `NODE_VERSION=22` foi preservado
+- **Artefatos:**
+  - `.github/workflows/staging-ci-cd.yml`
+  - `docs/architecture/railway-staging.md`
+  - `backlog.md`
+- **Validacoes locais:**
+  - referencias do workflow para `checkout` atualizadas para `v5`: ok
+  - referencias do workflow para `setup-node` atualizadas para `v5`: ok
+- **Limite desta rodada:**
+  - a validacao remota ainda depende de push, PR e execucao do `staging-ci-cd` no GitHub Actions
+
+---
+
 # Ordem sugerida para comecar
 
-- fechar a `FT-080` para tirar o staging da dependencia de publicacao manual de `api` e `admin`
-- depois abrir observabilidade minima do ambiente para acompanhar o staging automatizado
+- validar remotamente a `FT-083` no GitHub Actions
+- depois reavaliar o backlog apos a manutencao do pipeline
 
 ---
