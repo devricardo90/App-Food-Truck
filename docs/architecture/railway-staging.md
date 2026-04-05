@@ -208,6 +208,12 @@ O fluxo minimo oficial fica ancorado nesses comandos e nas variaveis versionadas
   - `Verify Workspace` falhou em `Setup Node.js` com `Unable to locate executable file: pnpm`
   - a causa exata foi `actions/setup-node@v5` ainda configurado com `cache: pnpm`, o que exige `pnpm` antes da ativacao via Corepack
   - o menor ajuste adicional foi remover `cache: pnpm` do `Setup Node.js`
+- inspecao seguinte do YAML em `2026-04-05`:
+  - nao restou `cache: pnpm`, `cache-dependency-path` ou outro uso precoce de `pnpm` antes do Corepack
+  - o problema remanescente era a chamada de `pnpm` puro nos steps seguintes, ainda dependente do `PATH` entre steps
+  - o ajuste minimo final foi:
+    - adicionar `corepack pnpm --version` imediatamente apos `corepack prepare`
+    - executar `install`, `lint`, `typecheck` e `test` como `corepack pnpm ...`
 - validacao remota pendente:
   - executar o workflow `staging-ci-cd` no GitHub Actions
   - confirmar que `Verify Workspace`, `Deploy API to Staging` e `Deploy Admin to Staging` continuam saudaveis

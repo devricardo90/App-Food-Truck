@@ -2780,6 +2780,12 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - a execucao seguinte falhou em `Verify Workspace` na etapa `Setup Node.js` com `Unable to locate executable file: pnpm`
   - a causa exata foi `actions/setup-node@v5` ainda configurado com `cache: pnpm`, exigindo `pnpm` antes da ativacao via Corepack
   - o menor ajuste adicional foi remover `cache: pnpm` do `Setup Node.js`, preservando o setup de `pnpm` via Corepack logo em seguida
+- **Correcao final de ordem/configuracao em:** `2026-04-05`
+  - a inspecao do YAML mostrou que ja nao havia `cache: pnpm` nem outro acoplamento precoce no `Setup Node.js`
+  - o problema remanescente era que os steps seguintes ainda chamavam `pnpm` puro, assumindo que o binario ativado pelo Corepack ficaria disponivel no `PATH` entre steps
+  - o menor ajuste adicional foi:
+    - adicionar `corepack pnpm --version` logo apos `corepack prepare`
+    - trocar `pnpm install`, `pnpm lint`, `pnpm typecheck` e `pnpm test` por `corepack pnpm ...`
 - **Artefatos:**
   - `.github/workflows/staging-ci-cd.yml`
   - `docs/architecture/railway-staging.md`
@@ -2788,6 +2794,8 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - referencias do workflow para `checkout` atualizadas para `v5`: ok
   - referencias do workflow para `setup-node` atualizadas para `v5`: ok
 - `cache: pnpm` removido do `Setup Node.js` para evitar dependencia precoce de executavel: ok
+- `corepack pnpm --version` adicionado apos a ativacao: ok
+- steps de `install`, `lint`, `typecheck` e `test` migrados para `corepack pnpm ...`: ok
 - **Limite desta rodada:**
   - a FT-083 permanece em `REVIEW` ate nova validacao remota do `staging-ci-cd` no GitHub Actions apos esta correcao de ordem/configuracao
 
