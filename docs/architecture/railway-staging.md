@@ -200,6 +200,10 @@ O fluxo minimo oficial fica ancorado nesses comandos e nas variaveis versionadas
   - `actions/checkout@v4` foi atualizado para `actions/checkout@v5`
   - `actions/setup-node@v4` foi atualizado para `actions/setup-node@v5`
   - `NODE_VERSION=22`, gatilhos e condicionais de deploy foram preservados
+- achado da validacao remota em `2026-04-05`:
+  - o warning de runtime legado continuou, agora explicitamente associado a `pnpm/action-setup@v4`
+  - como nao ha `pnpm/action-setup@v5` nesta frente, o menor ajuste adicional foi remover essa action do workflow
+  - o job `Verify Workspace` passou a preparar `pnpm` via `corepack enable` + `corepack prepare pnpm@10.30.3 --activate`
 - validacao remota pendente:
   - executar o workflow `staging-ci-cd` no GitHub Actions
   - confirmar que `Verify Workspace`, `Deploy API to Staging` e `Deploy Admin to Staging` continuam saudaveis

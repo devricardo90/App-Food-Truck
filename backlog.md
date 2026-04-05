@@ -2771,6 +2771,11 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - a origem mais provavel dos avisos estava em `actions/checkout@v4` e `actions/setup-node@v4`
   - o workflow `.github/workflows/staging-ci-cd.yml` foi ajustado para `actions/checkout@v5` e `actions/setup-node@v5` em todos os jobs
   - `NODE_VERSION=22` foi preservado
+- **Ajuste complementar em:** `2026-04-05`
+  - a validacao remota mostrou que o warning de runtime legado permaneceu por causa de `pnpm/action-setup@v4`
+  - como nao ha `pnpm/action-setup@v5` disponivel nesta frente, o menor ajuste adicional foi remover essa action do job `Verify Workspace`
+  - o setup de `pnpm` passou a usar `corepack enable` + `corepack prepare pnpm@${{ env.PNPM_VERSION }} --activate`
+  - `PNPM_VERSION=10.30.3`, `NODE_VERSION=22`, os gatilhos e as condicionais de deploy foram preservados
 - **Artefatos:**
   - `.github/workflows/staging-ci-cd.yml`
   - `docs/architecture/railway-staging.md`
@@ -2779,7 +2784,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - referencias do workflow para `checkout` atualizadas para `v5`: ok
   - referencias do workflow para `setup-node` atualizadas para `v5`: ok
 - **Limite desta rodada:**
-  - a validacao remota ainda depende de push, PR e execucao do `staging-ci-cd` no GitHub Actions
+  - a FT-083 permanece em `REVIEW` ate nova validacao remota do `staging-ci-cd` no GitHub Actions apos este ajuste complementar
 
 ---
 
