@@ -43,7 +43,6 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: pnpm
 
       - name: Setup pnpm via Corepack
         run: |
