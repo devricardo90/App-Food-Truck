@@ -61,6 +61,29 @@ type ResolveAdminAuthContextDependencies = {
   logWarn?: (message: string, payload: object) => void;
 };
 
+function classifyAdminAuthFailure(
+  statusCode: number,
+  data: AdminAuthMeResponse | null,
+) {
+  if (statusCode === 401) {
+    return 'invalid-token';
+  }
+
+  if (statusCode === 403) {
+    return 'role-or-membership-denied';
+  }
+
+  if (statusCode >= 500) {
+    return 'internal-error';
+  }
+
+  if (data && data.memberships.length === 0) {
+    return 'membership-missing';
+  }
+
+  return 'api-error';
+}
+
 async function readAdminAuthErrorDetail(response: Response) {
   try {
     const contentType = response.headers.get('content-type') ?? '';
@@ -214,6 +237,14 @@ export async function resolveAdminAuthContextFromState({
           .join(' '),
         detail,
       };
+
+      logWarn('Admin auth context resolution failed', {
+        statusCode: response.status,
+        category: classifyAdminAuthFailure(response.status, null),
+        detail,
+        source: source.label,
+        template: source.template,
+      });
 
       if (response.status === 401 && !isLastSource) {
         logWarn('Admin Clerk token fallback after 401', {

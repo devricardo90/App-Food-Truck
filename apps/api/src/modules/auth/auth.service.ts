@@ -1,18 +1,24 @@
 import {
-  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { verifyToken } from '@clerk/backend';
 
-import { UserRole } from '../../generated/prisma/enums';
+import { emitApiLog } from '../../common/observability';
+import { buildAuthEnvironmentSummary } from '../../config/runtime';
 import { FoodtruckMembershipsService } from '../foodtruck-memberships/foodtruck-memberships.service';
 import { UsersService } from '../users/users.service';
 import type {
   AuthenticatedRequestUser,
   ResolveActiveFoodtruckOptions,
 } from './auth.types';
+import {
+  buildMeContext,
+  extractBearerToken,
+  parseEnvList,
+  resolveActiveFoodtruckContext,
+} from './auth.utils';
 
 type ClerkClaims = {
   sub?: string;
@@ -23,6 +29,18 @@ type ClerkClaims = {
   full_name?: string;
 };
 
+function readErrorMetadata(error: unknown) {
+  return error instanceof Error
+    ? {
+        errorName: error.name,
+        errorMessage: error.message,
+      }
+    : {
+        errorName: 'UnknownError',
+        errorMessage: String(error),
+      };
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -32,7 +50,6 @@ export class AuthService {
 
   async authenticateBearerToken(token: string) {
     const secretKey = process.env.CLERK_SECRET_KEY;
-    const tokenPreview = token.slice(0, 16);
 
     if (!secretKey) {
       throw new InternalServerErrorException(
@@ -46,12 +63,10 @@ export class AuthService {
       );
     }
 
-    const authorizedParties = process.env.CLERK_AUTHORIZED_PARTIES?.split(',')
-      .map((party) => party.trim())
-      .filter(Boolean);
-    const audience = process.env.CLERK_AUDIENCE?.split(',')
-      .map((value) => value.trim())
-      .filter(Boolean);
+    const authorizedParties = parseEnvList(
+      process.env.CLERK_AUTHORIZED_PARTIES,
+    );
+    const audience = parseEnvList(process.env.CLERK_AUDIENCE);
 
     let claims: ClerkClaims;
 
@@ -78,34 +93,35 @@ export class AuthService {
 
       console.error('Clerk token validation failed', {
         stage: 'verifyToken',
-        tokenPreview,
-        tokenSegments: token.split('.').length,
         hasJwtKey: Boolean(process.env.CLERK_JWT_KEY?.trim()),
-        audience: audience?.length ? audience : null,
-        authorizedParties: authorizedParties?.length ? authorizedParties : null,
+        hasAudienceConfig: Boolean(audience?.length),
+        hasAuthorizedPartiesConfig: Boolean(authorizedParties?.length),
+        ...buildAuthEnvironmentSummary(),
+        errorName: validationError.name,
+        errorMessage: validationError.message,
+      });
+      emitApiLog('warn', 'auth.token.invalid', {
+        stage: 'verifyToken',
         errorName: validationError.name,
         errorMessage: validationError.message,
       });
 
-      throw error;
+      throw new UnauthorizedException(
+        `Clerk token validation failed: ${validationError.message}`,
+      );
     }
 
     const externalAuthId = claims.sub;
 
-    console.log('Clerk token validation passed', {
-      stage: 'verifyToken',
-      tokenPreview,
-      tokenSegments: token.split('.').length,
-      subjectPresent: Boolean(externalAuthId),
-      emailPresent: Boolean(claims.email),
-    });
-
     if (!externalAuthId) {
       console.error('Clerk token claims unexpected', {
         stage: 'verifyTokenClaims',
-        tokenPreview,
         subjectPresent: false,
         emailPresent: Boolean(claims.email),
+      });
+      emitApiLog('warn', 'auth.token.subject_missing', {
+        stage: 'verifyTokenClaims',
+        subjectPresent: false,
       });
       throw new UnauthorizedException('Clerk token is missing a subject.');
     }
@@ -114,18 +130,18 @@ export class AuthService {
 
     try {
       user = await this.syncDomainUser(externalAuthId, claims);
-      console.log('Clerk auth domain sync passed', {
-        stage: 'syncDomainUser',
-        externalAuthId,
-        userId: user.id,
-      });
     } catch (error) {
+      const errorMetadata = readErrorMetadata(error);
+
       console.error('Clerk auth domain sync failed', {
         stage: 'syncDomainUser',
         externalAuthId,
-        tokenPreview,
-        errorName: error instanceof Error ? error.name : 'UnknownError',
-        errorMessage: error instanceof Error ? error.message : String(error),
+        ...errorMetadata,
+      });
+      emitApiLog('error', 'auth.domain_sync.failed', {
+        stage: 'syncDomainUser',
+        externalAuthId,
+        ...errorMetadata,
       });
       throw error;
     }
@@ -138,18 +154,18 @@ export class AuthService {
       memberships = await this.foodtruckMembershipsService.listActiveForUser(
         user.id,
       );
-      console.log('Clerk auth membership lookup passed', {
-        stage: 'listActiveForUser',
-        userId: user.id,
-        membershipCount: memberships.length,
-      });
     } catch (error) {
+      const errorMetadata = readErrorMetadata(error);
+
       console.error('Clerk auth membership lookup failed', {
         stage: 'listActiveForUser',
         userId: user.id,
-        tokenPreview,
-        errorName: error instanceof Error ? error.name : 'UnknownError',
-        errorMessage: error instanceof Error ? error.message : String(error),
+        ...errorMetadata,
+      });
+      emitApiLog('error', 'auth.membership_lookup.failed', {
+        stage: 'listActiveForUser',
+        userId: user.id,
+        ...errorMetadata,
       });
       throw error;
     }
@@ -168,27 +184,24 @@ export class AuthService {
   }
 
   extractBearerToken(headerValue: string | undefined) {
-    if (!headerValue) {
-      console.warn('Clerk auth bearer missing', {
+    try {
+      return extractBearerToken(headerValue);
+    } catch (error) {
+      const diagnosticCode = headerValue ? 'invalid-token' : 'missing-auth';
+
+      emitApiLog('warn', 'auth.bearer.rejected', {
         stage: 'extractBearerToken',
+        diagnosticCode,
+        hasHeader: Boolean(headerValue),
+        scheme: headerValue?.split(' ')[0] ?? null,
       });
-      throw new UnauthorizedException('Authorization header is required.');
-    }
-
-    const [scheme, token] = headerValue.split(' ');
-
-    if (scheme?.toLowerCase() !== 'bearer' || !token) {
-      console.warn('Clerk auth bearer malformed', {
+      console.warn('Clerk auth bearer rejected', {
         stage: 'extractBearerToken',
-        scheme: scheme ?? null,
-        hasToken: Boolean(token),
+        hasHeader: Boolean(headerValue),
+        scheme: headerValue?.split(' ')[0] ?? null,
       });
-      throw new UnauthorizedException(
-        'Authorization header must use Bearer token.',
-      );
+      throw error;
     }
-
-    return token;
   }
 
   resolveActiveFoodtruckContext(
@@ -196,63 +209,18 @@ export class AuthService {
     requestedFoodtruckId?: string,
     options?: ResolveActiveFoodtruckOptions,
   ): AuthenticatedRequestUser['memberships'][number] | null {
-    const normalizedFoodtruckId = requestedFoodtruckId?.trim();
-    const memberships = authUser.memberships;
-
-    if (normalizedFoodtruckId) {
-      const matchingMembership = memberships.find(
-        (membership) => membership.foodtruckId === normalizedFoodtruckId,
-      );
-
-      if (!matchingMembership) {
-        throw new ForbiddenException(
-          'Requested foodtruck is not available for the authenticated user.',
-        );
-      }
-
-      return matchingMembership;
-    }
-
-    if (memberships.length === 1) {
-      return memberships[0] ?? null;
-    }
-
-    if (options?.requireSelection) {
-      if (!memberships.length) {
-        throw new ForbiddenException(
-          'Authenticated user has no active foodtruck membership.',
-        );
-      }
-
-      throw new ForbiddenException(
-        'x-foodtruck-id header is required when multiple foodtruck memberships exist.',
-      );
-    }
-
-    return null;
+    return resolveActiveFoodtruckContext(
+      authUser,
+      requestedFoodtruckId,
+      options,
+    );
   }
 
   buildMeContext(
     authUser: AuthenticatedRequestUser,
     requestedFoodtruckId?: string,
   ) {
-    const activeFoodtruck = this.resolveActiveFoodtruckContext(
-      authUser,
-      requestedFoodtruckId,
-    );
-
-    return {
-      userId: authUser.userId,
-      externalAuthId: authUser.externalAuthId,
-      role: authUser.role,
-      email: authUser.email,
-      name: authUser.name,
-      canAccessPlatform: authUser.role === UserRole.platform_admin,
-      requiresFoodtruckSelection:
-        authUser.memberships.length > 1 && !activeFoodtruck,
-      memberships: authUser.memberships,
-      activeFoodtruck,
-    };
+    return buildMeContext(authUser, requestedFoodtruckId);
   }
 
   private async syncDomainUser(externalAuthId: string, claims: ClerkClaims) {

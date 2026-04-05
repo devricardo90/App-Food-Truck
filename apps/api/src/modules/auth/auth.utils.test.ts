@@ -7,6 +7,7 @@ import {
   buildMeContext,
   extractBearerToken,
   parseEnvList,
+  parseOriginList,
   resolveActiveFoodtruckContext,
 } from './auth.utils';
 
@@ -43,6 +44,19 @@ runTest('parseEnvList normalizes comma-separated values', () => {
   assert.equal(parseEnvList(undefined), undefined);
   assert.equal(parseEnvList('   ,  '), undefined);
 });
+
+runTest(
+  'parseOriginList trims trailing slashes and de-duplicates origins',
+  () => {
+    assert.deepEqual(
+      parseOriginList(
+        ' https://admin.example.com/ , https://admin.example.com, http://localhost:3001/// ',
+      ),
+      ['https://admin.example.com', 'http://localhost:3001'],
+    );
+    assert.equal(parseOriginList(' , '), undefined);
+  },
+);
 
 runTest('extractBearerToken returns the token for valid bearer headers', () => {
   assert.equal(extractBearerToken('Bearer token-123'), 'token-123');

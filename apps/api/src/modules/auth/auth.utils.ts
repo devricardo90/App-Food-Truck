@@ -15,6 +15,14 @@ export function parseEnvList(value: string | undefined) {
   return parsed?.length ? parsed : undefined;
 }
 
+export function parseOriginList(value: string | undefined) {
+  const parsed = parseEnvList(value)?.map((entry) =>
+    entry.replace(/\/+$/, '').trim(),
+  );
+
+  return parsed?.length ? Array.from(new Set(parsed)) : undefined;
+}
+
 export function extractBearerToken(headerValue: string | undefined) {
   if (!headerValue) {
     throw new UnauthorizedException('Authorization header is required.');
