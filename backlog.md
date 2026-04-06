@@ -1760,7 +1760,8 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-- reavaliar backlog e abrir o proximo ciclo funcional do MVP
+- validar remotamente a `FT-083` no GitHub Actions e encerrar a manutencao do pipeline
+- depois reavaliar as pendencias restantes pela ordem de maior desbloqueio e menor risco
 
 ---
 
@@ -1817,6 +1818,9 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - emulador Android detectado: ok
   - Metro iniciado localmente em `http://localhost:8081`: ok
   - Expo Go aberto no Android emulator via `adb`: ok
+  - revalidacao local em `2026-04-03`: bloqueio do mobile resolvido apos materializar corretamente o pacote `expo` no workspace com `pnpm --filter @foodtrucks/mobile add expo@~52.0.49`
+  - evidencia da revalidacao local: `pnpm --filter @foodtrucks/mobile exec expo --version = 0.22.28`
+  - proximo passo operacional: executar `pnpm --filter @foodtrucks/mobile start --clear` e seguir com a validacao do mobile
   - observacao: a validacao funcional de descoberta/detalhe/catalogo fica para `FT-057`
   - commit: pendente
 
@@ -2625,7 +2629,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # READY atuais
 
-- `FT-061` - hardening, observabilidade e testes de auth para proteger o fluxo validado do MVP
+- nenhuma task `READY` no momento
 
 ---
 
@@ -2692,6 +2696,13 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - `GET /health` na API de staging: `200`
   - `GET /login` no admin de staging: `200`
   - `GET /auth/me` sem token na API de staging: `401`
+- **Riscos residuais:**
+  - credenciais Clerk de staging ainda nao estao segregadas das credenciais de desenvolvimento
+  - variaveis por ambiente ainda precisam de revisao formal por superficie
+  - CORS e origins entre `admin`, `api` e `mobile` ainda nao foram endurecidos por ambiente
+  - cookies, session e callbacks publicos ainda nao passaram por revisao dedicada de staging
+  - ainda nao existe pipeline CI/CD protegendo build, lint e typecheck antes de deploy
+- **Proxima task recomendada:** `FT-077 - Hardening de staging`
 - **Observacoes de encerramento em:** `2026-04-03`
   - o projeto Railway oficial desta fase ficou como `app-food-truck-staging`
   - a API publica ficou em `https://foodtrucks-api-staging-staging.up.railway.app`
@@ -2702,13 +2713,215 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 ---
 
+## FT-077 - Hardening de staging
+
+- **Skill dona:** `deployment-infra`
+- **Status:** `DONE`
+- **Fluxo critico:** `nao`
+- **Descricao:** Endurecer o ambiente de staging para reduzir risco operacional, separar credenciais por ambiente e revisar as superficies publicas de autenticacao, origem e sessao antes de avancar para automacao e integracoes remotas mais amplas.
+- **Dependencias:** `FT-076`
+- **Objetivo:**
+  - segregar credenciais Clerk por ambiente
+  - revisar variaveis de ambiente por servico
+  - revisar CORS, origins e callbacks publicos
+  - revisar cookies e session por ambiente
+  - reduzir risco operacional do staging sem abrir novas frentes fora do escopo
+- **Escopo aprovado:**
+  - credenciais Clerk exclusivas para staging onde aplicavel
+  - auditoria das variaveis necessarias em `api` e `admin`
+  - revisao de `CORS`/origins entre `admin`, `api` e `mobile`
+  - revisao de cookies, session e callbacks publicos relacionados ao auth flow
+  - atualizacao da documentacao operacional de staging apos o hardening
+- **Fora de escopo:**
+  - CI/CD completa multi-ambiente
+  - custom domain
+  - rollout ponta a ponta do mobile remoto
+  - mudancas amplas de produto fora das dependencias diretas do hardening
+- **Criterios de aceite:**
+  - credenciais Clerk de staging segregadas e documentadas
+  - variaveis por ambiente revisadas sem segredos acidentais no versionamento
+  - origins aceitas em `api` e `admin` revisadas contra as URLs reais do staging
+  - callbacks publicos revisados para evitar mismatch de ambiente
+  - estrategia de cookies/session revisada e alinhada ao comportamento esperado em staging
+  - validacao manual minima executada apos ajustes sem regressao dos endpoints basicos
+  - backlog e documentacao atualizados com decisoes, riscos e comandos de verificacao
+- **Validacoes esperadas:**
+  - `GET /docs` na API de staging retorna `200`
+  - `GET /health` na API de staging retorna `200`
+  - `GET /login` no admin de staging retorna `200`
+  - `GET /auth/me` sem token na API de staging continua retornando `401`
+  - fluxo autenticado minimo entre admin e API deixa de depender de credenciais de desenvolvimento
+- **Riscos principais:**
+  - divergencia entre chaves Clerk e callbacks publicos pode quebrar login em staging
+  - endurecimento excessivo de origins pode bloquear admin ou mobile indevidamente
+  - configuracao de cookies/session pode variar conforme dominio Railway e ambiente
+  - ajustes de variaveis em staging podem exigir redisparo coordenado de deploy por servico
+- **Plano de execucao:**
+  - mapear o estado atual de variaveis, auth e origins em `api` e `admin`
+  - identificar acoplamentos indevidos com credenciais de desenvolvimento
+  - propor e aplicar a segregacao minima de Clerk para staging
+  - revisar e ajustar CORS, callbacks e comportamento de session/cookies
+  - validar o ambiente endurecido e registrar o resultado no backlog e na documentacao
+- **Observacoes de execucao em:** `2026-04-03`
+  - a API passou a ter baseline explicito de CORS por allowlist, derivado de `CORS_ALLOWED_ORIGINS` e `CLERK_AUTHORIZED_PARTIES`, com fallback local apenas em `APP_ENV=local`
+  - o admin passou a ter contrato explicito de redirect publico do Clerk via variaveis `NEXT_PUBLIC_CLERK_*REDIRECT_URL` e `NEXT_PUBLIC_CLERK_AFTER_SIGN_OUT_URL`
+  - a estrategia oficial desta fase continua baseada em bearer token para `/auth/me`; a API nao depende de cookies cross-site entre `admin` e `api`
+- **Entrega em:** `2026-04-03`
+- **Artefatos:**
+  - `apps/api/src/main.ts`
+  - `apps/api/src/config/runtime.ts`
+  - `apps/api/src/modules/auth/auth.utils.ts`
+  - `apps/api/.env.example`
+  - `apps/admin/app/login/page.tsx`
+  - `apps/admin/app/(console)/layout.tsx`
+  - `apps/admin/app/layout.tsx`
+  - `apps/admin/src/lib/auth-context.ts`
+  - `apps/admin/src/lib/runtime-env.ts`
+  - `apps/admin/.env.example`
+  - `docs/auth/clerk-runtime-config.md`
+  - `docs/architecture/railway-staging.md`
+  - `backlog.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - `@foodtrucks/api test`: ok
+  - `@foodtrucks/api typecheck`: ok
+  - `@foodtrucks/admin test`: ok
+  - `@foodtrucks/admin typecheck`: ok
+  - `GET /docs` na API de staging: `200`
+  - `GET /health` na API de staging: `200`
+  - `GET /login` no admin de staging: `200`
+  - `GET /auth/me` sem token na API de staging: `401`
+  - `OPTIONS /auth/me` com `Origin=https://foodtrucks-admin-staging-staging.up.railway.app`: `204`
+  - `GET /auth/me` com `Origin=https://foodtrucks-admin-staging-staging.up.railway.app`: `401` com `access-control-allow-origin` presente
+  - login real do Clerk em staging: ok
+  - sessao Clerk criada em staging: ok
+  - loop entre `/login` e `/truck` no admin: corrigido
+- **Observacoes de encerramento em:** `2026-04-03`
+  - o bloqueio de `CORS` em staging foi concluido com `APP_ENV`, `CORS_ALLOWED_ORIGINS` e `CLERK_AUTHORIZED_PARTIES` aplicados no runtime ativo da API
+  - o login real do Clerk foi validado em staging sem evidencias de crash de frontend, falha base de auth ou novo bloqueio de redirect
+  - o ponto remanescente apos o hardening nao e mais de infra/auth base; trata-se de autorizacao e provisionamento operacional do usuario autenticado no dominio
+  - mudancas locais preexistentes fora deste recorte foram preservadas e nao fizeram parte do fechamento formal desta task
+
+---
+
+## FT-078 - Provisionar acesso operacional do usuario autenticado em staging
+
+- **Skill dona:** `auth-domain`
+- **Status:** `DONE`
+- **Fluxo critico:** `nao`
+- **Descricao:** Garantir que um usuario autenticado com sessao Clerk valida em staging possua vinculo de dominio suficiente para que o admin resolva acesso operacional real via `/auth/me`, sem depender de ajustes manuais soltos e sem confundir hardening de auth com autorizacao de dominio.
+- **Dependencias:** `FT-077`
+- **Objetivo:**
+  - sincronizar o usuario autenticado do Clerk com o usuario de dominio da API
+  - garantir role e memberships minimas para acesso ao painel
+  - validar retorno operacional util em `/auth/me` para um usuario real de staging
+- **Escopo aprovado:**
+  - diagnostico do usuario autenticado atual em staging
+  - criacao ou ajuste minimo de role e membership operacional
+  - validacao do fluxo autenticado do admin com contexto operacional resolvido
+- **Fora de escopo:**
+  - redesign de permissoes completo
+  - refatoracao ampla de dominio
+  - CI/CD, dominio customizado ou mobile remoto
+- **Criterios de aceite:**
+  - usuario autenticado em staging deixa de cair em estado "sessao Clerk criada, mas sem acesso operacional valido"
+  - `/auth/me` autenticado retorna contexto coerente para uso no admin
+  - o admin entra em rota protegida sem loop e com contexto operacional utilizavel
+  - backlog registra o vinculo minimo necessario para reproducao
+- **Observacoes de execucao em:** `2026-04-03`
+  - a causa raiz confirmada ficou no provisionamento de dominio da API, nao no Clerk: o usuario autenticado era sincronizado com `externalAuthId`, mas entrava no dominio com `User.role = customer` e sem `TruckMembership` ativa
+  - o ponto exato do vinculo incompleto ficou em `apps/api/src/modules/users/users.service.ts`, onde `upsertAuthUser()` cria usuario novo sem acesso operacional minimo
+  - em staging, o usuario autenticado foi revalidado no banco com `memberships = 0` antes da correcao
+  - a correcao minima aplicada em staging foi criar uma `Truck` ativa de suporte e uma `TruckMembership` ativa unica para o usuario autenticado, com papel operacional `truck_manager`
+  - o vinculo operacional minimo ficou persistido com `role = truck_manager`, membership ativa unica e truck ativa `Staging Operator Truck`
+- **Entrega em:** `2026-04-03`
+- **Artefatos:**
+  - `backlog.md`
+  - `docs/architecture/railway-staging.md`
+- **Revisao:** `aprovada`
+- **Validacoes:**
+  - diagnostico do backend confirmou `externalAuthId` sincronizado com usuario local: ok
+  - verificacao direta em banco antes da correcao confirmou usuario com `role = customer` e `memberships = 0`: ok
+  - provisionamento minimo em staging confirmou `role = truck_manager`: ok
+  - provisionamento minimo em staging confirmou `TruckMembership` ativa unica: ok
+  - provisionamento minimo em staging confirmou truck ativa `Staging Operator Truck`: ok
+  - validacao final em navegador confirmou entrada em `/truck` sem loop: ok
+  - painel carregado com contexto operacional valido: ok
+  - sessao autenticada estavel em staging: ok
+  - role ativa exibida no painel `TRUCK_MANAGER`: ok
+  - truck ativa exibida no painel `Staging Operator Truck`: ok
+  - backend auth context resolvido com sucesso no painel: ok
+- **Observacoes de encerramento em:** `2026-04-03`
+  - a FT-078 fechou a lacuna entre sessao Clerk valida e autorizacao de dominio em staging
+  - nao foi necessario ampliar auth base, CORS, callbacks ou infraestrutura alem do escopo aprovado
+  - o vinculo operacional minimo desta fase ficou como uma membership ativa unica de `truck_manager` para o usuario autenticado de staging
+  - futuras evolucoes devem tratar provisionamento mais amplo, onboarding e governanca de acessos em task propria, sem reabrir o escopo da FT-078
+
+---
+
+## FT-079 - Tornar reproduzivel o provisionamento operacional minimo de staging
+
+- **Skill dona:** `auth-domain`
+- **Status:** `DONE`
+- **Fluxo critico:** `nao`
+- **Descricao:** Transformar o provisionamento operacional minimo do usuario autenticado em um fluxo reproduzivel por comando, para evitar ajuste manual ad hoc no banco sempre que um usuario de staging precisar de acesso ao painel.
+- **Dependencias:** `FT-078`
+- **Objetivo:**
+  - padronizar um comando oficial para provisionar role e membership operacional minima
+  - permitir execucao tanto em `local` quanto em `staging`
+  - registrar o fluxo no backlog e no runbook operacional
+- **Escopo aprovado:**
+  - generalizar o bootstrap de contexto operacional existente
+  - aceitar `DATABASE_URL` por argumento ou ambiente para uso fora do `.env` local
+  - manter compatibilidade com o fluxo local ja existente
+  - documentar o comando oficial para Railway
+- **Fora de escopo:**
+  - auto-provisionamento no login
+  - redesign de RBAC
+  - onboarding completo de operadores
+  - CI/CD e automacao de deploy
+- **Criterios de aceite:**
+  - existe um comando oficial reproduzivel para provisionar contexto operacional minimo
+  - o comando funciona sem depender exclusivamente de `apps/api/.env`
+  - o runbook de staging documenta a execucao por Railway com `DATABASE_URL` do ambiente
+  - o backlog registra a estrategia adotada e o vinculo minimo esperado
+- **Observacoes de execucao em:** `2026-04-03`
+  - o bootstrap antes restrito ao escopo local foi generalizado para `apps/api/scripts/bootstrap-operator-context.mjs`
+  - o novo comando aceita `--database-url`, `DATABASE_URL` em runtime ou fallback para `apps/api/.env`
+  - o alias antigo `bootstrap:local-operator-context` foi preservado para nao quebrar o fluxo local ja documentado
+  - o fluxo oficial de staging passa a poder usar `railway run` sem SQL manual solto
+- **Artefatos:**
+  - `apps/api/scripts/bootstrap-operator-context.mjs`
+  - `apps/api/scripts/bootstrap-local-operator-context.mjs`
+  - `apps/api/package.json`
+  - `docs/architecture/railway-staging.md`
+  - `docs/auth/clerk-runtime-config.md`
+  - `backlog.md`
+- **Validacoes:**
+  - ajuda do comando oficial renderizada com sucesso: ok
+  - `@foodtrucks/api typecheck`: ok
+  - execucao controlada em staging do comando oficial: ok
+  - retorno do bootstrap em staging com `status: ok`: ok
+  - revalidacao persistida em staging com `role = truck_manager`: ok
+  - revalidacao persistida em staging com `membership_status = active`: ok
+  - revalidacao persistida em staging com `truck_slug = staging-operator`: ok
+  - baseline publico apos bootstrap em staging preservado com `GET /docs = 200`, `GET /health = 200` e `GET /login = 200`: ok
+- **Observacoes de encerramento em:** `2026-04-03`
+  - o comando oficial `bootstrap:operator-context` foi implementado e passou a cobrir `local` e `staging`
+  - a compatibilidade com o fluxo anterior foi preservada via alias `bootstrap:local-operator-context`
+  - a validacao em staging confirmou comportamento idempotente, reaplicando o vinculo operacional minimo esperado sem SQL manual
+  - a prova adicional de primeira provisao com um usuario novo fica como melhoria opcional futura, nao bloqueante para o encerramento desta task
+  - esta task reduz o risco operacional de repetir FT-078 por ajuste manual no banco
+
+---
+
 ## FT-080 - Implantar CI/CD minima de staging para API e admin
 
 - **Skill dona:** `deployment-infra`
-- **Status:** `REVIEW`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Automatizar a verificacao de qualidade e o deploy de staging para `api` e `admin`, reduzindo dependencia de publicacao manual e criando trilha minima de entrega reproduzivel por branch protegida.
-- **Dependencias:** `FT-076`
+- **Dependencias:** `FT-076`, `FT-077`, `FT-079`
 - **Objetivo:**
   - executar `lint`, `typecheck` e `test` antes de publicar
   - automatizar deploy de staging para `api` e `admin`
@@ -2734,7 +2947,11 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - workflow inicial criado em `.github/workflows/staging-ci-cd.yml`
   - checks minimos configurados com `pnpm lint`, `pnpm typecheck` e `pnpm test`
   - deploys de staging configurados por `railway up` com `--project`, `--environment staging`, `--service` e `--path-as-root`
-  - o baseline desta fase depende dos secrets `RAILWAY_TOKEN` e `RAILWAY_PROJECT_ID` no GitHub
+  - branch isolada publicada: `chore/ft-080-staging-cicd`
+  - workflow versionado ja publicado no GitHub
+  - secrets operacionais preparados/configurados para a validacao remota: `RAILWAY_TOKEN` e `RAILWAY_PROJECT_ID`
+  - repositorio pronto para abertura e validacao do PR da `FT-080`
+- **Entrega em:** `2026-04-03`
 - **Artefatos:**
   - `.github/workflows/staging-ci-cd.yml`
   - `docs/architecture/railway-staging.md`
@@ -2744,13 +2961,666 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - gates minimos configurados com `lint`, `typecheck` e `test`: ok
   - deploy de `api` e `admin` configurado com `workflow_dispatch`: ok
   - deploy de `api` e `admin` configurado em `push` para `main`: ok
-  - validacao final no GitHub Actions: pendente de configuracao dos secrets `RAILWAY_TOKEN` e `RAILWAY_PROJECT_ID` e da primeira execucao remota
+  - implementacao concluida e preparacao operacional registrada: ok
+  - Verify Workspace no pipeline remoto: passed
+  - Deploy API to Staging no pipeline remoto: passed
+  - Deploy Admin to Staging no pipeline remoto: passed
+- `GET /health` em staging: `200`
+- `GET /docs` em staging: `200`
+- admin staging acessivel e renderizando corretamente: ok
+- pipeline validado: ok
+- deploy de staging validado: ok
+- checagem remota validada: ok
+- evidencia final de saude do staging registrada: ok
+
+---
+
+## FT-081 - Implantar observabilidade minima do staging para auth, /auth/me e saude operacional do deploy
+
+- **Skill dona:** `observability-support`
+- **Status:** `DONE`
+- **Fluxo critico:** `sim`
+- **Descricao:** Implantar observabilidade minima no staging para reduzir tempo de diagnostico em falhas de autenticacao, autorizacao operacional, CORS/origin e saude pos-deploy, com foco em `api`, `admin`, `/auth/me` e evidencias basicas do ciclo remoto.
+- **Dependencias:** `FT-080`
+- **Objetivo:**
+  - diagnosticar rapidamente falhas em `auth`, `CORS`, contexto operacional e erro interno da API
+  - tornar `GET /auth/me` mais facil de classificar por tipo de falha
+  - registrar sinais minimos de bootstrap e saude operacional apos deploy
+  - formalizar checklist objetiva de validacao pos-deploy no runbook
+- **Escopo aprovado:**
+  - padronizacao de logs minimos na API para requests e respostas criticas em staging
+  - instrumentacao util no fluxo de auth e em `GET /auth/me`
+  - logs minimos no admin para falhas de resolucao do contexto autenticado
+  - checklist operacional pos-deploy documentada
+  - enriquecimento nao sensivel de sinais de saude, se couber sem ampliar escopo
+- **Pontos de instrumentacao:**
+  - bootstrap da API em `apps/api/src/main.ts`
+  - guard/service de auth da API para distinguir `missing auth`, `invalid token`, `user not found`, `membership missing`, `role insufficient` e erro interno
+  - `GET /auth/me` com classificacao objetiva de `200`, `401`, `403` e `500`
+  - eventos de `CORS`/origin rejeitada
+  - resolucao de contexto autenticado no admin quando `GET /auth/me` falhar
+- **Fora de escopo:**
+  - observabilidade externa completa
+  - tracing distribuido
+  - alerting
+  - smoke tests autenticados completos
+  - mudancas de producao fora do minimo seguro por ambiente
+- **Criterios de aceite:**
+  - logs permitem distinguir falha de auth base, `CORS`/origin, usuario sem membership e erro interno da API
+  - `GET /auth/me` fica diagnosticavel por categoria de falha sem expor segredo
+  - o runbook de staging passa a conter checklist objetiva pos-deploy
+  - nao ha regressao funcional em staging
+  - nenhum token, cookie, secret ou payload sensivel e persistido em log
+- **Riscos e limites:**
+  - evitar ampliar a task para stack externa de observabilidade
+  - evitar transformar `/health` em endpoint pesado ou acoplado demais
+  - evitar ruido excessivo de logs que dificulte o diagnostico
+  - qualquer mudanca deve permanecer segura e especifica por ambiente
+- **Observacoes de execucao em:** `2026-04-05`
+  - recorte isolado publicado em `origin/chore/ft-081-staging-observability`
+  - commit publicado do recorte: `c7ed7b9`
+  - validacoes locais do recorte concluidas com sucesso antes da abertura do PR
+  - checklist curta de validacao pos-deploy registrada no runbook de staging
+- **Entrega em:** `2026-04-05`
+- **Artefatos:**
+  - `apps/api/src/main.ts`
+  - `apps/api/src/common/observability.ts`
+  - `apps/api/src/modules/auth/auth.guard.ts`
+  - `apps/api/src/modules/auth/auth.service.ts`
+  - `apps/api/src/modules/auth/foodtruck-membership.guard.ts`
+  - `apps/admin/src/lib/auth-context-core.ts`
+  - `docs/architecture/railway-staging.md`
+  - `backlog.md`
+- **Validacoes:**
+  - observabilidade minima centralizada na API: ok
+  - log de bootstrap e request critica implantados: ok
+  - classificacao de falhas de auth, membership e role implantada: ok
+  - log de rejeicao de origem CORS implantado: ok
+  - `warn` estruturado no admin quando `/auth/me` falha: ok
+  - checklist pos-deploy documentada no runbook: ok
+  - Verify Workspace no pipeline remoto: passed
+  - Deploy API to Staging no pipeline remoto: passed
+  - Deploy Admin to Staging no pipeline remoto: skipped (expected by workflow condition)
+  - deploy com a nova instrumentacao publicado com sucesso: ok
+  - staging permaneceu funcional apos o deploy: ok
+  - baseline de staging preservado: ok
+- **Observacoes de encerramento em:** `2026-04-05`
+  - a FT-081 foi validada remotamente em staging com pipeline e deploy concluidos sem regressao funcional observada
+  - a task encerra com observabilidade minima suficiente para diagnostico de bootstrap, requests criticas, auth, membership, role e rejeicao de origem CORS
+  - as anotacoes de deprecacao relacionadas a Node.js 20 no GitHub Actions ficam registradas como melhoria futura de manutencao do pipeline e nao bloqueiam este encerramento
+  - problemas preexistentes fora do escopo permanecem isolados e nao contaminam o fechamento desta task
+
+---
+
+## FT-082 - Validar mobile contra staging com auth, checkout e observabilidade minima
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `DONE`
+- **Fluxo critico:** `sim`
+- **Descricao:** Validar o fluxo real do mobile contra o staging ja endurecido e observavel, confirmando que auth, resolucao de contexto, checkout e acompanhamento de pedido funcionam fora do ambiente local com diagnostico operacional suficiente.
+- **Dependencias:** `FT-071`, `FT-080`, `FT-081`
+- **Objetivo:**
+  - confirmar que o mobile consome o staging real sem regressao funcional relevante
+  - validar `auth`, `/auth/me`, descoberta, checkout e acompanhamento de pedido no ambiente remoto
+  - usar a observabilidade minima de staging para registrar causa exata de qualquer falha remanescente
+  - transformar a baseline remota atual em evidencia de produto, nao apenas de infra e operacao
+- **Escopo aprovado:**
+  - configurar o mobile para apontar para `api` de staging e usar o tenant/contrato autenticado vigente
+  - validar login real, bootstrap autenticado e contexto operacional minimo necessario
+  - validar descoberta, detalhe, catalogo, checkout e acompanhamento de pedido contra o staging
+  - cruzar qualquer falha com logs de `api` e sinais do admin ja instrumentados
+  - registrar evidencias, limites e eventuais bloqueios residuais no backlog e no runbook se necessario
+- **Fora de escopo:**
+  - distribuicao publica do mobile
+  - producao
+  - redesign de auth ou pagamentos
+  - observabilidade externa completa
+- **Criterios de aceite:**
+  - login real do mobile em staging funciona com o contrato atual do Clerk
+  - `GET /auth/me` em staging responde de forma coerente para o usuario validado
+  - descoberta, detalhe e catalogo funcionam contra a base remota esperada
+  - checkout cria ou tenta criar pedido contra o staging com diagnostico suficiente em caso de falha
+  - o acompanhamento do pedido no mobile reflete o estado remoto observado
+  - qualquer falha remanescente fica classificada com causa objetiva usando a observabilidade da `FT-081`
+- **Contexto de priorizacao em:** `2026-04-05`
+  - `FT-071` ja validou o fluxo principal do MVP localmente ponta a ponta
+  - `FT-076` a `FT-081` fecharam o baseline remoto de staging com deploy, hardening, bootstrap operacional, CI/CD minima e observabilidade
+  - o maior ganho agora e converter a baseline de staging em evidencia funcional de produto no mobile, reduzindo o risco de divergencia entre local e remoto
+  - a task usa infraestrutura e diagnostico ja prontos, sem exigir nova frente estrutural antes da validacao
+- **Observacoes de execucao em:** `2026-04-05`
+  - staging respondeu com baseline publica saudavel em `GET /health = 200`, `GET /docs = 200`, `GET /login = 200` e `GET /auth/me` sem token = `401`
+  - discovery publica contra staging respondeu com sucesso em `GET /foodtrucks`, `GET /foodtrucks/funky-chicken` e `GET /foodtrucks/funky-chicken/catalog`
+  - o mobile foi relancado no emulador Android com `EXPO_PUBLIC_API_BASE_URL=https://foodtrucks-api-staging-staging.up.railway.app`, `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` do tenant atual e `EXPO_PUBLIC_CLERK_JWT_TEMPLATE=foodtrucks-api`
+  - o Expo Go abriu a `ExperienceActivity`, o bundle avancou de `88%` para `100%`, mas a UI do app nao foi renderizada
+  - apos `adb reverse tcp:8082 tcp:8082` e relancamento com `exp://127.0.0.1:8082`, o Expo Go saiu da tela branca para `ErrorActivity` e depois voltou para a Home do Expo
+- **Artefatos:**
+  - `backlog.md`
+  - `docs/architecture/railway-staging.md`
+- **Validacoes:**
+  - `GET /health` na API de staging: `200`
+  - `GET /docs` na API de staging: `200`
+  - `GET /login` no admin de staging: `200`
+  - `GET /auth/me` sem token na API de staging: `401`
+  - `GET /foodtrucks` na API de staging: `200`
+  - `GET /foodtrucks/funky-chicken` na API de staging: `200`
+  - `GET /foodtrucks/funky-chicken/catalog` na API de staging: `200`
+  - Expo Go abriu o projeto de staging no emulador: ok
+  - bundle no Expo Go concluiu em `100%`: ok
+  - login real do mobile em staging: bloqueado antes da tela do app
+  - bootstrap autenticado via `/auth/me` no mobile: sem evidencia por bloqueio de runtime
+  - checkout e acompanhamento de pedido no mobile contra staging: sem evidencia por bloqueio de runtime
+- **Bloqueio registrado em:** `2026-04-05`
+  - o fluxo de validacao no Expo Go nao conseguiu concluir a carga do app no emulador, apesar do bundle chegar a `100%`
+  - o `logcat` registrou falha de websocket em `ws://10.0.2.2:8082/message...` com `Connection reset`
+  - apos `adb reverse`, o Expo Go registrou `Failed to download remote update`, abriu `host.exp.exponent/.experience.ErrorActivity` e emitiu a mensagem `Sorry about that. You can go back to Expo home or try to reload the project.`
+  - como o app nao chegou a renderizar a interface propria, os criterios de aceite ligados a login, `/auth/me`, checkout e acompanhamento de pedido no mobile nao puderam ser validados nesta rodada
+- **Reexecucao em:** `2026-04-05`
+  - a FT-084 removeu o bloqueio de runtime com o procedimento reproduzivel `localhost:8083` + `adb reverse tcp:8083 tcp:8083` + `exp://127.0.0.1:8083`
+  - a UI do app voltou a abrir no emulador com a tela `Barracas abertas no evento`
+  - a aba `Conta` confirmou sessao restaurada e bootstrap autenticado com `ricardo.foodtruck.test01@gmail.com`, `role=truck_manager`, `memberships=1`, `phase=ready` e `foodtruck ativo: Staging Operator Truck`
+  - descoberta, detalhe e catalogo foram revalidados no mobile contra staging para `funky-chicken`
+  - o carrinho foi preenchido com `1x Chicken over rice` e o checkout avancou ate a tela `Confirmacao final do pedido`
+  - ao iniciar o pagamento, o app tentou criar o pedido real em `POST /orders`, mas a API respondeu `404`
+- **Validacoes adicionais em:** `2026-04-05`
+  - UI propria do app renderizada no emulador contra staging: ok
+  - login real do mobile em staging com sessao Clerk restaurada: ok
+  - bootstrap autenticado via `/auth/me` no mobile: ok
+  - discovery no mobile contra staging: ok
+  - detalhe da barraca no mobile contra staging: ok
+  - catalogo no mobile contra staging: ok
+  - checkout no mobile contra staging: falhou com `404` objetivo da API
+  - acompanhamento do pedido no mobile: sem evidencia porque nenhum pedido foi criado
+- **Bloqueio atual em:** `2026-04-05`
+  - o bloqueio deixou de ser runtime e passou a ser de dataset operacional em staging
+  - a tentativa oficial de `POST /orders` retornou `A API respondeu 404 em /orders. Foodtruck 'funky-chicken' is not available in the active event.`
+  - isso impede a criacao do pedido em `pending_payment` e, por consequencia, bloqueia a validacao de acompanhamento nesta rodada
+- **Proxima reexecucao depende de:**
+  - alinhar o foodtruck e os itens usados pelo mobile com o `active event` real do staging
+  - repetir a FT-082 somente depois que `POST /orders` deixar de responder `404` por indisponibilidade do foodtruck no evento ativo
+- **Desbloqueio em:** `2026-04-05`
+  - a `FT-085` confirmou que o staging estava sem `Event` ativo e sem `EventTruck`/itens persistidos para `funky-chicken`
+  - o alinhamento minimo criou o evento ativo `staging-mobile-checkout`, publicou `EventTruck` orderable para `funky-chicken` com `acceptsOrders = true` e persistiu `2` categorias com `3` itens
+  - a superficie publica passou a refletir esse dataset real com `GET /foodtrucks = 200` retornando `count = 1` e `GET /foodtrucks/funky-chicken/catalog = 200` com `eventSlug = staging-mobile-checkout`
+  - a mesma logica de `createPendingOrder` usada por `POST /orders` foi revalidada dentro da API de staging com `foodtruckSlug = funky-chicken` e `menuItemId = funky-chicken-pratos-0`
+  - o resultado deixou de ser `404` e passou a criar pedido real em `pending_payment` com `paymentStatus = pending`
+  - a FT-082 voltou para `READY`; a repeticao seguinte deveria validar de novo o fluxo mobile ponta a ponta com carrinho limpo e item persistido do staging
+- **Encerramento em:** `2026-04-05`
+  - o mobile foi reaberto com o procedimento reproduzivel `localhost:8083` + `adb reverse tcp:8083 tcp:8083` + `exp://127.0.0.1:8083`
+  - a aba `Conta` voltou a validar bootstrap autenticado via `/auth/me` com `ricardo.foodtruck.test01@gmail.com`, `role=truck_manager`, `memberships=1`, `phase=ready` e `foodtruck ativo: Staging Operator Truck`
+  - discovery, detalhe e catalogo de `funky-chicken` passaram a refletir o dataset operacional real do staging, incluindo `Evento ativo: Staging-Mobile-Checkout`
+  - o checkout mobile usou carrinho limpo e o item persistido `funky-chicken-pratos-0` (`Chicken over rice`)
+  - o `logcat` registrou `Mobile checkout create order success` com `status = pending_payment`
+  - na sequencia, o handoff de pagamento mock registrou `Mobile confirm mock payment success` com `status = new` e `paymentStatus = paid`
+  - a UI do mobile exibiu `Pedido cmnlyqpiq00010ep1lx2ezfyv`, `Status atual: Pedido confirmado` e `Payment provider: mock_gateway | status: paid`
+- **Validacoes finais em:** `2026-04-05`
+  - login real do mobile em staging com sessao Clerk restaurada: ok
+  - bootstrap autenticado via `/auth/me` no mobile: ok
+  - discovery no mobile contra staging: ok
+  - detalhe da barraca no mobile contra staging: ok
+  - catalogo no mobile contra staging: ok
+  - checkout no mobile contra staging criando pedido real: ok
+  - handoff de pagamento mock no mobile: ok
+  - acompanhamento do pedido no proprio fluxo mobile: ok
+- **Observacoes de encerramento em:** `2026-04-05`
+  - a FT-082 converteu a baseline de staging em evidencia funcional de produto no mobile
+  - o pedido criado no fluxo oficial ficou evidenciado pelo `publicCode = cmnlyqpiq00010ep1lx2ezfyv`
+  - nenhuma frente nova foi aberta neste encerramento; a `FT-083` permanece fora de execucao
+
+---
+
+## FT-083 - Atualizar pipeline de staging para remover deprecacoes de Node.js 20 no GitHub Actions
+
+- **Skill dona:** `deployment-infra`
+- **Status:** `DONE`
+- **Fluxo critico:** `nao`
+- **Descricao:** Ajustar o workflow de staging para eliminar as anotacoes de deprecacao ligadas a Node.js 20 no GitHub Actions, preservando o comportamento atual do pipeline sem misturar essa manutencao com a validacao funcional do mobile em staging.
+- **Dependencias:** `FT-080`, `FT-081`, `FT-082`
+- **Objetivo:**
+  - remover warnings e deprecacoes de runtime do pipeline atual
+  - preservar `Verify Workspace`, deploy da API e condicionais existentes sem regressao
+  - manter o historico do pipeline limpo antes de abrir novas frentes de manutencao mais amplas
+- **Escopo aprovado:**
+  - revisar a origem exata da deprecacao no workflow atual
+  - atualizar actions, runtime ou configuracao necessaria de forma minima
+  - revalidar o comportamento esperado de `api` e `admin` no workflow
+  - registrar o ajuste no backlog e no runbook se houver impacto operacional
+- **Fora de escopo:**
+  - redesign amplo de CI/CD
+  - producao
+  - mudancas funcionais no mobile, admin ou API
+  - nova frente de observabilidade
+- **Contexto de priorizacao em:** `2026-04-05`
+  - a necessidade foi identificada durante o fechamento da `FT-081`
+  - a manutencao e relevante, mas foi registrada como nao bloqueante para o encerramento da observabilidade minima
+  - a prioridade imediata continua sendo converter o staging atual em evidencia funcional de produto via `FT-082`
+  - esta task deve ser a proxima frente apos concluir a validacao mobile em staging
+- **Execucao em:** `2026-04-05`
+  - a origem mais provavel das anotacoes de deprecacao do runtime legado estava nas actions versionadas em `actions/checkout@v4` e `actions/setup-node@v4`
+  - o workflow foi ajustado de forma minima para `actions/checkout@v5` e `actions/setup-node@v5` em todos os jobs de verificacao e deploy
+  - `NODE_VERSION = 22` foi preservado; o ajuste desta task ficou restrito ao runtime das actions do proprio GitHub Actions
+- **Artefatos:**
+  - `.github/workflows/staging-ci-cd.yml`
+  - `docs/architecture/railway-staging.md`
+  - `backlog.md`
+- **Validacoes locais:**
+  - leitura estrutural do workflow atualizada sem erro de sintaxe aparente: ok
+  - referencias do workflow para `checkout` e `setup-node` atualizadas para `v5`: ok
+- **Limite desta rodada:**
+  - o workflow remoto ainda nao foi executado apos o ajuste
+  - o encerramento da task depende da validacao remota do GitHub Actions para confirmar que as anotacoes de Node.js 20 deixaram de aparecer e que `Verify Workspace`, `Deploy API to Staging` e `Deploy Admin to Staging` continuam corretos
+- **Encerramento informado em:** `2026-04-06`
+  - a validacao remota do GitHub Actions foi considerada concluida no fechamento oficial da task
+  - a manutencao do pipeline deixa de ser pendencia aberta para a retriagem atual
+
+---
+
+## FT-084 - Estabilizar runtime de validacao mobile em staging no Expo Go/emulador
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `DONE`
+- **Fluxo critico:** `sim`
+- **Descricao:** Diagnosticar e corrigir o caminho minimo de execucao do app mobile no Expo Go/emulador para que a UI propria volte a renderizar contra o staging, destravando a reexecucao funcional da `FT-082`.
+- **Dependencias:** `FT-082`
+- **Objetivo:**
+  - fazer o app abrir a interface propria no emulador apontando para o staging
+  - eliminar o bloqueio atual entre bundle concluido e renderizacao real da UI
+  - deixar o ambiente pronto para repetir a validacao de login, `/auth/me`, checkout e acompanhamento na `FT-082`
+- **Escopo aprovado:**
+  - diagnosticar a causa do travamento entre Metro, Expo Go, websocket/dev support e runtime do app
+  - revisar o caminho minimo de execucao no emulador com `Expo Go`, `adb reverse`, deep link, porta do Metro e variaveis de ambiente
+  - corrigir o menor conjunto necessario para a UI do app abrir no emulador contra staging
+  - registrar evidencias do desbloqueio e o procedimento operacional reproduzivel
+- **Fora de escopo:**
+  - validacao funcional completa da `FT-082`
+  - manutencao do pipeline GitHub Actions
+  - distribuicao publica do mobile
+  - refatoracoes amplas de auth, checkout ou observabilidade
+- **Criterios de aceite:**
+  - o app deixa de parar em tela branca, `ErrorActivity` ou retorno para a Home do Expo
+  - a UI propria do app renderiza no emulador contra o staging
+  - o caminho de execucao fica reproduzivel para a reexecucao da `FT-082`
+  - backlog e documentacao operacional registram a causa e a correcao adotada
+- **Contexto de priorizacao em:** `2026-04-05`
+  - a `FT-082` foi bloqueada antes do bootstrap funcional do app, apesar da baseline HTTP publica de staging estar saudavel
+  - o maior desbloqueio imediato do roadmap e restaurar a capacidade de executar o mobile no emulador contra o staging
+  - sem esse ajuste, a `FT-082` nao pode produzir evidencia de login, `/auth/me`, checkout ou acompanhamento
+  - a `FT-083` permanece relevante, mas nao remove o bloqueio atual da validacao funcional mobile
+- **Riscos e dependencias:**
+  - o problema pode envolver mais de um eixo entre Metro, Expo Go, websocket de dev support, deep link, bridge/new architecture ou acesso de rede do emulador
+  - a reproducao depende de emulador Android, `adb`, Expo Go e dev server local operacionais
+  - se o bloqueio estiver no runtime do app e nao apenas no dev transport, a task pode precisar de diagnostico mais profundo antes de liberar a `FT-082`
+- **Observacoes de execucao em:** `2026-04-05`
+  - a causa imediata do bloqueio anterior era abrir o Expo Go contra uma porta que nao estava servindo um Metro valido do projeto
+  - o caminho reproduzivel desta rodada ficou em subir um Metro limpo em `localhost:8083`, validar `Waiting on http://localhost:8083`, executar `adb reverse tcp:8083 tcp:8083` e abrir `exp://127.0.0.1:8083`
+  - com esse fluxo, o Expo Go deixou de cair em `ErrorActivity` e a UI propria do app voltou a renderizar no emulador contra o staging
+  - a lista de barracas foi carregada com sucesso na tela `Barracas abertas no evento`, evidenciando que o app voltou a falar com a API de staging no runtime mobile
+- **Entrega em:** `2026-04-05`
+- **Artefatos:**
+  - `backlog.md`
+  - `docs/architecture/railway-staging.md`
+- **Validacoes:**
+  - Metro limpo iniciado em `http://localhost:8083`: ok
+  - `adb reverse tcp:8083 tcp:8083`: ok
+  - deep link `exp://127.0.0.1:8083` aberto no Expo Go: ok
+  - `ReactNativeJS Running \"main\"`: ok
+  - `ReactNativeJS Running \"HomeMenu\"`: ok
+  - estado da lista de barracas no mobile passou de `isPending: true` para `isPending: false` com `count: 6`: ok
+  - UI propria do app renderizada no emulador contra staging: ok
+- **Observacoes de encerramento em:** `2026-04-05`
+  - o desbloqueio desta task nao conclui a `FT-082`, mas remove o gargalo de runtime que impedia qualquer validacao funcional do mobile
+  - a condicao objetiva para reabrir a `FT-082` ficou satisfeita: a UI do app voltou a renderizar no emulador contra o staging com procedimento reproduzivel
+  - a proxima frente imediata volta a ser a validacao funcional da `FT-082`, sem puxar a `FT-083` nesta rodada
+
+---
+
+## FT-085 - Alinhar dataset operacional de staging para permitir criacao real de pedido no mobile
+
+- **Skill dona:** `backend-architecture`
+- **Status:** `DONE`
+- **Fluxo critico:** `sim`
+- **Descricao:** Verificar e alinhar o dataset operacional do staging para que o foodtruck e os itens usados pelo mobile estejam realmente disponiveis no `active event`, removendo o `404` atual de `POST /orders` e destravando a reexecucao funcional da `FT-082`.
+- **Dependencias:** `FT-082`, `FT-078`, `FT-079`
+- **Objetivo:**
+  - confirmar qual `active event` esta valendo no staging no momento da validacao
+  - garantir que o foodtruck usado no fluxo do mobile esteja associado a esse evento com contexto orderable
+  - alinhar itens e dados operacionais minimos para que `POST /orders` deixe de responder `404`
+  - documentar a conferencia e o procedimento reproduzivel para futuras revalidacoes
+- **Escopo aprovado:**
+  - diagnosticar a divergencia entre discovery publica, catalogo visivel e elegibilidade real de `POST /orders`
+  - verificar `Event`, `EventTruck`, disponibilidade do foodtruck e itens usados no checkout do mobile
+  - aplicar o menor alinhamento necessario no dataset/configuracao operacional de staging
+  - revalidar que o erro atual de `POST /orders` deixa de ocorrer no cenario alvo
+  - registrar evidencias e procedimento de conferencia no backlog e no runbook
+- **Fora de escopo:**
+  - FT-083 e manutencao do pipeline GitHub Actions
+  - refatoracao ampla de checkout, auth ou observabilidade
+  - distribuicao publica do mobile
+  - producao
+- **Criterios de aceite:**
+  - o `active event` do staging fica identificado de forma objetiva
+  - o foodtruck usado pelo mobile fica coerente com o `active event`
+  - `POST /orders` deixa de responder `404` por indisponibilidade do foodtruck no evento ativo
+  - o procedimento de conferencia do dataset fica documentado
+- **Contexto de priorizacao em:** `2026-04-05`
+  - a `FT-082` agora falha em um ponto funcional objetivo e reproduzivel: `POST /orders`
+  - auth, `/auth/me`, discovery, detalhe e catalogo ja ficaram validados, entao o maior desbloqueio imediato e corrigir o dataset operacional de staging
+  - a `FT-083` continua fora da prioridade imediata porque nao remove este bloqueio de produto
+- **Riscos e dependencias:**
+  - o dataset visivel em discovery/catalogo pode continuar divergente do dataset elegivel para checkout real
+  - a correcao pode depender de alinhar `Event`, `EventTruck`, `acceptsOrders`, itens e relacoes persistidas no staging
+  - se houver mais de um truck visivel no mobile, sera preciso escolher explicitamente qual deles e o alvo oficial do fluxo
+- **Observacoes de execucao em:** `2026-04-05`
+  - o Dockerfile da API foi ajustado para incluir `scripts/` no container de staging, permitindo diagnostico e bootstrap operacional reproduziveis dentro do proprio servico
+  - foi criado o script versionado `bootstrap-operational-dataset.mjs` e o alias `bootstrap:operational-dataset`
+  - a inspecao remota via `railway ssh` confirmou `activeEvents = []` e `truckAlignment = []` para `funky-chicken`, explicando o `404` original de `POST /orders`
+  - o alinhamento minimo aplicado criou o evento ativo `staging-mobile-checkout` e vinculou `funky-chicken` como `EventTruck` orderable com `acceptsOrders = true`
+  - o bootstrap persistiu `2` categorias e `3` itens reais no `EventTruck` oficial do staging
+  - a superficie publica passou a expor apenas o dataset real alinhado do staging em discovery e catalogo
+  - a revalidacao do app mostrou que o `404` anterior por `Foodtruck 'funky-chicken' is not available in the active event` deixou de ocorrer; um `404` residual por `menu item 'chicken-over-rice'` apareceu apenas com carrinho legado em memoria, antes da limpeza do estado
+  - a revalidacao controlada dentro da API com o mesmo `OrdersService.createPendingOrder` usado por `POST /orders` criou pedido real em `pending_payment` para `menuItemId = funky-chicken-pratos-0`
+- **Entrega em:** `2026-04-05`
+- **Artefatos:**
+  - `apps/api/scripts/bootstrap-operational-dataset.mjs`
+  - `apps/api/scripts/revalidate-create-order.mjs`
+  - `apps/api/package.json`
+  - `apps/api/Dockerfile`
+  - `backlog.md`
+  - `docs/architecture/railway-staging.md`
+- **Validacoes:**
+  - `activeEvents` em staging antes do ajuste: `0`
+  - `truckAlignment` de `funky-chicken` em staging antes do ajuste: vazio
+  - `activeEvents` em staging apos o ajuste: `1`
+  - `eventSlug` ativo publicado: `staging-mobile-checkout`
+  - `EventTruck` de `funky-chicken` com `acceptsOrders = true`: ok
+  - `2` categorias e `3` itens persistidos no `EventTruck`: ok
+  - `GET /foodtrucks` em staging retornando apenas `funky-chicken`: ok
+  - `GET /foodtrucks/funky-chicken/catalog` em staging retornando `eventSlug = staging-mobile-checkout`: ok
+  - revalidacao via `OrdersService.createPendingOrder` com `menuItemId = funky-chicken-pratos-0`: ok
+  - pedido criado em `pending_payment` com `paymentStatus = pending`: ok
+- **Observacoes de encerramento em:** `2026-04-05`
+  - a causa raiz do bloqueio da `FT-082` era ausencia de dataset operacional real no staging, nao falha de auth, runtime ou pipeline
+  - a condicao objetiva para reexecutar a `FT-082` ficou satisfeita: o `POST /orders` deixou de falhar por indisponibilidade do foodtruck no evento ativo
+  - a reexecucao da `FT-082` deve partir de carrinho limpo e usar o `menuItemId` persistido do staging, como `funky-chicken-pratos-0`
+
+---
+
+## FT-086 - Validar operacao remota da barraca no admin contra staging apos pedido real do mobile
+
+- **Skill dona:** `admin-web-architecture`
+- **Status:** `DONE`
+- **Fluxo critico:** `sim`
+- **Descricao:** Validar em staging o trecho operacional da barraca no admin web, confirmando que um pedido real criado no mobile entra na fila remota da barraca, pode avancar pelos status oficiais e reflete corretamente no cliente sem depender do ambiente local.
+- **Dependencias:** `FT-082`, `FT-083`
+- **Objetivo:**
+  - converter a validacao remota atual em fluxo MVP realmente ponta a ponta tambem pelo lado da barraca
+  - confirmar que o painel remoto da barraca recebe e opera pedidos reais vindos do mobile em staging
+  - reduzir o risco de descobrir regressao tardia na superficie operacional do admin
+- **Escopo aprovado:**
+  - criar ou reaproveitar um pedido real em staging pelo fluxo oficial do mobile
+  - autenticar no admin de staging com contexto operacional valido da barraca
+  - validar fila em `/truck/orders` e executar as transicoes oficiais suportadas pela UI existente
+  - confirmar reflexo do status no cliente apos a operacao remota da barraca
+  - registrar evidencias, limites e eventual bloqueio residual no backlog e no runbook se necessario
+- **Fora de escopo:**
+  - novas features de produto
+  - refatoracao de UX do admin
+  - automacao E2E completa
+  - producao
+- **Criterios de aceite:**
+  - pedido real criado em staging aparece na fila operacional remota da barraca
+  - o admin de staging consegue executar `new -> in_progress -> ready -> completed` com as acoes atuais
+  - o mobile reflete o avancar real do pedido sem divergir do backend
+  - backlog registra evidencias e qualquer friccao operacional relevante
+- **Riscos e dependencias:**
+  - a validacao depende de sessao operacional valida no admin de staging e de dataset ativo coerente para o truck usado no mobile
+  - a repeticao exige carrinho limpo, item persistido do staging e pedido novo para nao contaminar a evidencia
+  - se houver atraso de polling, cache ou refresh entre admin e mobile, a task pode expor friccao operacional sem necessariamente indicar falha de dominio
+- **Contexto de priorizacao em:** `2026-04-06`
+  - a `FT-082` ja provou checkout, pagamento mock e acompanhamento no mobile contra staging
+  - a `FT-083` fechou a manutencao imediata do pipeline e deixou de competir por prioridade
+  - o maior gap restante antes de abrir frentes novas e provar o elo remoto da barraca no admin, que e parte explicita do fluxo obrigatorio do MVP
+- **Execucao iniciada em:** `2026-04-06`
+  - validacao aberta com foco exclusivo em evidencia operacional remota do elo barraca -> cliente pelo admin de staging
+- **Observacoes de execucao em:** `2026-04-06`
+  - foi obtido bearer token real do mesmo usuario operacional de staging via Clerk Backend SDK e sessao criada por API, sem alterar codigo do projeto
+  - `GET /auth/me` em staging confirmou contexto operacional valido com `role = truck_manager` e `activeFoodtruck = staging-operator`
+  - o catalogo publico de staging permaneceu apontando para `funky-chicken` no evento ativo `staging-mobile-checkout`
+  - a rodada criou novo pedido real em staging com `menuItemId = funky-chicken-pratos-0`, `publicCode = cmnn79ze600070ep1xtqoo5lp` e status inicial `pending_payment`
+  - o handoff mock de pagamento promoveu o pedido para `new` com `paymentStatus = paid`
+  - a consulta remota da fila operacional do admin com o mesmo contrato de `/truck/orders` retornou `200`, mas com `activeFoodtruck = staging-operator`, `eventSlug = sem-evento` e `orders = []`
+  - o pedido criado permaneceu associado a `foodtruckSlug = funky-chicken`, portanto nao entrou na fila da barraca ativa resolvida para o admin nesta rodada
+- **Validacoes:**
+  - token real do Clerk emitido para o usuario operacional de staging: ok
+  - `GET /auth/me` em staging: `200`
+  - contexto autenticado resolvido com `foodtruckSlug = staging-operator`: ok
+  - `GET /foodtrucks/funky-chicken/catalog` em staging: `200`
+  - criacao de pedido real em staging para `funky-chicken`: `201`
+  - pedido criado com `status = pending_payment`: ok
+  - confirmacao de pagamento mock em staging: `201`
+  - pedido promovido para `status = new` e `paymentStatus = paid`: ok
+  - consulta da fila remota do admin para `staging-operator`: `200`
+  - fila remota do admin contendo o pedido criado no mobile: falhou
+  - transicoes `new -> in_progress -> ready -> completed` pelo admin: sem evidencia por ausencia do pedido na fila da barraca ativa
+  - reflexo no mobile alem do estado `new`: sem evidencia por bloqueio operacional anterior no admin
+- **Bloqueio registrado em:** `2026-04-06`
+  - existe divergencia operacional entre a barraca validada no mobile (`funky-chicken`) e a barraca ativa do contexto autenticado do admin (`staging-operator`)
+  - a fila remota de `/truck/orders` do contexto atual veio vazia, apesar de haver pedido real confirmado em `new` para `funky-chicken`
+  - sem alinhar o contexto operacional do admin a mesma barraca do fluxo do mobile, a FT-086 nao consegue provar o trecho remoto `barraca -> cliente` pelo painel
+- **Conclusao desta rodada:**
+  - a FT-086 nao encontrou erro estrutural novo em checkout, pagamento mock ou leitura do pedido pelo cliente
+  - o bloqueio atual e operacional de contexto de barraca em staging, nao de runtime, pipeline ou auth base
+  - a task deve permanecer bloqueada ate existir correspondencia objetiva entre a barraca operada no admin e a barraca usada para criar o pedido real no mobile
+- **Desbloqueio em:** `2026-04-06`
+  - a `FT-087` identificou a causa raiz no dado operacional de staging: o usuario autenticado do admin tinha uma unica membership ativa apontando para `staging-operator`, enquanto o fluxo remoto do mobile operava em `funky-chicken`
+  - a correcao minima reatribuiu a membership ativa do operador para `funky-chicken`, preservando `role = truck_manager`
+  - `GET /auth/me` passou a resolver `activeFoodtruck = funky-chicken` com `requiresFoodtruckSelection = false`
+  - a revalidacao remota da fila passou a listar pedido real criado no mesmo contrato do mobile, restaurando a condicao objetiva para retomar a FT-086
+- **Reexecucao iniciada em:** `2026-04-06`
+  - validacao remota retomada com o contexto operacional do admin corrigido para a mesma truck do fluxo do mobile
+- **Encerramento em:** `2026-04-06`
+  - foi criado novo pedido real em staging para `funky-chicken` com `menuItemId = funky-chicken-pratos-0` e `publicCode = cmnn7v6e5000j0ep16w9ugmip`
+  - o detalhe remoto do pedido no lado cliente confirmou a sequencia `pending_payment -> new -> in_progress -> ready -> completed`
+  - a fila remota do admin no contexto corrigido de `funky-chicken` passou a enxergar o pedido em `new`, depois em `in_progress` e depois em `ready`
+  - as mutacoes remotas do contrato operacional do admin retornaram `200` para `in_progress`, `ready` e `completed`
+  - apos `completed`, o pedido deixou de aparecer na fila operacional listada, enquanto o detalhe do cliente permaneceu acessivel com status final `completed`
+- **Validacoes finais em:** `2026-04-06`
+  - `GET /auth/me` em staging: `200`
+  - `activeFoodtruck` do admin em staging: `funky-chicken`
+  - criacao de pedido real no fluxo remoto: `201`
+  - pedido criado com `status = pending_payment` e `paymentStatus = pending`: ok
+  - confirmacao de pagamento mock remota: `201`
+  - pedido promovido para `new`: ok
+  - fila remota do admin enxergando o pedido em `new`: ok
+  - transicao remota `new -> in_progress`: `200`
+  - cliente/mobile refletindo `in_progress`: ok
+  - fila remota do admin enxergando o pedido em `in_progress`: ok
+  - transicao remota `in_progress -> ready`: `200`
+  - cliente/mobile refletindo `ready`: ok
+  - fila remota do admin enxergando o pedido em `ready`: ok
+  - transicao remota `ready -> completed`: `200`
+  - cliente/mobile refletindo `completed`: ok
+  - pedido removido da fila operacional apos `completed`: ok
+- **Friccoes observadas em:** `2026-04-06`
+  - os contadores agregados da fila nao partiram de zero porque havia pedidos operacionais anteriores ja presentes em staging
+  - isso nao bloqueou a validacao desta task, porque o pedido alvo foi localizado explicitamente por `id/publicCode` em cada etapa e acompanhou todas as transicoes esperadas
+- **Observacoes de encerramento em:** `2026-04-06`
+  - a FT-086 fechou a evidencia remota do elo `barraca -> cliente` no MVP usando o mesmo contexto operacional validado no mobile
+  - nenhuma mudanca estrutural nova foi necessaria nesta rodada; o fluxo fechou com correcoes minimas de dado operacional ja tratadas na FT-087
+
+---
+
+## FT-087 - Corrigir alinhamento do contexto operacional de staging entre admin e mobile
+
+- **Skill dona:** `auth-domain`
+- **Status:** `DONE`
+- **Fluxo critico:** `sim`
+- **Descricao:** Identificar e corrigir o menor ponto de desalinhamento que faz o admin autenticado resolver `activeFoodtruck = staging-operator` enquanto o fluxo remoto validado do mobile cria pedidos em `funky-chicken`, impedindo que `/truck/orders` enxergue o pedido real em staging.
+- **Dependencias:** `FT-086`
+- **Objetivo:**
+  - localizar a causa raiz exata do contexto operacional divergente em staging
+  - alinhar admin e mobile para a mesma barraca e evento operacionais validos
+  - revalidar o contrato remoto da fila antes de retomar a FT-086
+- **Escopo aprovado:**
+  - identificar a origem exata de `activeFoodtruck = staging-operator` no contexto autenticado do admin
+  - verificar se a divergencia esta em seed, vinculo do operador, mapping de evento, membership, bootstrap ou configuracao de staging
+  - aplicar a correcao minima necessaria sem abrir frente estrutural nova
+  - revalidar `GET /auth/me` e `/orders/foodtruck-queue` no contexto corrigido
+  - registrar evidencias objetivas e decidir se a FT-086 pode voltar para `READY`
+- **Fora de escopo:**
+  - novas features de auth ou RBAC
+  - refatoracao ampla de dominio
+  - distribuicao externa do mobile
+  - automacao E2E completa
+  - producao
+- **Criterios de aceite:**
+  - a causa raiz do desalinhamento fica identificada de forma objetiva
+  - a correcao minima aplicada alinha o contexto autenticado do admin a mesma barraca usada no fluxo do mobile
+  - `/truck/orders` passa a enxergar ao menos um pedido real criado no mobile em staging
+  - a decisao seguinte sobre a FT-086 fica objetiva: voltar para `READY` ou permanecer `BLOCKED` com causa residual clara
+- **Riscos e dependencias:**
+  - o desalinhamento pode estar em mais de uma camada entre membership ativa, bootstrap operacional, dados do evento e escolha implicita de contexto no auth
+  - mexer no vinculo operacional do usuario de staging pode afetar outras validacoes remotas se a correcao nao for minima e rastreavel
+  - se o usuario precisar de mais de uma membership, a revalidacao deve respeitar o contrato atual de selecao de foodtruck
+- **Contexto de priorizacao em:** `2026-04-06`
+  - a FT-086 encontrou um bloqueio operacional real e reproduzivel, sem evidenciar defeito novo em checkout ou pagamento
+  - nao faz sentido abrir distribuicao externa nem outras frentes antes de corrigir esse alinhamento
+  - o menor desbloqueio real do roadmap agora e fazer o admin remoto enxergar o mesmo fluxo operacional ja validado no mobile
+- **Execucao iniciada em:** `2026-04-06`
+  - investigacao aberta com foco em causa raiz objetiva e correcao minima do contexto operacional em staging
+- **Causa raiz identificada em:** `2026-04-06`
+  - o usuario de staging autenticado no admin possuia exatamente uma membership ativa
+  - essa membership unica apontava para `staging-operator`, truck sem `EventTruck` ativo e sem fila operacional no evento `staging-mobile-checkout`
+  - em paralelo, o fluxo remoto validado no mobile criava pedidos em `funky-chicken`, que era a truck realmente publicada no evento ativo e orderable em staging
+  - como o contrato atual de auth resolve automaticamente a unica membership ativa como `activeFoodtruck`, o admin sempre carregava `/truck/orders` no contexto errado e recebia fila vazia
+- **Correcao aplicada em:** `2026-04-06`
+  - a correcao minima foi reatribuir a membership ativa existente do operador de staging de `staging-operator` para `funky-chicken`
+  - nenhuma mudanca estrutural de codigo, auth base, pipeline ou schema foi necessaria
+  - o truck legado `staging-operator` foi preservado no banco, mas deixou de ser a membership ativa do operador desta validacao
+- **Validacoes:**
+  - inspecao do banco de staging confirmou membership ativa unica anterior em `staging-operator`: ok
+  - inspecao do banco de staging confirmou `funky-chicken` com `EventTruck` ativo em `staging-mobile-checkout`: ok
+  - `GET /auth/me` apos a correcao: `200`
+  - `activeFoodtruck` apos a correcao: `funky-chicken`
+  - `requiresFoodtruckSelection` apos a correcao: `false`
+  - criacao de novo pedido real em staging no mesmo contrato do mobile: `201`
+  - confirmacao de pagamento mock do novo pedido: `201`
+  - consulta remota de `/orders/foodtruck-queue` no contexto corrigido: `200`
+  - fila remota passou a listar o pedido `cmnn7q0ka000d0ep184qqhupx` criado no fluxo revalidado: ok
+- **Observacoes de encerramento em:** `2026-04-06`
+  - a FT-087 fechou a divergencia operacional entre barraca ativa do admin e barraca usada pelo mobile em staging
+  - a correcao foi estritamente de dado operacional e manteve o contrato atual de auth sem abrir nova frente estrutural
+  - a FT-086 volta para `READY`, porque `/truck/orders` recuperou a capacidade objetiva de enxergar pedido real criado no fluxo do mobile
+
+---
+
+## Checkpoint estrategico apos FT-086
+
+- em `2026-04-06`, o MVP passou a ter evidencia operacional remota completa em staging
+- ficou comprovado o elo `cliente -> barraca -> cliente` no ambiente remoto com:
+  - `GET /auth/me` coerente para o contexto operacional alvo
+  - pedido real criado no fluxo do mobile
+  - pagamento mock promovendo `pending_payment -> new`
+  - fila remota do admin enxergando o pedido da barraca correta
+  - operacao remota no admin concluindo `new -> in_progress -> ready -> completed`
+  - cliente refletindo cada transicao ate `completed`
+- com essa prova fechada, o maior ganho real seguinte deixa de ser infraestrutura base e passa a ser validacao externa controlada do app contra o staging
+- producao e frentes estruturais amplas permanecem fora da prioridade imediata desta rodada
+
+---
+
+## FT-088 - Formalizar distribuicao controlada do mobile contra staging para validacao externa
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `DONE`
+- **Fluxo critico:** `nao`
+- **Descricao:** Preparar o menor caminho oficial para distribuir o app mobile apontando para staging em um canal externo controlado de teste, transformando a validacao hoje restrita ao ambiente interno em uma rodada reproduzivel para poucos validadores sem abrir rollout publico nem frente estrutural ampla.
+- **Dependencias:** `FT-082`, `FT-086`
+- **Objetivo:**
+  - sair da validacao exclusiva em ambiente local/emulador
+  - permitir teste externo controlado do app contra o staging ja validado
+  - reduzir risco de descobrir tardiamente problemas de distribuicao, bootstrap ou ambiente fora da maquina de desenvolvimento
+- **Escopo aprovado:**
+  - escolher o canal minimo oficial desta fase para distribuicao controlada do app
+  - preparar configuracao publica do mobile apontando para o staging
+  - documentar o procedimento de instalacao, acesso e revalidacao minima para poucos testadores
+  - registrar limites, pre-condicoes e criterio objetivo de uso deste canal
+- **Fora de escopo:**
+  - publicacao em loja
+  - rollout amplo para usuarios finais
+  - producao
+  - automacao completa de release mobile
+  - nova frente estrutural de observabilidade
+- **Criterios de aceite:**
+  - existe um caminho oficial e reproduzivel para instalar/executar o mobile contra staging fora do ambiente interno
+  - o canal controlado fica documentado com pre-condicoes e limites
+  - a configuracao do app para o staging fica objetiva e sem ambiguidade operacional
+  - backlog registra o que esta validado e o que continua fora de escopo nesta fase
+- **Riscos e dependencias:**
+  - a distribuicao pode expor friccoes de dispositivo real, sessao Clerk ou runtime que nao aparecem no emulador
+  - a rodada exige controle do publico para nao confundir teste de staging com rollout real
+  - se o canal escolhido depender de credenciais/plataforma externa, a configuracao precisa permanecer minima e rastreavel
+- **Contexto de priorizacao em:** `2026-04-06`
+  - a prova operacional remota do MVP ja foi concluida em staging
+  - o maior ganho real agora e validar o app em um canal externo controlado antes de discutir rollout maior ou producao
+  - isso adiciona valor direto ao roadmap sem reabrir infraestrutura base nem auth estrutural
+- **Execucao iniciada em:** `2026-04-06`
+  - formalizacao aberta com foco em um canal externo controlado minimo, sem rollout publico nem frente estrutural ampla
+- **Canal escolhido em:** `2026-04-06`
+  - o canal oficial minimo desta fase ficou em `Expo Go` com distribuicao `LAN`
+  - a escolha foi feita porque o stack atual ainda nao possui trilha `EAS Build`, release interna versionada ou pipeline de distribuicao mobile pronta
+- **Estrategia operacional definida em:** `2026-04-06`
+  - o app deve subir com configuracao explicita para `staging`
+  - o operador inicia o projeto mobile com `pnpm --filter @foodtrucks/mobile exec expo start --lan --go --clear --port 8085`
+  - os validadores externos desta fase ficam restritos a poucos dispositivos reais na mesma rede local do operador
+  - o fluxo externo controlado desta rodada fica documentado em `docs/architecture/mobile-staging-controlled-distribution.md`
+- **Checklist curto de validacao externa:**
+  - instalar `Expo Go` no dispositivo real
+  - abrir o app pelo endereco `exp://172.20.10.5:8085` na mesma rede local
+  - validar login/autenticacao
+  - confirmar bootstrap por `/auth/me`
+  - validar discovery, detalhe, catalogo e fluxo principal do app
+  - registrar friccoes de sessao, rede, atualizacao, permissao ou runtime
+- **Evidencias desta rodada em:** `2026-04-06`
+  - o projeto mobile subiu com sucesso em `LAN`
+  - o servidor ficou aguardando em `http://localhost:8085`
+  - a configuracao usada nesta rodada apontou explicitamente para `https://foodtrucks-api-staging-staging.up.railway.app`
+  - a superficie servida respondeu localmente com o app `Foodtrucks Mobile`, confirmando o caminho minimo de acesso
+- **Friccoes reais encontradas em:** `2026-04-06`
+  - a tentativa de `Expo Go` via `tunnel` falhou com `failed to start tunnel` e detalhe `remote gone away`
+  - a causa observada ficou no provedor externo do tunel, nao no app ou no `staging`
+  - por isso, o primeiro canal oficial utilizavel ficou restrito a `LAN` e a testadores na mesma rede local
+- **Artefatos:**
+  - `docs/architecture/mobile-staging-controlled-distribution.md`
+  - `backlog.md`
+  - `status.md`
+- **Observacoes de encerramento em:** `2026-04-06`
+  - a FT-088 ficou concluida porque o canal controlado minimo foi formalizado e esta utilizavel
+  - a limitacao atual e de alcance do meio de distribuicao, nao de impossibilidade operacional do app
+  - qualquer necessidade de sair da mesma rede local deve voltar em task propria, sem abrir producao nem rollout amplo nesta fase
+
+---
+
+## Checkpoint estrategico apos FT-088
+
+- em `2026-04-06`, o MVP passou a ter:
+  - evidencia operacional remota completa em `staging`
+  - canal controlado minimo de uso externo do mobile via `Expo Go` em `LAN`
+- nesta retriagem, nao ha evidencia de:
+  - testador externo concreto ja definido fora da mesma rede local
+  - necessidade operacional imediata de validar fora da `LAN`
+  - ganho que justifique agora abrir uma nova frente de distribuicao alem do canal minimo ja formalizado
+- leitura sênior desta rodada:
+  - o checkpoint atual e suficiente para o MVP ate surgir demanda concreta
+  - abrir agora uma task para distribuicao fora da mesma rede local aumentaria complexidade de canal e dependencia externa sem desbloqueio proporcional do roadmap
+- regra de continuidade a partir deste ponto:
+  - so abrir task nova de distribuicao controlada fora da `LAN` quando houver testador externo real, janela de validacao definida ou necessidade operacional/comercial objetiva
 
 ---
 
 # Ordem sugerida para comecar
 
-- fechar a `FT-080` para tirar o staging da dependencia de publicacao manual de `api` e `admin`
-- depois abrir observabilidade minima do ambiente para acompanhar o staging automatizado
+- nenhuma nova task `READY` no momento
+- se surgir demanda para validadores fora da mesma rede local, abrir task minima para destravar distribuicao controlada sem depender do `tunnel`
+- manter producao e frentes estruturais amplas fora da fila imediata
 
 ---
