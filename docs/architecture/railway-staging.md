@@ -236,3 +236,28 @@ O fluxo minimo oficial fica ancorado nesses comandos e nas variaveis versionadas
 - o workflow nao cria environments efemeros para PR
 - o workflow ainda nao executa smoke tests autenticados completos apos deploy
 - a validacao final do workflow depende da configuracao desses secrets no repositorio GitHub
+
+## Manutencao do pipeline na FT-083
+
+- ajuste local em `2026-04-05`:
+  - `actions/checkout@v4` foi atualizado para `actions/checkout@v5`
+  - `actions/setup-node@v4` foi atualizado para `actions/setup-node@v5`
+  - `NODE_VERSION=22`, gatilhos e condicionais de deploy foram preservados
+- achado da validacao remota em `2026-04-05`:
+  - o warning de runtime legado continuou, agora explicitamente associado a `pnpm/action-setup@v4`
+  - como nao ha `pnpm/action-setup@v5` nesta frente, o menor ajuste adicional foi remover essa action do workflow
+  - o job `Verify Workspace` passou a preparar `pnpm` via `corepack enable` + `corepack prepare pnpm@10.30.3 --activate`
+- falha seguinte da validacao remota em `2026-04-05`:
+  - `Verify Workspace` falhou em `Setup Node.js` com `Unable to locate executable file: pnpm`
+  - a causa exata foi `actions/setup-node@v5` ainda configurado com `cache: pnpm`, o que exige `pnpm` antes da ativacao via Corepack
+  - o menor ajuste adicional foi remover `cache: pnpm` do `Setup Node.js`
+- inspecao seguinte do YAML em `2026-04-05`:
+  - nao restou `cache: pnpm`, `cache-dependency-path` ou outro uso precoce de `pnpm` antes do Corepack
+  - o problema remanescente era a chamada de `pnpm` puro nos steps seguintes, ainda dependente do `PATH` entre steps
+  - o ajuste minimo final foi:
+    - adicionar `corepack pnpm --version` imediatamente apos `corepack prepare`
+    - executar `install`, `lint`, `typecheck` e `test` como `corepack pnpm ...`
+- validacao remota pendente:
+  - executar o workflow `staging-ci-cd` no GitHub Actions
+  - confirmar que `Verify Workspace`, `Deploy API to Staging` e `Deploy Admin to Staging` continuam saudaveis
+  - confirmar que os avisos ligados ao runtime legado de Node.js 20 deixaram de aparecer
