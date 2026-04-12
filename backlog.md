@@ -3619,8 +3619,100 @@ Quando houver multiplas tasks `READY`, priorizar por:
 
 # Ordem sugerida para comecar
 
-- nenhuma nova task `READY` no momento
-- se surgir demanda para validadores fora da mesma rede local, abrir task minima para destravar distribuicao controlada sem depender do `tunnel`
-- manter producao e frentes estruturais amplas fora da fila imediata
+- nenhuma nova task `READY` aberta automaticamente apos o fechamento da `FT-091`
+- antes de qualquer nova frente, fazer retriagem curta do checkpoint atual
+- manter producao, loja, iOS, EAS Submit, EAS Update, CI/CD mobile e rollout amplo fora da fila imediata sem demanda concreta
 
 ---
+
+## FT-091 - Preparar pipeline minimo de build distribuivel do mobile
+
+- **Skill dona:** `mobile-app-architecture`
+- **Status:** `DONE`
+- **Fluxo critico:** `nao`
+- **Descricao:** Configurar o minimo necessario para gerar uma build Android distribuivel do app mobile com EAS Build, mantendo o app apontado explicitamente para `staging` e sem abrir producao, loja ou rollout amplo.
+- **Dependencias:** `FT-088`
+- **Gatilho real em:** `2026-04-12`
+  - decisao explicita do owner de avancar para EAS Build apos o checkpoint pausado corretamente
+  - objetivo limitado a distribuicao controlada mais seria do mobile, sem producao
+- **Objetivo:**
+  - verificar o estado atual do projeto para EAS Build
+  - configurar ou revisar `eas.json`
+  - definir perfis minimos coerentes com a fase atual
+  - garantir que a build usada nesta fase aponte para `staging`
+  - preparar caminho minimo para build Android interna/controlada
+  - documentar runbook de geracao e uso da build
+- **Escopo aprovado:**
+  - Android primeiro
+  - EAS Build com perfil interno/controlado
+  - app mobile apontando explicitamente para a API publica de `staging`
+  - documentacao operacional minima
+  - avaliacao objetiva entre development build e internal distribution build
+- **Fora de escopo:**
+  - producao
+  - publicacao em loja
+  - rollout publico
+  - iOS nesta primeira rodada
+  - EAS Submit
+  - EAS Update
+  - CI/CD de build mobile
+  - refatoracao estrutural
+- **Criterios de aceite:**
+  - diagnostico do estado atual para EAS registrado
+  - `apps/mobile/eas.json` minimo criado ou revisado
+  - perfil Android interno/controlado definido
+  - variaveis de staging documentadas
+  - runbook de build e instalacao registrado
+  - recomendacao final objetiva: `READY para rodar a build` ou `BLOCKED` com causa
+- **Riscos e dependencias:**
+  - execucao real da build depende de conta Expo autenticada
+  - a primeira build pode exigir `eas init` e criacao/vinculo de projeto Expo
+  - Android signing pode exigir aceitar credenciais gerenciadas pelo EAS
+  - `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` de staging deve ser configurada como variavel/secret antes da build
+- **Artefatos previstos:**
+  - `apps/mobile/eas.json`
+  - `apps/mobile/app.json`
+  - `docs/architecture/mobile-eas-build.md`
+  - `backlog.md`
+- **Execucao iniciada em:** `2026-04-12`
+  - task saiu de `READY` para `IN_PROGRESS` porque a preparacao minima ja teve execucao real
+  - `apps/mobile/eas.json` foi criado com perfil `preview-staging`
+  - `apps/mobile/app.json` recebeu package Android de staging
+  - runbook de EAS Build foi criado em `docs/architecture/mobile-eas-build.md`
+  - handoff e resume pack foram atualizados para refletir a frente ativa
+- **Proxima acao objetiva:**
+  - executar a primeira build Android interna/controlada contra `staging`
+- **Checklist minimo da proxima execucao:**
+  - instalar EAS CLI
+  - autenticar no Expo/EAS
+  - vincular/inicializar o projeto se necessario
+  - cadastrar `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` no environment `preview`
+  - executar `eas build --platform android --profile preview-staging`
+  - registrar o resultado objetivo
+- **Regra de status a partir daqui:**
+  - manter `IN_PROGRESS` enquanto a primeira build nao for tentada com o ambiente pronto
+  - mover para `DONE` somente se a build sair com sucesso e o runbook ficar validado
+  - mover para `BLOCKED` somente se a execucao falhar por causa objetiva de credencial, vinculo, assinatura ou ambiente
+- **Bloqueio registrado em:** `2026-04-12`
+  - a primeira tentativa de build remota do EAS falhou em `Install dependencies`
+  - causa raiz objetiva: o `prisma preinstall` detectou versao de Node incompatibilidade no builder remoto
+  - evidencia do log: `Prisma only supports Node.js versions 20.19+, 22.12+, 24.0+`
+  - comando remoto que falhou: `pnpm install --no-frozen-lockfile`
+  - correcao minima aplicada: fixar `node: "22.12.0"` no profile `preview-staging` de `apps/mobile/eas.json`
+- **Fechamento em:** `2026-04-12`
+  - a build Android interna/controlada foi repetida com sucesso via EAS usando o profile `preview-staging`
+  - o builder remoto passou de `Install dependencies` apos fixar Node `22.12.0`
+  - link/QR de distribuicao da build ficou disponivel
+  - o app foi baixado no emulador Android
+  - a instalacao da build foi concluida com sucesso
+  - o app iniciou com sucesso no emulador
+  - o runbook EAS ficou validado na pratica
+- **Diff objetivo validado:**
+  - `apps/mobile/eas.json`: profile `preview-staging` com `distribution: internal`, `environment: preview`, `node: "22.12.0"`, API publica de `staging` e Android `apk`
+  - `apps/mobile/app.json`: package Android de staging mantido para a build controlada
+  - `docs/architecture/mobile-eas-build.md`: runbook minimo de build e instalacao validado pela execucao real
+  - `backlog.md`, `docs/ops/session-handoff.md`, `docs/ops/resume-pack.md` e `status.md`: fechamento operacional registrado
+- **Decisao de continuidade:**
+  - nao abrir nova `READY` automaticamente apos o fechamento
+  - fazer retriagem curta antes de qualquer nova frente
+  - producao, loja, iOS, EAS Submit, EAS Update, CI/CD mobile e rollout amplo seguem fora de escopo sem demanda concreta

@@ -1,0 +1,19 @@
+{
+  "cli": {
+    "appVersionSource": "local"
+  },
+  "build": {
+    "preview-staging": {
+      "distribution": "internal",
+      "environment": "preview",
+      "node": "22.12.0",
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://foodtrucks-api-staging-staging.up.railway.app",
+        "EXPO_PUBLIC_CLERK_JWT_TEMPLATE": "foodtrucks-api"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    }
+  }
+}
