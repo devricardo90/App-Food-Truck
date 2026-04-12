@@ -1,68 +1,66 @@
 # Foodtrucks Platform
 
-Plataforma de pedidos para foodtrucks em eventos, com app cliente, painel admin e API central.
+A monorepo-based ordering platform for food trucks operating at events, composed of a customer mobile app, an admin panel, and a central API.
 
-## Objetivo do MVP
+## MVP Goal
 
-O primeiro corte do projeto prioriza o fluxo critico:
+The first product slice focuses on the platform’s critical order lifecycle:
 
-1. cliente escolhe a barraca
-2. cliente monta o pedido
-3. cliente paga
-4. pedido e confirmado
-5. barraca recebe e prepara
-6. cliente e avisado quando o pedido estiver pronto
-7. cliente retira
+1. Customer selects a food truck
+2. Customer builds an order
+3. Customer pays
+4. Order is confirmed
+5. Food truck receives and prepares the order
+6. Customer is notified when the order is ready
+7. Customer picks up the order
 
-Escopo detalhado: `docs/product/mvp.md`  
-Fluxo oficial do pedido: `docs/flows/order-flow.md`
+Detailed scope: `docs/product/mvp.md`  
+Official order flow: `docs/flows/order-flow.md`
 
-## Estrutura do monorepo
+## Monorepo Structure
 
 ```txt
 apps/
-  admin/    painel web da barraca e da plataforma
-  api/      backend central em NestJS
-  mobile/   app cliente em Expo
+  admin/    Web admin panel for food trucks and platform operations
+  api/      Central backend built with NestJS
+  mobile/   Customer-facing mobile app built with Expo
 
 packages/
-  api-client/  cliente compartilhado para integracao com a API
-  config/      configuracoes compartilhadas
-  schemas/     schemas e contratos compartilhados
-  types/       tipos compartilhados
-  utils/       utilitarios compartilhados
-```
+  api-client/  Shared API client for platform integration
+  config/      Shared configuration
+  schemas/     Shared schemas and contracts
+  types/       Shared TypeScript types
+  utils/       Shared utilities    Architecture reference: docs/architecture/monorepo.md
+Environment and deployment baseline: docs/architecture/environments-and-deploy.md
+Railway staging runbook: docs/architecture/railway-staging.md
+Clerk runtime auth configuration: docs/auth/clerk-runtime-config.md
 
-Documentacao da arquitetura do workspace: `docs/architecture/monorepo.md`
-Baseline oficial de ambientes e deploy: `docs/architecture/environments-and-deploy.md`
-Runbook de staging Railway: `docs/architecture/railway-staging.md`
-Configuracao runtime de auth Clerk: `docs/auth/clerk-runtime-config.md`
+Core Stack
+Node.js 22.x LTS
+pnpm 10.x
+Turborepo 2.5.x
+TypeScript 5.8.x
+ESLint 10.x
+Prettier 3.3.0
+Applications
+Mobile: Expo SDK 52
+Admin: Next.js 16.2.x
+API: NestJS 11.x
+ORM: Prisma 7.x
+Database: PostgreSQL 16.13
 
-## Stack base
+Official version source: docs/architecture/version-matrix.md
 
-- Node.js `22.x LTS`
-- pnpm `10.x`
-- Turborepo `2.5.x`
-- TypeScript `5.8.x`
-- ESLint `10.x`
-- Prettier `3.3.0`
-- Mobile: Expo SDK `52`
-- Admin: Next.js `16.2.x`
-- API: NestJS `11.x` + Prisma `7.x` + PostgreSQL `16.13`
+Operating Rules
 
-Fonte oficial de versoes: `docs/architecture/version-matrix.md`
+The project follows a strict execution protocol to preserve technical consistency and reduce rework.
 
-## Regras operacionais importantes
-
-- `backlog.md` e a fonte canonica de status
-- nenhuma task sai de `READY` sem gatilho humano
-- sem `version-matrix` nao ha instalacao segura
-- sem Swagger e Scalar nao ha contrato confiavel para API
-- se a task tocar Prisma, `prisma generate` e obrigatorio antes de `REVIEW` ou `DONE`
-
-## Scripts da raiz
-
-```bash
+backlog.md is the canonical source of execution status
+No task moves out of READY without explicit human approval
+No safe installation or upgrade happens without version-matrix
+No API contract is considered trustworthy without Swagger and Scalar
+If a task touches Prisma, prisma generate is mandatory before REVIEW or DONE
+Root Scripts
 pnpm dev
 pnpm lint
 pnpm format
@@ -71,15 +69,37 @@ pnpm typecheck
 pnpm test
 pnpm build
 pnpm clean
-```
+Current Repository Status
 
-## Estado atual do scaffold
+The repository already includes:
 
-O repositorio ja possui:
+Monorepo foundation
+Shared TypeScript configuration
+Shared ESLint and Prettier configuration
+Central documentation for product, authentication, orders, payments, notifications, testing, and observability
 
-- base do monorepo criada
-- TypeScript compartilhado configurado
-- ESLint e Prettier compartilhados configurados
-- documentacao central de produto, auth, pedidos, pagamentos, notificacoes, testes e observabilidade
+Application and backend implementation continue according to the canonical backlog.
 
-Implementacoes de app e backend ainda seguem o backlog.
+Documentation Index
+Product scope: docs/product/mvp.md
+Order flow: docs/flows/order-flow.md
+Architecture: docs/architecture/monorepo.md
+Environments and deploy: docs/architecture/environments-and-deploy.md
+Staging runbook: docs/architecture/railway-staging.md
+Auth runtime config: docs/auth/clerk-runtime-config.md
+Version matrix: docs/architecture/version-matrix.md
+Development Notes
+
+Before starting any task:
+
+Read AGENTS.md
+Read docs/ops/session-handoff.md
+Read the session recovery instruction
+Read docs/architecture/version-matrix.md
+Read docs/ops/backlog.md
+
+This project uses structured handoff and operational documentation to ensure continuity across sessions and contributors.
+
+Status
+
+The project is currently paused at a validated MVP checkpoint, with the next steps driven only by real product, operational, or business triggers.
