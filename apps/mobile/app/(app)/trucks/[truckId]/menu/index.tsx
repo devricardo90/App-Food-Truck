@@ -56,9 +56,12 @@ export default function MenuScreen() {
 
   if (catalogQuery.isPending) {
     return (
-      <View className="flex-1 items-center justify-center bg-sand px-6">
+      <View className="flex-1 items-center justify-center bg-neutral-50 px-6">
         <Text className="text-lg font-semibold text-ink">
           Carregando cardapio...
+        </Text>
+        <Text className="mt-3 text-center text-sm leading-6 text-neutral-500">
+          Consultando itens disponiveis para pedido no evento ativo.
         </Text>
       </View>
     );
@@ -66,7 +69,7 @@ export default function MenuScreen() {
 
   if (catalogQuery.isError || !catalogQuery.data) {
     return (
-      <View className="flex-1 items-center justify-center bg-sand px-6">
+      <View className="flex-1 items-center justify-center bg-neutral-50 px-6">
         <Text className="text-lg font-semibold text-ink">
           Cardapio indisponivel
         </Text>
@@ -83,27 +86,28 @@ export default function MenuScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-sand"
+      className="flex-1 bg-neutral-50"
       contentContainerClassName="px-6 pb-10 pt-16"
       showsVerticalScrollIndicator={false}
     >
-      <Text className="text-xs font-semibold uppercase tracking-[2px] text-ember">
+      <Text className="text-xs font-semibold uppercase tracking-[2px] text-pine">
         Cardapio
       </Text>
       <Text className="mt-3 text-3xl font-bold text-ink">
         {catalog.foodtruckName}
       </Text>
       <Text className="mt-3 text-base leading-6 text-neutral-600">
-        Itens disponiveis para o pedido do cliente.
+        Itens disponiveis para montar o pedido. Cada item leva ao detalhe e ao
+        carrinho do fluxo validado.
       </Text>
 
       <View className="mt-8 gap-4">
         {catalog.categories.map((category) => (
           <View
-            className="rounded-[24px] border border-amber-950/10 bg-white px-5 py-5 shadow-sm"
+            className="border-t border-neutral-200 pt-5"
             key={category.slug}
           >
-            <Text className="text-xs font-semibold uppercase tracking-[2px] text-ember">
+            <Text className="text-xs font-semibold uppercase tracking-[2px] text-pine">
               {category.name}
             </Text>
             <View className="mt-4 gap-4">
@@ -117,7 +121,7 @@ export default function MenuScreen() {
                     key={item.id}
                   >
                     <Pressable
-                      className="rounded-[20px] bg-stone-50 p-4"
+                      className="rounded-lg border border-neutral-200 bg-white p-4 shadow-sm"
                       onPress={() => {
                         console.log('Mobile catalog item pressed:', {
                           truckSlug: catalog.foodtruckSlug,
@@ -126,19 +130,20 @@ export default function MenuScreen() {
                         });
                       }}
                     >
-                      <Text className="text-base font-medium text-ink">
+                      <Text className="text-base font-semibold text-ink">
                         {item.name}
                       </Text>
-                      <Text className="mt-2 text-sm leading-6 text-neutral-500">
+                      <Text className="mt-2 text-sm leading-6 text-neutral-600">
                         {item.description ?? 'Sem descricao'}
-                        {' | '}
+                      </Text>
+                      <Text className="mt-3 text-sm font-semibold text-neutral-800">
                         {formatPrice(item.price, item.currency)}
-                        {' | '}
+                        {' - '}
                         {item.isAvailable ? 'Disponivel' : 'Pausado'}
                       </Text>
                       {itemImage ? (
                         <Image
-                          className="mt-4 h-40 w-full rounded-[18px]"
+                          className="mt-4 h-40 w-full rounded-lg"
                           resizeMode="cover"
                           source={itemImage}
                         />
@@ -154,7 +159,7 @@ export default function MenuScreen() {
 
       <View className="mt-8">
         <Link asChild href="/(app)/cart">
-          <Pressable className="rounded-full bg-neutral-950 px-4 py-4">
+          <Pressable className="rounded-lg bg-pine px-4 py-4">
             <Text className="text-center text-sm font-semibold text-white">
               Ir para carrinho
             </Text>

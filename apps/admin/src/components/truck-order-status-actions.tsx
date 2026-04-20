@@ -23,7 +23,7 @@ function SubmitButton({ action }: { action: AdminTruckOrderStatusAction }) {
       name="targetStatus"
       value={action.targetStatus}
       disabled={pending}
-      className="rounded-full bg-stone-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-stone-800 disabled:cursor-wait disabled:bg-stone-400"
+      className="rounded-lg bg-stone-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-stone-800 disabled:cursor-wait disabled:bg-stone-400"
     >
       {pending ? 'Atualizando fila...' : action.label}
     </button>
@@ -65,8 +65,8 @@ export function TruckOrderStatusActions({
         <div
           className={
             state.status === 'error'
-              ? 'rounded-[1rem] border border-rose-200 bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-700'
-              : 'rounded-[1rem] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm leading-6 text-emerald-700'
+              ? 'rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm leading-6 text-rose-700'
+              : 'rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm leading-6 text-emerald-700'
           }
         >
           {state.message}

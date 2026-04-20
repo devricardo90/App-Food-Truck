@@ -10,19 +10,22 @@ export default function CartScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-sand"
+      className="flex-1 bg-neutral-50"
       contentContainerClassName="px-6 pb-10 pt-16"
       showsVerticalScrollIndicator={false}
     >
-      <Text className="text-xs font-semibold uppercase tracking-[2px] text-ember">
+      <Text className="text-xs font-semibold uppercase tracking-[2px] text-pine">
         Carrinho
       </Text>
       <Text className="mt-3 text-3xl font-bold text-ink">
         Revisao antes do checkout
       </Text>
+      <Text className="mt-3 text-base leading-6 text-neutral-600">
+        Confirme itens, quantidades e total antes de criar o pedido pendente.
+      </Text>
 
       {hasItems ? (
-        <View className="mt-8 rounded-[28px] border border-amber-950/10 bg-white p-6 shadow-sm">
+        <View className="mt-8 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
           <Text className="text-lg font-semibold text-ink">
             {cart.foodtruckName}
           </Text>
@@ -30,7 +33,7 @@ export default function CartScreen() {
             Um carrinho por barraca durante o MVP.
           </Text>
           {cart.note ? (
-            <View className="mt-4 rounded-[20px] border border-amber-200 bg-amber-50 px-4 py-4">
+            <View className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-4">
               <Text className="text-sm leading-6 text-amber-950">
                 {cart.note}
               </Text>
@@ -40,7 +43,7 @@ export default function CartScreen() {
           <View className="mt-6 gap-4">
             {cart.items.map((item) => (
               <View
-                className="rounded-[20px] border border-stone-200 bg-stone-50 p-4"
+                className="rounded-lg border border-neutral-200 bg-neutral-50 p-4"
                 key={item.id}
               >
                 <Text className="text-base font-medium text-neutral-800">
@@ -52,7 +55,7 @@ export default function CartScreen() {
                 <View className="mt-4 flex-row items-center justify-between">
                   <View className="flex-row items-center gap-3">
                     <Pressable
-                      className="rounded-full border border-neutral-300 px-4 py-2"
+                      className="rounded-lg border border-neutral-300 px-4 py-2"
                       onPress={() => decrementItem(item.id)}
                     >
                       <Text className="text-sm font-semibold text-neutral-700">
@@ -63,7 +66,7 @@ export default function CartScreen() {
                       {item.quantity}x
                     </Text>
                     <Pressable
-                      className="rounded-full border border-neutral-300 px-4 py-2"
+                      className="rounded-lg border border-neutral-300 px-4 py-2"
                       onPress={() => incrementItem(item.id)}
                     >
                       <Text className="text-sm font-semibold text-neutral-700">
@@ -91,7 +94,7 @@ export default function CartScreen() {
           </Text>
         </View>
       ) : (
-        <View className="mt-8 rounded-[28px] border border-amber-950/10 bg-white p-6 shadow-sm">
+        <View className="mt-8 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
           <Text className="text-lg font-semibold text-ink">
             Seu carrinho esta vazio
           </Text>
@@ -105,14 +108,14 @@ export default function CartScreen() {
       <View className="mt-8 gap-3">
         {hasItems ? (
           <Link asChild href="/(app)/checkout">
-            <Text className="rounded-full bg-pine px-4 py-4 text-center text-sm font-semibold text-white">
+            <Text className="rounded-lg bg-pine px-4 py-4 text-center text-sm font-semibold text-white">
               Seguir para checkout
             </Text>
           </Link>
         ) : null}
         {hasItems ? (
           <Pressable
-            className="rounded-full border border-neutral-300 px-4 py-4"
+            className="rounded-lg border border-neutral-300 px-4 py-4"
             onPress={clearCart}
           >
             <Text className="text-center text-sm font-semibold text-neutral-700">
@@ -121,7 +124,7 @@ export default function CartScreen() {
           </Pressable>
         ) : null}
         <Link asChild href="/(app)/(tabs)/trucks">
-          <Text className="rounded-full border border-neutral-300 px-4 py-4 text-center text-sm font-semibold text-neutral-700">
+          <Text className="rounded-lg border border-neutral-300 px-4 py-4 text-center text-sm font-semibold text-neutral-700">
             Voltar para barracas
           </Text>
         </Link>

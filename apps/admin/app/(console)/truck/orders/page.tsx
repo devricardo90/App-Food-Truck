@@ -39,14 +39,14 @@ export default async function TruckOrdersPage() {
       title={queue?.activeFoodtruck.foodtruckName ?? 'Fila de pedidos'}
       description={
         queue
-          ? `Fila operacional real carregada da API para ${queue.activeFoodtruck.foodtruckName}.`
-          : 'Entrada base para lista de pedidos, filtros por estado e acesso ao detalhe operacional.'
+          ? `Fila real em staging para ${queue.activeFoodtruck.foodtruckName}, com transicoes operacionais controladas.`
+          : 'Fila da barraca, contadores por estado e acoes permitidas pelo contrato do pedido.'
       }
       cards={[
         {
           title: 'Aguardando pagamento',
           value: String(queue?.pendingPaymentCount ?? 0),
-          hint: 'Checkouts iniciados, mas ainda fora da fila operacional final.',
+          hint: 'Checkouts criados, ainda fora da operacao da barraca.',
         },
         {
           title: 'Novos',
@@ -67,36 +67,35 @@ export default async function TruckOrdersPage() {
     >
       {queue ? (
         <section className="grid gap-4">
-          <article className="rounded-[1.75rem] border border-stone-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.05)]">
+          <article className="rounded-lg border border-emerald-200 bg-emerald-50 p-6 shadow-[0_18px_50px_rgba(15,23,42,0.05)]">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-700">
-                  Balcao
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-800">
+                  Balcao de retirada
                 </p>
-                <h3 className="mt-2 text-xl font-semibold text-stone-950">
-                  Prontos para retirada
+                <h3 className="mt-2 text-xl font-semibold text-emerald-950">
+                  {queue.readyCount} pedido(s) prontos
                 </h3>
               </div>
-              <span className="rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-800">
-                {queue.readyCount}
+              <span className="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-emerald-900">
+                Staging
               </span>
             </div>
-            <p className="mt-4 text-sm leading-6 text-stone-600">
-              A fila revalida a tela apos cada mutacao. Checkouts em
-              `pending_payment` continuam visiveis nos cards, mas so entram no
-              fluxo operacional quando forem confirmados.
+            <p className="mt-4 text-sm leading-6 text-emerald-900">
+              A tela revalida a fila apos cada mutacao. Pedidos so entram na
+              operacao depois da confirmacao de pagamento.
             </p>
           </article>
 
           {queue.orders.length > 0 ? (
             queue.orders.map((order) => (
               <article
-                className="rounded-[1.75rem] border border-stone-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.05)]"
+                className="rounded-lg border border-stone-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.05)]"
                 key={order.id}
               >
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-700">
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-800">
                       Pedido {order.publicCode}
                     </p>
                     <h3 className="mt-2 text-xl font-semibold text-stone-950">
@@ -111,7 +110,7 @@ export default async function TruckOrdersPage() {
                     </p>
                   </div>
 
-                  <div className="rounded-[1.25rem] bg-stone-50 px-4 py-4 text-right">
+                  <div className="rounded-lg bg-stone-50 px-4 py-4 text-right">
                     <p className="text-xs font-semibold uppercase tracking-[0.22em] text-stone-500">
                       Total
                     </p>
@@ -133,13 +132,13 @@ export default async function TruckOrdersPage() {
               </article>
             ))
           ) : hasOperationalOrders ? (
-            <article className="rounded-[1.75rem] border border-amber-200 bg-amber-50 p-6 text-sm leading-6 text-amber-950 shadow-[0_18px_50px_rgba(15,23,42,0.05)]">
+            <article className="rounded-lg border border-amber-200 bg-amber-50 p-6 text-sm leading-6 text-amber-950 shadow-[0_18px_50px_rgba(15,23,42,0.05)]">
               A fila retornou contadores operacionais, mas nenhum pedido foi
               listado. Recarregue a tela ou repita a consulta para confirmar a
               consistencia da fila.
             </article>
           ) : (
-            <article className="rounded-[1.75rem] border border-stone-200 bg-white p-6 text-sm leading-6 text-stone-600 shadow-[0_18px_50px_rgba(15,23,42,0.05)]">
+            <article className="rounded-lg border border-stone-200 bg-white p-6 text-sm leading-6 text-stone-600 shadow-[0_18px_50px_rgba(15,23,42,0.05)]">
               Nenhum pedido operacional foi encontrado para a barraca neste
               momento. Quando novos pedidos entrarem em `new`, `in_progress` ou
               `ready`, as acoes aparecerao aqui.
@@ -147,7 +146,7 @@ export default async function TruckOrdersPage() {
           )}
         </section>
       ) : (
-        <section className="rounded-[1.75rem] border border-amber-200 bg-amber-50 p-6 text-sm leading-6 text-amber-950">
+        <section className="rounded-lg border border-amber-200 bg-amber-50 p-6 text-sm leading-6 text-amber-950">
           <p className="font-semibold">
             {activeFoodtruck
               ? `Nao foi possivel carregar a fila real de pedidos para ${activeFoodtruck.foodtruckName}.`

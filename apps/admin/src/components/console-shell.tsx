@@ -21,7 +21,7 @@ export function ConsoleShell({
 }: ConsoleShellProps) {
   return (
     <section className="space-y-6">
-      <div className="rounded-[2rem] border border-stone-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
+      <div className="rounded-lg border border-stone-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-700">
           {eyebrow}
         </p>
@@ -36,7 +36,7 @@ export function ConsoleShell({
       <div className="grid gap-4 xl:grid-cols-3">
         {cards.map((card) => (
           <article
-            className="rounded-[1.75rem] border border-stone-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.05)]"
+            className="rounded-lg border border-stone-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.05)]"
             key={card.title}
           >
             <p className="text-sm font-medium text-stone-500">{card.title}</p>

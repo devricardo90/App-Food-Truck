@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Link, useRouter } from 'expo-router';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
+import { withClerkApiToken } from '../../src/lib/clerk-api-token';
 import { formatPrice } from '../../src/lib/foodtrucks-api';
 import { createPendingOrder, OrdersApiError } from '../../src/lib/orders-api';
 import { useCart } from '../../src/providers/cart-provider';
@@ -13,34 +14,26 @@ export default function CheckoutScreen() {
   const { getToken } = useAuth();
   const { cart } = useCart();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const clerkJwtTemplate =
-    process.env.EXPO_PUBLIC_CLERK_JWT_TEMPLATE?.trim() || undefined;
 
   const createOrderMutation = useMutation({
     mutationFn: async () => {
-      const token = await getToken(
-        clerkJwtTemplate ? { template: clerkJwtTemplate } : undefined,
-      );
-
-      if (!token) {
-        throw new Error(
-          'A sessao ativa nao retornou bearer token para criar o pedido.',
-        );
-      }
-
       if (!cart.foodtruckSlug || cart.items.length === 0) {
         throw new Error(
           'Adicione itens ao carrinho antes de iniciar o checkout.',
         );
       }
 
-      return createPendingOrder(token, {
-        foodtruckSlug: cart.foodtruckSlug,
-        items: cart.items.map((item) => ({
-          menuItemId: item.id,
-          quantity: item.quantity,
-        })),
-      });
+      const foodtruckSlug = cart.foodtruckSlug;
+
+      return withClerkApiToken(getToken, (token) =>
+        createPendingOrder(token, {
+          foodtruckSlug,
+          items: cart.items.map((item) => ({
+            menuItemId: item.id,
+            quantity: item.quantity,
+          })),
+        }),
+      );
     },
     onSuccess: (order) => {
       console.log('Mobile checkout create order success:', {
@@ -71,30 +64,29 @@ export default function CheckoutScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-sand"
+      className="flex-1 bg-neutral-50"
       contentContainerClassName="px-6 pb-10 pt-16"
       showsVerticalScrollIndicator={false}
     >
-      <Text className="text-xs font-semibold uppercase tracking-[2px] text-ember">
+      <Text className="text-xs font-semibold uppercase tracking-[2px] text-pine">
         Checkout
       </Text>
       <Text className="mt-3 text-3xl font-bold text-ink">
         Confirmacao final do pedido
       </Text>
       <Text className="mt-3 text-base leading-6 text-neutral-600">
-        Esta tela cria o pedido em `pending_payment` e delega a confirmacao
-        controlada para a etapa seguinte do fluxo mock.
+        Esta etapa cria o pedido em pending_payment e preserva o handoff
+        validado antes da entrada na fila da barraca.
       </Text>
 
-      <View className="mt-8 rounded-[28px] border border-amber-950/10 bg-white p-6 shadow-sm">
+      <View className="mt-8 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
         {hasItems ? (
           <>
             <Text className="text-lg font-semibold text-ink">
               {cart.foodtruckName}
             </Text>
             <Text className="mt-2 text-sm text-neutral-500">
-              Pedido criado como `pending_payment` ate a confirmacao controlada
-              do backend na etapa de pagamento.
+              O backend continua como autoridade do estado do pedido.
             </Text>
             <View className="mt-6 gap-3">
               {cart.items.map((item) => (
@@ -127,7 +119,7 @@ export default function CheckoutScreen() {
       </View>
 
       {errorMessage ? (
-        <View className="mt-6 rounded-[20px] border border-rose-200 bg-rose-50 px-4 py-4">
+        <View className="mt-6 rounded-lg border border-rose-200 bg-rose-50 px-4 py-4">
           <Text className="text-sm leading-6 text-rose-900">
             {errorMessage}
           </Text>
@@ -136,7 +128,7 @@ export default function CheckoutScreen() {
 
       <View className="mt-8 gap-3">
         <Pressable
-          className={`rounded-full px-4 py-4 ${
+          className={`rounded-lg px-4 py-4 ${
             hasItems && !createOrderMutation.isPending
               ? 'bg-pine'
               : 'bg-stone-300'
@@ -154,7 +146,7 @@ export default function CheckoutScreen() {
           </Text>
         </Pressable>
         <Link asChild href="/(app)/cart">
-          <Text className="rounded-full border border-neutral-300 px-4 py-4 text-center text-sm font-semibold text-neutral-700">
+          <Text className="rounded-lg border border-neutral-300 px-4 py-4 text-center text-sm font-semibold text-neutral-700">
             Voltar ao carrinho
           </Text>
         </Link>

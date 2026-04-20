@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link, useLocalSearchParams } from 'expo-router';
 import { ScrollView, Text, View } from 'react-native';
 
+import { withClerkApiToken } from '../../../src/lib/clerk-api-token';
 import { formatPrice } from '../../../src/lib/foodtrucks-api';
 import { fetchOrderById } from '../../../src/lib/orders-api';
 import {
@@ -15,21 +16,17 @@ import {
 export default function OrderDetailScreen() {
   const { getToken } = useAuth();
   const { orderId } = useLocalSearchParams<{ orderId: string }>();
-  const clerkJwtTemplate =
-    process.env.EXPO_PUBLIC_CLERK_JWT_TEMPLATE?.trim() || undefined;
   const orderQuery = useQuery({
     queryKey: ['order-detail', orderId],
     enabled: Boolean(orderId),
     queryFn: async () => {
-      const token = await getToken(
-        clerkJwtTemplate ? { template: clerkJwtTemplate } : undefined,
-      );
-
-      if (!token || !orderId) {
+      if (!orderId) {
         throw new Error('Nao foi possivel autenticar a consulta do pedido.');
       }
 
-      return fetchOrderById(token, orderId);
+      return withClerkApiToken(getToken, (token) =>
+        fetchOrderById(token, orderId),
+      );
     },
     refetchInterval: (query) =>
       query.state.data
@@ -40,7 +37,7 @@ export default function OrderDetailScreen() {
 
   if (orderQuery.isPending) {
     return (
-      <View className="flex-1 items-center justify-center bg-sand px-6">
+      <View className="flex-1 items-center justify-center bg-neutral-50 px-6">
         <Text className="text-lg font-semibold text-ink">
           Carregando pedido...
         </Text>
@@ -50,7 +47,7 @@ export default function OrderDetailScreen() {
 
   if (orderQuery.isError || !orderQuery.data) {
     return (
-      <View className="flex-1 items-center justify-center bg-sand px-6">
+      <View className="flex-1 items-center justify-center bg-neutral-50 px-6">
         <Text className="text-lg font-semibold text-ink">
           Pedido nao encontrado
         </Text>
@@ -69,18 +66,18 @@ export default function OrderDetailScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-sand"
+      className="flex-1 bg-neutral-50"
       contentContainerClassName="px-6 pb-10 pt-16"
       showsVerticalScrollIndicator={false}
     >
-      <Text className="text-xs font-semibold uppercase tracking-[2px] text-ember">
+      <Text className="text-xs font-semibold uppercase tracking-[2px] text-pine">
         Pedido
       </Text>
       <Text className="mt-3 text-3xl font-bold text-ink">
         {order.publicCode}
       </Text>
       <View
-        className={`mt-6 rounded-[28px] border px-5 py-5 shadow-sm ${statusTone.panel}`}
+        className={`mt-6 rounded-lg border px-5 py-5 shadow-sm ${statusTone.panel}`}
       >
         <Text className="text-sm uppercase tracking-[1.5px] text-neutral-500">
           Status atual
@@ -97,7 +94,7 @@ export default function OrderDetailScreen() {
         </Text>
       </View>
 
-      <View className="mt-8 rounded-[28px] border border-amber-950/10 bg-white p-6 shadow-sm">
+      <View className="mt-8 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
         <Text className="text-sm uppercase tracking-[1.5px] text-neutral-500">
           Linha do tempo
         </Text>
@@ -125,7 +122,7 @@ export default function OrderDetailScreen() {
         </View>
       </View>
 
-      <View className="mt-8 rounded-[28px] border border-amber-950/10 bg-white p-6 shadow-sm">
+      <View className="mt-8 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
         <Text className="text-sm uppercase tracking-[1.5px] text-neutral-500">
           Resumo
         </Text>
@@ -154,7 +151,7 @@ export default function OrderDetailScreen() {
 
       <View className="mt-8 gap-3">
         <Link asChild href="/(app)/(tabs)/orders">
-          <Text className="rounded-full border border-neutral-300 px-4 py-4 text-center text-sm font-semibold text-neutral-700">
+          <Text className="rounded-lg border border-neutral-300 px-4 py-4 text-center text-sm font-semibold text-neutral-700">
             Voltar ao historico
           </Text>
         </Link>

@@ -3716,3 +3716,67 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - nao abrir nova `READY` automaticamente apos o fechamento
   - fazer retriagem curta antes de qualquer nova frente
   - producao, loja, iOS, EAS Submit, EAS Update, CI/CD mobile e rollout amplo seguem fora de escopo sem demanda concreta
+
+---
+
+## FT-092 - Polir experiencia demonstravel do fluxo validado para portfolio
+
+- **Skill dona:** `ui-ux-pro-max`
+- **Status:** `REVIEW`
+- **Fluxo critico:** `nao`
+- **Descricao:** Aplicar um polish visual e operacional pequeno nas telas centrais do fluxo ja validado, aumentando o valor do projeto como portfolio profissional sem expandir dominio, pagamento, auth, schema ou distribuicao.
+- **Dependencias:** `FT-091`
+- **Gatilho real em:** `2026-04-20`
+  - decisao explicita do owner de evoluir o MVP validado como ativo de portfolio profissional
+  - objetivo limitado a melhorar apresentacao, hierarquia, copy, estados e consistencia do fluxo demonstravel
+- **Objetivo:**
+  - deixar o fluxo validado mais apresentavel para GitHub, screenshots e recrutadores
+  - melhorar hierarquia visual, spacing, copy operacional, feedback de loading/erro e consistencia de cards/botoes
+  - manter staging como ambiente de referencia
+- **Escopo aprovado:**
+  - mobile: descoberta, detalhe da barraca, cardapio, detalhe do item, carrinho, checkout, pagamento pendente e detalhe do pedido
+  - admin: fila de pedidos da barraca, acoes de transicao e shell de console usado pelos cards
+  - evidencia visual antes/depois quando o ambiente autenticado permitir
+  - correcao da divergencia documental de `FT-091` em `docs/ops/status.md`
+- **Fora de escopo:**
+  - pagamento real
+  - multi-truck avancado
+  - producao
+  - loja
+  - iOS
+  - EAS Submit
+  - EAS Update
+  - CI/CD
+  - observabilidade estrutural
+  - auth estrutural
+  - mudanca de schema
+  - nova regra de dominio
+  - refatoracao ampla
+  - novas dependencias criticas sem task propria
+- **Criterios de aceite:**
+  - screenshots antes/depois das telas tocadas
+  - fluxo principal continua navegavel contra staging
+  - `pnpm --filter @foodtrucks/mobile run typecheck` passa
+  - `pnpm --filter @foodtrucks/admin run typecheck` passa
+  - testes existentes das areas tocadas passam
+  - backlog canonico atualizado
+  - divergencia documental de `FT-091` corrigida ou explicitamente registrada
+- **Execucao iniciada em:** `2026-04-20`
+  - polish mobile aplicado em descoberta, detalhe, cardapio, item, carrinho, checkout, pagamento pendente e detalhe do pedido
+  - polish admin aplicado na fila operacional da barraca, acoes de transicao e shell de console
+  - os ajustes foram limitados a UI/copy/feedback visual, sem alterar contratos, dominio, auth, schema ou pagamentos
+  - a divergencia documental de `FT-091` foi corrigida em `docs/ops/status.md`, priorizando `backlog.md` como fonte canonica
+- **Validacoes em:** `2026-04-20`
+  - `pnpm.cmd --filter @foodtrucks/mobile run typecheck`: PASS
+  - `pnpm.cmd --filter @foodtrucks/admin run typecheck`: PASS
+  - `pnpm.cmd --filter @foodtrucks/mobile run test`: PASS
+  - `pnpm.cmd --filter @foodtrucks/admin run test`: PASS
+- **Evidencia visual em:** `2026-04-20`
+  - antes: screenshots existentes do fluxo mobile foram preservados em `docs/quality/ft-092/`
+  - depois: capturas foram tentadas com Expo web e emulador Android
+  - bloqueio residual: as telas autenticadas tocadas nao puderam ser capturadas em estado final porque o mobile falhou em `/auth/me` com `Network request failed`
+  - admin local tambem nao gerou screenshot porque o binario local de Next nao esta materializado em `apps/admin/node_modules/next/dist/bin/next`
+  - detalhes registrados em `docs/quality/ft-092/evidence.md`
+- **Status de revisao:**
+  - a task nao vira `DONE` nesta rodada porque falta a evidencia visual depois das telas autenticadas tocadas
+  - manter em `REVIEW` ate capturar screenshots depois em ambiente autenticado funcional

@@ -4,6 +4,7 @@ import { Link, useLocalSearchParams } from 'expo-router';
 import { useEffect } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
+import { withClerkApiToken } from '../../../src/lib/clerk-api-token';
 import { formatPrice } from '../../../src/lib/foodtrucks-api';
 import {
   confirmMockPayment,
@@ -21,22 +22,18 @@ export default function PaymentPendingScreen() {
   const { getToken } = useAuth();
   const { clearCart } = useCart();
   const { orderId } = useLocalSearchParams<{ orderId?: string }>();
-  const clerkJwtTemplate =
-    process.env.EXPO_PUBLIC_CLERK_JWT_TEMPLATE?.trim() || undefined;
 
   const orderQuery = useQuery({
     queryKey: ['checkout-order', orderId],
     enabled: Boolean(orderId),
     queryFn: async () => {
-      const token = await getToken(
-        clerkJwtTemplate ? { template: clerkJwtTemplate } : undefined,
-      );
-
-      if (!token || !orderId) {
+      if (!orderId) {
         throw new Error('Nao foi possivel autenticar a reconsulta do pedido.');
       }
 
-      return fetchOrderById(token, orderId);
+      return withClerkApiToken(getToken, (token) =>
+        fetchOrderById(token, orderId),
+      );
     },
     refetchInterval: (query) =>
       query.state.data
@@ -47,17 +44,15 @@ export default function PaymentPendingScreen() {
 
   const confirmPaymentMutation = useMutation({
     mutationFn: async () => {
-      const token = await getToken(
-        clerkJwtTemplate ? { template: clerkJwtTemplate } : undefined,
-      );
-
-      if (!token || !orderId) {
+      if (!orderId) {
         throw new Error(
           'Nao foi possivel autenticar a confirmacao do pagamento mock.',
         );
       }
 
-      return confirmMockPayment(token, orderId);
+      return withClerkApiToken(getToken, (token) =>
+        confirmMockPayment(token, orderId),
+      );
     },
     onSuccess: (order) => {
       console.log('Mobile confirm mock payment success:', {
@@ -108,11 +103,11 @@ export default function PaymentPendingScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-sand"
+      className="flex-1 bg-neutral-50"
       contentContainerClassName="px-6 pb-10 pt-16"
       showsVerticalScrollIndicator={false}
     >
-      <Text className="text-xs font-semibold uppercase tracking-[2px] text-ember">
+      <Text className="text-xs font-semibold uppercase tracking-[2px] text-pine">
         Pagamento
       </Text>
       <Text className="mt-3 text-3xl font-bold text-ink">
@@ -123,7 +118,7 @@ export default function PaymentPendingScreen() {
         pedido para a fila operacional da barraca.
       </Text>
 
-      <View className="mt-8 rounded-[28px] border border-amber-950/10 bg-white p-6 shadow-sm">
+      <View className="mt-8 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
         {!orderId ? (
           <Text className="text-sm leading-6 text-neutral-600">
             Nenhum pedido real foi informado para esta etapa.
@@ -134,8 +129,8 @@ export default function PaymentPendingScreen() {
           </Text>
         ) : confirmPaymentMutation.isPending ? (
           <Text className="text-sm leading-6 text-neutral-600">
-            Confirmando pagamento mock e promovendo o pedido para a fila da
-            barraca...
+            Confirmando pagamento mock e enviando o pedido para a fila da
+            barraca.
           </Text>
         ) : orderQuery.isError ? (
           <Text className="text-sm leading-6 text-rose-900">
@@ -165,7 +160,7 @@ export default function PaymentPendingScreen() {
               )}
             </Text>
             <Text className="mt-2 text-sm text-neutral-500">
-              Payment provider: {orderQuery.data.payment.provider} | status:{' '}
+              Provedor: {orderQuery.data.payment.provider} - status:{' '}
               {orderQuery.data.payment.status}
             </Text>
             {confirmPaymentMutation.isError ? (
@@ -182,7 +177,7 @@ export default function PaymentPendingScreen() {
       <View className="mt-8 gap-3">
         {orderId && confirmPaymentMutation.isError ? (
           <Pressable
-            className="rounded-full bg-pine px-4 py-4"
+            className="rounded-lg bg-pine px-4 py-4"
             onPress={() => confirmPaymentMutation.mutate()}
           >
             <Text className="text-center text-sm font-semibold text-white">
@@ -194,12 +189,12 @@ export default function PaymentPendingScreen() {
           asChild
           href={orderId ? `/(app)/orders/${orderId}` : '/(app)/(tabs)/orders'}
         >
-          <Text className="rounded-full bg-pine px-4 py-4 text-center text-sm font-semibold text-white">
+          <Text className="rounded-lg bg-pine px-4 py-4 text-center text-sm font-semibold text-white">
             Reconsultar pedido
           </Text>
         </Link>
         <Link asChild href="/(app)/cart">
-          <Text className="rounded-full border border-neutral-300 px-4 py-4 text-center text-sm font-semibold text-neutral-700">
+          <Text className="rounded-lg border border-neutral-300 px-4 py-4 text-center text-sm font-semibold text-neutral-700">
             Voltar ao carrinho
           </Text>
         </Link>

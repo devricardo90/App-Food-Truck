@@ -52,7 +52,7 @@ export default function TruckDetailScreen() {
 
   if (truckQuery.isPending) {
     return (
-      <View className="flex-1 items-center justify-center bg-sand px-6">
+      <View className="flex-1 items-center justify-center bg-neutral-50 px-6">
         <Text className="text-lg font-semibold text-ink">
           Carregando barraca...
         </Text>
@@ -62,7 +62,7 @@ export default function TruckDetailScreen() {
 
   if (truckQuery.isError || !truckQuery.data) {
     return (
-      <View className="flex-1 items-center justify-center bg-sand px-6">
+      <View className="flex-1 items-center justify-center bg-neutral-50 px-6">
         <Text className="text-lg font-semibold text-ink">
           Barraca nao encontrada
         </Text>
@@ -81,17 +81,17 @@ export default function TruckDetailScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-sand"
+      className="flex-1 bg-neutral-50"
       contentContainerClassName="px-6 pb-10 pt-16"
       showsVerticalScrollIndicator={false}
     >
-      <Text className="text-xs font-semibold uppercase tracking-[2px] text-ember">
+      <Text className="text-xs font-semibold uppercase tracking-[2px] text-pine">
         Barraca
       </Text>
 
       {heroImage ? (
         <Image
-          className="mt-6 h-52 w-full rounded-[28px]"
+          className="mt-6 h-52 w-full rounded-lg"
           resizeMode="cover"
           source={heroImage}
         />
@@ -100,7 +100,7 @@ export default function TruckDetailScreen() {
       <View className="mt-6 flex-row items-center gap-4">
         {logoImage ? (
           <Image
-            className="h-16 w-16 rounded-[20px] bg-white"
+            className="h-16 w-16 rounded-lg bg-white"
             resizeMode="contain"
             source={logoImage}
           />
@@ -119,13 +119,20 @@ export default function TruckDetailScreen() {
         {truck.description ?? 'Sem descricao cadastrada para esta barraca.'}
       </Text>
 
-      <View className="mt-8 rounded-[28px] border border-amber-950/10 bg-white p-6 shadow-sm">
-        <Text className="text-sm uppercase tracking-[1.5px] text-neutral-500">
-          Status
-        </Text>
-        <Text className="mt-2 text-xl font-semibold text-ink">
-          {truck.acceptsOrders ? 'Aceitando pedidos' : 'Pedidos pausados'}
-        </Text>
+      <View className="mt-8 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
+        <View className="flex-row items-center justify-between gap-4">
+          <View className="flex-1">
+            <Text className="text-sm uppercase tracking-[1.5px] text-neutral-500">
+              Status
+            </Text>
+            <Text className="mt-2 text-xl font-semibold text-ink">
+              {truck.acceptsOrders ? 'Aceitando pedidos' : 'Pedidos pausados'}
+            </Text>
+          </View>
+          <Text className="rounded-lg bg-emerald-50 px-3 py-2 text-xs font-semibold uppercase tracking-[1.5px] text-emerald-800">
+            Staging
+          </Text>
+        </View>
         <Text className="mt-4 text-sm text-neutral-500">
           Evento ativo: {truck.eventName}
         </Text>
@@ -151,7 +158,7 @@ export default function TruckDetailScreen() {
       <View className="mt-8 gap-3">
         <Link asChild href={`/(app)/trucks/${truck.slug}/menu`}>
           <Pressable
-            className="rounded-full bg-pine px-4 py-4"
+            className="rounded-lg bg-pine px-4 py-4"
             onPress={() => {
               console.log('Mobile truck detail open catalog:', {
                 truckSlug: truck.slug,
@@ -165,7 +172,7 @@ export default function TruckDetailScreen() {
           </Pressable>
         </Link>
         <Link asChild href="/(app)/(tabs)/trucks">
-          <Pressable className="rounded-full border border-neutral-300 px-4 py-4">
+          <Pressable className="rounded-lg border border-neutral-300 px-4 py-4">
             <Text className="text-center text-sm font-semibold text-neutral-700">
               Voltar para barracas
             </Text>

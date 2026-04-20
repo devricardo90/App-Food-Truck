@@ -27,7 +27,7 @@ export default function MenuItemDetailScreen() {
 
   if (catalogQuery.isPending) {
     return (
-      <View className="flex-1 items-center justify-center bg-sand px-6">
+      <View className="flex-1 items-center justify-center bg-neutral-50 px-6">
         <Text className="text-lg font-semibold text-ink">
           Carregando item...
         </Text>
@@ -37,7 +37,7 @@ export default function MenuItemDetailScreen() {
 
   if (catalogQuery.isError || !catalogQuery.data || !item) {
     return (
-      <View className="flex-1 items-center justify-center bg-sand px-6">
+      <View className="flex-1 items-center justify-center bg-neutral-50 px-6">
         <Text className="text-lg font-semibold text-ink">
           Item indisponivel
         </Text>
@@ -56,8 +56,8 @@ export default function MenuItemDetailScreen() {
     Boolean(cart.foodtruckSlug) && cart.foodtruckSlug !== catalog.foodtruckSlug;
 
   return (
-    <View className="flex-1 bg-sand px-6 pt-16">
-      <Text className="text-xs font-semibold uppercase tracking-[2px] text-ember">
+    <View className="flex-1 bg-neutral-50 px-6 pt-16">
+      <Text className="text-xs font-semibold uppercase tracking-[2px] text-pine">
         Item
       </Text>
       <Text className="mt-3 text-3xl font-bold text-ink">{item.name}</Text>
@@ -67,13 +67,13 @@ export default function MenuItemDetailScreen() {
 
       {itemImage ? (
         <Image
-          className="mt-6 h-56 w-full rounded-[28px]"
+          className="mt-6 h-56 w-full rounded-lg"
           resizeMode="cover"
           source={itemImage}
         />
       ) : null}
 
-      <View className="mt-8 rounded-[28px] border border-amber-950/10 bg-white p-6 shadow-sm">
+      <View className="mt-8 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
         <Text className="text-sm uppercase tracking-[1.5px] text-neutral-500">
           Preco
         </Text>
@@ -87,7 +87,7 @@ export default function MenuItemDetailScreen() {
 
       <View className="mt-8 gap-3">
         <Pressable
-          className="rounded-full bg-pine px-4 py-4"
+          className="rounded-lg bg-pine px-4 py-4"
           onPress={() => {
             console.log('Mobile cart add item:', {
               foodtruckSlug: catalog.foodtruckSlug,
@@ -112,13 +112,13 @@ export default function MenuItemDetailScreen() {
           </Text>
         </Pressable>
         {willReplaceCart ? (
-          <Text className="text-sm leading-6 text-amber-900">
+          <Text className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
             O MVP aceita um carrinho por barraca. Adicionar este item substitui
             os itens atuais.
           </Text>
         ) : null}
         <Link asChild href={`/(app)/trucks/${catalog.foodtruckSlug}/menu`}>
-          <Text className="rounded-full border border-neutral-300 px-4 py-4 text-center text-sm font-semibold text-neutral-700">
+          <Text className="rounded-lg border border-neutral-300 px-4 py-4 text-center text-sm font-semibold text-neutral-700">
             Voltar ao cardapio
           </Text>
         </Link>
