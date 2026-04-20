@@ -1,4 +1,6 @@
-type ClerkGetToken = (options?: { template?: string }) => Promise<string | null>;
+type ClerkGetToken = (options?: {
+  template?: string;
+}) => Promise<string | null>;
 
 type ClerkTokenSource = {
   label: 'template' | 'session';
