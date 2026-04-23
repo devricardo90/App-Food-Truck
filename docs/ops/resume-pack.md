@@ -2,11 +2,14 @@
 
 ## O que e este projeto
 
-Aplicacao de operacao e consumo no contexto Foodtrucks, com fluxo mobile para cliente e painel/admin operacional para barraca, validada contra `staging`.
+Aplicacao de operacao e consumo no contexto Foodtrucks, com fluxo mobile para
+cliente e painel/admin operacional para barraca, validada contra `staging`.
 
 ## Objetivo atual
 
-Checkpoint fechado apos validar o pipeline minimo de build Android distribuivel do mobile com EAS Build, mantendo o app apontado para `staging` e sem abrir producao, loja ou rollout amplo.
+Retomar o projeto a partir do backlog canonico apos o fechamento documental e
+operacional da `FT-092`, sem abrir novo escopo fora da priorizacao do Protocolo
+Rick.
 
 ## Stack aprovada
 
@@ -21,14 +24,11 @@ Checkpoint fechado apos validar o pipeline minimo de build Android distribuivel 
 ## Estado operacional
 
 * Task ativa: nenhuma
-* Ultima task concluida: `FT-091 - Preparar pipeline minimo de build distribuivel do mobile`
-* Status atual: checkpoint fechado; `FT-091 = DONE` no backlog canonico
-* Bloqueado?: nao
-* Proximo passo: fazer retriagem curta antes de qualquer nova frente; nao abrir nova `READY` automaticamente
-* Evidencia final: build Android interna gerada com sucesso via EAS, link/QR disponivel, app baixado e instalado no emulador, app iniciado com sucesso
-* Causa do bloqueio anterior: Node incompatibilidade com `prisma preinstall` no builder remoto durante `Install dependencies`
-* Correcao validada: fixar `node: "22.12.0"` no profile `preview-staging`
-* Runbook EAS: validado na pratica
+* Status atual: sem execucao de produto aberta apos o fechamento da `FT-092`
+* Ultima task concluida: `FT-092 - Polir experiencia demonstravel do fluxo validado para portfolio`
+* Bloqueado?: nao para a FT-092; pendencias remanescentes fora do recorte continuam documentadas
+* Proximo passo: reler `backlog.md` e decidir a proxima frente somente pelo backlog canonico
+* Validado nesta retomada: `typecheck` e `test` de mobile/admin; admin local `200` em `localhost:3010`; Expo local ouvindo em `8085` fora do sandbox; owner confirmou mobile contra `staging` ate checkout apos a correcao do CTA
 
 ## Regras criticas
 
@@ -51,9 +51,8 @@ Checkpoint fechado apos validar o pipeline minimo de build Android distribuivel 
 * O backlog canonico atual esta em `backlog.md` na raiz.
 * `docs/ops/backlog.md` e apenas um ponteiro operacional; nao duplica nem substitui o backlog canonico.
 * `status.md` nao e fonte de verdade; serve apenas como resumo executivo manual.
-* `FT-091` foi aberta por decisao explicita do owner para avancar EAS Build.
-* `FT-091` esta `DONE` porque houve build bem-sucedida, instalacao e inicializacao no emulador, e runbook validado.
-* A causa objetiva do bloqueio anterior foi incompatibilidade de Node remoto com `prisma preinstall`.
-* O mobile contra `staging` ja estava formalizado via `Expo Go` em `LAN`; agora tambem ha build Android interna/controlada com EAS validada.
-* Sem nova demanda concreta, nao abrir frente para loja, producao, iOS, EAS Submit, EAS Update, CI/CD mobile ou rollout amplo.
-* O contexto operacional de staging aprovado para o fluxo remoto foi alinhado para `funky-chicken`.
+* O workaround confirmado do admin continua sendo `node ..\\..\\node_modules\\next\\dist\\bin\\next dev --hostname 127.0.0.1 --port 3010` em `apps/admin`.
+* `pnpm --filter @foodtrucks/admin exec next ...` continua quebrado por junction invalido em `apps/admin/node_modules/next`.
+* `next dev` e `expo start` batem `spawn EPERM` no sandbox; runtime precisa ser revalidado fora do sandbox.
+* O mobile ja tem `.env` local alinhado para `https://foodtrucks-api-staging-staging.up.railway.app`.
+* A FT-092 ja foi fechada; qualquer reabertura exige evidencia real de regressao no fluxo validado.

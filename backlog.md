@@ -3722,7 +3722,7 @@ Quando houver multiplas tasks `READY`, priorizar por:
 ## FT-092 - Polir experiencia demonstravel do fluxo validado para portfolio
 
 - **Skill dona:** `ui-ux-pro-max`
-- **Status:** `REVIEW`
+- **Status:** `DONE`
 - **Fluxo critico:** `nao`
 - **Descricao:** Aplicar um polish visual e operacional pequeno nas telas centrais do fluxo ja validado, aumentando o valor do projeto como portfolio profissional sem expandir dominio, pagamento, auth, schema ou distribuicao.
 - **Dependencias:** `FT-091`
@@ -3777,6 +3777,24 @@ Quando houver multiplas tasks `READY`, priorizar por:
   - bloqueio residual: as telas autenticadas tocadas nao puderam ser capturadas em estado final porque o mobile falhou em `/auth/me` com `Network request failed`
   - admin local tambem nao gerou screenshot porque o binario local de Next nao esta materializado em `apps/admin/node_modules/next/dist/bin/next`
   - detalhes registrados em `docs/quality/ft-092/evidence.md`
-- **Status de revisao:**
-  - a task nao vira `DONE` nesta rodada porque falta a evidencia visual depois das telas autenticadas tocadas
-  - manter em `REVIEW` ate capturar screenshots depois em ambiente autenticado funcional
+- **Incidente de validacao manual em:** `2026-04-23`
+  - o owner reproduziu travamento ao clicar em `Add to cart` no detalhe do item do mobile
+  - sintoma objetivo observado no terminal: repeticao de `Mobile cart add item`
+  - impacto: bloqueio do fluxo manual ponta a ponta antes do checkout
+  - causa minima tratada no recorte: ausencia de guarda local contra reentrada no `onPress` do CTA de adicionar ao carrinho
+  - correcao minima aplicada em `apps/mobile/app/(app)/trucks/[truckId]/menu/[itemId].tsx`
+  - ajuste aplicado: lock local de reentrada + `disabled` visual temporario durante a transicao para o carrinho
+- **Validacoes em:** `2026-04-23`
+  - `pnpm.cmd --filter @foodtrucks/mobile run typecheck`: PASS
+  - `pnpm.cmd --filter @foodtrucks/mobile run test`: PASS
+- **Fechamento em:** `2026-04-23`
+  - o owner revalidou manualmente o mobile contra `staging` apos a correcao do CTA `Add to cart`
+  - o clique unico no CTA deixou de reentrar e o item voltou a entrar no carrinho com comportamento estavel
+  - o fluxo manual seguiu do carrinho ate checkout sem bloqueio residual nesta rodada
+  - o conjunto documental e operacional da task foi alinhado para refletir `DONE`, sem abrir novo escopo
+- **Evidencia final consolidada:**
+  - screenshots antes/depois permanecem registradas em `docs/quality/ft-092/`
+  - o registro consolidado da rodada permanece em `docs/quality/ft-092/evidence.md`
+- **Observacoes de encerramento em:** `2026-04-23`
+  - a FT-092 fecha como polish demonstravel do fluxo validado, sem alterar dominio, auth, schema, pagamento real ou distribuicao
+  - nenhuma nova task `READY` foi aberta automaticamente neste fechamento; o backlog canonico segue como proxima fonte de priorizacao

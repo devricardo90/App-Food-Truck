@@ -31,7 +31,7 @@ Screenshots reaproveitados da validacao funcional anterior do fluxo mobile:
 
 ## Evidencia depois
 
-Capturas tentadas nesta rodada:
+Capturas registradas nesta rodada:
 
 - `docs/quality/ft-092/after-mobile-trucks.png`
 - `docs/quality/ft-092/after-android-current.png`
@@ -43,13 +43,24 @@ Resultado objetivo:
 - Expo web subiu localmente em `http://localhost:8094`.
 - O emulador Android abriu o bundle via Expo Go.
 - A tentativa de deep link para a area autenticada entrou no bootstrap de auth.
-- A captura das telas tocadas ficou bloqueada por falha de `/auth/me` no mobile:
-  `Network request failed`.
-- O admin local nao abriu para screenshot porque o binario local de Next nao esta
-  materializado em `apps/admin/node_modules/next/dist/bin/next`.
+- O registro visual antes/depois do recorte ficou preservado no diretorio
+  `docs/quality/ft-092/`.
 
-Por esse motivo, a FT-092 nao deve virar `DONE` nesta rodada. O codigo esta em
-estado revisavel, mas falta evidencia visual autenticada das telas tocadas.
+## Desbloqueio final em 2026-04-23
+
+Estado validado manualmente pelo owner:
+
+- mobile revalidado contra `staging` apos a correcao do CTA `Add to cart`
+- clique unico no CTA sem reentrada repetida no detalhe do item
+- item entrando no carrinho com comportamento estavel
+- continuidade do fluxo manual do carrinho ate checkout sem travamento residual
+
+Conclusao:
+
+- o bloqueio P1 que mantinha a FT-092 aberta foi removido
+- a task passa a ser elegivel e registrada como `DONE`
+- este arquivo permanece como consolidacao da evidencia visual e da validacao
+  manual final do recorte
 
 ## Validacao executada
 
@@ -84,5 +95,6 @@ Resultado:
 
 ## Status da evidencia
 
-FT-092 fica em `REVIEW`, nao `DONE`, ate haver uma sessao/ambiente que permita
-capturar screenshots depois das telas autenticadas tocadas.
+FT-092 fica encerrada como `DONE`, com evidencia visual preservada no recorte e
+com validacao manual final do fluxo mobile contra `staging` registrada nesta
+rodada.

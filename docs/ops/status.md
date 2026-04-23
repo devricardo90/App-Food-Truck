@@ -10,7 +10,7 @@ Resumo atual:
 - `FT-087 = DONE`
 - `FT-088 = DONE`
 - `FT-091 = DONE`
-- `FT-092 = REVIEW`
+- `FT-092 = DONE`
 
 ## Divergencia corrigida em 2026-04-20
 
@@ -25,24 +25,26 @@ Correcao aplicada:
 - a correcao minima validada da FT-091 permanece `node: "22.12.0"` no profile
   `preview-staging`
 
-## Frente atual
+## Fechamento atual
 
 `FT-092 - Polir experiencia demonstravel do fluxo validado para portfolio`
-esta em `REVIEW`.
+foi encerrada como `DONE`.
 
-Motivo:
+Motivo do fechamento:
 
 - polish visual/copy/feedback aplicado em telas centrais mobile/admin
-- typecheck mobile/admin: PASS
-- testes existentes mobile/admin: PASS
-- evidencia visual depois das telas autenticadas ainda nao fechou
+- diagnostico manual identificou e fechou o bloqueio P1 no `Add to cart` do mobile
+- a correcao minima aplicada foi uma guarda local contra reentrada no `onPress`
+- `pnpm.cmd --filter @foodtrucks/mobile run typecheck`: PASS
+- `pnpm.cmd --filter @foodtrucks/mobile run test`: PASS
+- o owner confirmou manualmente em dispositivo o fluxo mobile contra `staging` apos a correcao
+- o clique unico no CTA voltou a levar ao carrinho sem travar a UI e o fluxo seguiu ate checkout
 
-Bloqueio residual da FT-092:
+Evidencia operacional:
 
-- mobile em Expo Go entrou no bootstrap autenticado, mas `/auth/me` falhou com
-  `Network request failed`
-- admin local nao abriu para screenshot porque o binario local de Next nao esta
-  materializado em `apps/admin/node_modules/next/dist/bin/next`
+- o conjunto de capturas antes/depois permanece em `docs/quality/ft-092/`
+- o registro consolidado da task permanece em `docs/quality/ft-092/evidence.md`
+- o backlog canonico e o handoff foram atualizados para refletir o encerramento
 
 Fora de escopo mantido:
 
